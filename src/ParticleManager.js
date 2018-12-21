@@ -1,16 +1,14 @@
-var ParticleManager = Class(
-{
-  $const:
-  {
-    c_particleLimit: 5000
-  },
+import { fmod, lerp } from "./Utils";
+import { drawSprite } from "../exp/pixi_main";
+import EffectsLibrary from "./EffectsLibrary";
 
-  constructor: function( particles /*= c_particleLimit*/ , layers /*= 1*/ )
-  {
+class ParticleManager {
+  // $const: {
+  //   c_particleLimit: 5000
+  // }
+  c_particleLimit = 5000;
 
-    particles = GetDefaultArg( particles, ParticleManager.c_particleLimit );
-    layers = GetDefaultArg( layers, 1 );
-
+  constructor(particles = this.c_particleLimit, layers = 1) {
     this._effectLayers = layers;
 
     this._originX = 0;
@@ -55,43 +53,34 @@ var ParticleManager = Class(
     this._inUse = [];
     this._effects = [];
 
-    for ( var el = 0; el < layers; ++el )
-    {
-      this._inUse[ el ] = [];
-      this._effects[ el ] = [];
-
+    for (let el = 0; el < layers; ++el) {
+      this._inUse[el] = [];
+      this._effects[el] = [];
 
       // Seems ridiculous
-      for ( var i = 0; i < 10; ++i )
-      {
-        this._inUse[ el ][ i ] = [];
+      for (let i = 0; i < 10; ++i) {
+        this._inUse[el][i] = [];
       }
     }
 
     this._unused = [];
-    for ( var c = 0; c < particles; ++c )
-    {
-      var p = new Particle();
-      p.SetOKtoRender( false );
-      this._unused.push( p );
+    for (let c = 0; c < particles; ++c) {
+      let p = new Particle();
+      p.setOKtoRender(false);
+      this._unused.push(p);
     }
-  },
+  }
 
-  Update: function()
-  {
-    if ( !this._paused )
-    {
-      this._currentTime += EffectsLibrary.GetUpdateTime();
+  update() {
+    if (!this._paused) {
+      this._currentTime += EffectsLibrary.getUpdateTime();
       this._currentTick++;
 
-      for ( var i = 0; i < this._effectLayers; i++ )
-      {
-        var list = this._effects[ i ];
-        for ( var j = 0; j < list.length; j++ )
-        {
-          if ( !list[ j ].Update() )
-          {
-            list.splice( j, 1 );
+      for (let i = 0; i < this._effectLayers; i++) {
+        let list = this._effects[i];
+        for (let j = 0; j < list.length; j++) {
+          if (!list[j].update()) {
+            list.splice(j, 1);
             j--;
           }
         }
@@ -101,23 +90,17 @@ var ParticleManager = Class(
       this._oldOriginY = this._originY;
       this._oldOriginZ = this._originZ;
     }
-  },
+  }
 
-  GrabParticle: function( effect, pool, layer /*= 0*/ )
-  {
-    layer = GetDefaultArg( layer, 0 );
+  grabParticle(effect, pool, layer = 0) {
+    if (this._unused.length > 0) {
+      let p = this._unused.pop();
 
-    if ( this._unused.length > 0 )
-    {
-      var p = this._unused.pop();
+      p.setLayer(layer);
+      p.setGroupParticles(pool);
 
-      p.SetLayer( layer );
-      p.SetGroupParticles( pool );
-
-      if ( pool )
-        effect.AddInUse( layer, p );
-      else
-        this._inUse[ effect.GetEffectLayer() ][ layer ].push( p );
+      if (pool) effect.addInUse(layer, p);
+      else this._inUse[effect.getEffectLayer()][layer].push(p);
 
       this._inUseCount++;
 
@@ -125,395 +108,352 @@ var ParticleManager = Class(
     }
 
     return null;
-  },
+  }
 
-  ReleaseParticle: function( p )
-  {
-    if ( this.onParticleKilledCB )
-      this.onParticleKilledCB( p );
+  releaseParticle(p) {
+    if (this.onParticleKilledCB) this.onParticleKilledCB(p);
 
     this._inUseCount--;
-    this._unused.push( p );
-    if ( !p.IsGroupParticles() )
-    {
-      var pList = this._inUse[ p.GetEffectLayer() ][ p.GetLayer() ];
-      RemoveFromList( pList, p );
+    this._unused.push(p);
+    if (!p.isGroupParticles()) {
+      let pList = this._inUse[p.getEffectLayer()][p.getLayer()];
+      removeFromList(pList, p);
     }
-  },
+  }
 
-  DrawParticles: function( tween /*= 1.0*/ , layer /*= -1*/ )
-  {
-    tween = GetDefaultArg( tween, 1.0 );
-    layer = GetDefaultArg( layer, -1 );
-
+  drawParticles(tween = 1.0, layer = -1) {
     // tween origin
     this._currentTween = tween;
-    this._camtx = -Lerp( this._oldOriginX, this._originX, tween );
-    this._camty = -Lerp( this._oldOriginY, this._originY, tween );
-    this._camtz = Lerp( this._oldOriginZ, this._originZ, tween );
+    this._camtx = -lerp(this._oldOriginX, this._originX, tween);
+    this._camty = -lerp(this._oldOriginY, this._originY, tween);
+    this._camtz = lerp(this._oldOriginZ, this._originZ, tween);
 
-    if ( this._angle !== 0 )
-    {
-      this._angleTweened = Lerp( _oldAngle, _angle, tween );
-      var a = this._angleTweened / 180.0 * M_PI;
+    if (this._angle !== 0) {
+      this._angleTweened = lerp(_oldAngle, _angle, tween);
+      let a = (this._angleTweened / 180.0) * M_PI;
       //  this._matrix.Set(cos(a), sin(a), -sin(a), cos(a));  // CHECK
     }
 
-    var layers = 0;
-    var startLayer = 0;
-    if ( layer == -1 || layer >= this._effectLayers )
-    {
+    let layers = 0;
+    let startLayer = 0;
+    if (layer == -1 || layer >= this._effectLayers) {
       layers = this._effectLayers - 1;
-    }
-    else
-    {
+    } else {
       layers = layer;
       startLayer = layer;
     }
 
-    for ( var el = startLayer; el <= layers; ++el )
-    {
-      for ( var i = 0; i < 10; ++i ) // wtf
-      {
-        var plist = this._inUse[ el ][ i ];
-        for ( var j = 0; j < plist.length; j++ )
-        {
-          this.DrawParticle( plist[ j ] );
+    for (let el = startLayer; el <= layers; ++el) {
+      for (
+        let i = 0;
+        i < 10;
+        ++i // wtf
+      ) {
+        let plist = this._inUse[el][i];
+        for (let j = 0; j < plist.length; j++) {
+          this.drawParticle(plist[j]);
         }
       }
     }
-    this.DrawEffects();
-  },
+    this.drawEffects();
+  }
 
-  DrawBoundingBoxes: function()
-  {
-    for ( var el = 0; el < this._effectLayers; ++el )
-    {
-      var list = this._effects[ el ];
-      for ( var j = 0; j < list.length; j++ )
-        list[ j ].DrawBoundingBox();
+  drawBoundingBoxes() {
+    for (let el = 0; el < this._effectLayers; ++el) {
+      let list = this._effects[el];
+      for (let j = 0; j < list.length; j++) list[j].drawBoundingBox();
     }
-  },
+  }
 
-  SetOrigin: function( x, y, z /*= 1.0*/ )
-  {
-    this.SetOriginX( x );
-    this.SetOriginY( y );
-    this.SetOriginZ( GetDefaultArg( z, 1.0 ) );
-  },
+  setOrigin(x, y, z = 1.0) {
+    this.setOriginX(x);
+    this.setOriginY(y);
+    this.setOriginZ(z);
+  }
 
-  SetOriginX: function( x )
-  {
+  setOriginX(x) {
     this._oldOriginX = this._originX;
     this._originX = x;
-  },
+  }
 
-  SetOriginY: function( y )
-  {
+  setOriginY(y) {
     this._oldOriginY = this._originY;
     this._originY = y;
-  },
+  }
 
-  SetOriginZ: function( z )
-  {
+  setOriginZ(z) {
     this._oldOriginZ = this._originZ;
     this._originZ = z;
-  },
+  }
 
-  SetAngle: function( angle )
-  {
+  setAngle(angle) {
     this._oldAngle = this._angle;
     this._angle = angle;
-  },
+  }
 
-  SetScreenSize: function( w, h )
-  {
+  setScreenSize(w, h) {
     this._vpW = w;
     this._vpH = h;
     this._centerX = this._vpW / 2;
     this._centerY = this._vpH / 2;
-  },
+  }
 
-  SetScreenPosition: function( x, y )
-  {
+  setScreenPosition(x, y) {
     this._vpX = x;
     this._vpY = y;
-  },
+  }
 
-  SetIdleTimeLimit: function( limit )
-  {
+  setIdleTimeLimit(limit) {
     this._idleTimeLimit = limit;
-  },
+  }
 
-  GetOriginX: function()
-  {
+  getOriginX() {
     return this._originX;
-  },
-  GetOriginY: function()
-  {
+  }
+  getOriginY() {
     return this._originY;
-  },
-  GetOriginZ: function()
-  {
+  }
+  getOriginZ() {
     return this._originZ;
-  },
+  }
 
-  GetGlobalAmountScale: function()
-  {
+  getGlobalAmountScale() {
     return this._globalAmountScale;
-  },
-  SetGlobalAmountScale: function( scale )
-  {
+  }
+  setGlobalAmountScale(scale) {
     this._globalAmountScale = scale;
-  },
+  }
 
-  GetParticlesInUse: function()
-  {
+  getParticlesInUse() {
     return this._inUseCount;
-  },
-  GetParticlesUnused: function()
-  {
+  }
+  getParticlesUnused() {
     return this._unused.length;
-  },
+  }
 
-  AddPreLoadedEffect: function( e, frames, layer /*= 0*/ )
-  {
-    layer = GetDefaultArg( layer, 0 );
-    if ( layer >= this._effectLayers )
-      layer = 0;
+  addPreLoadedEffect(e, frames, layer = 0) {
+    if (layer >= this._effectLayers) layer = 0;
 
-    var tempTime = this._currentTime;
-    this._currentTime -= frames * EffectsLibrary.GetUpdateTime();
-    e.ChangeDoB( this._currentTime );
+    let tempTime = this._currentTime;
+    this._currentTime -= frames * EffectsLibrary.getUpdateTime();
+    e.changeDoB(this._currentTime);
 
-    for ( var i = 0; i < frames; ++i )
-    {
-      this._currentTime = ( frames + 1 ) * EffectsLibrary.GetUpdateTime();
-      e.Update();
-      if ( e.IsDestroyed() )
-        RemoveEffect( e );
+    for (let i = 0; i < frames; ++i) {
+      this._currentTime = (frames + 1) * EffectsLibrary.getUpdateTime();
+      e.update();
+      if (e.isDestroyed()) this.removeEffect(e);
     }
     this._currentTime = tempTime;
-    e.SetEffectLayer( layer );
-    this._effects[ layer ].push( e );
-  },
+    e.setEffectLayer(layer);
+    this._effects[layer].push(e);
+  }
 
-  AddEffect: function( e, layer /*= 0*/ )
-  {
-    layer = GetDefaultArg( layer, 0 );
-    if ( layer >= this._effectLayers )
-      layer = 0;
-    e.SetEffectLayer( layer );
-    this._effects[ layer ].push( e );
-  },
+  addEffect(e, layer = 0) {
+    if (layer >= this._effectLayers) layer = 0;
+    e.selEffectLayer(layer);
+    this._effects[layer].push(e);
+  }
 
-  RemoveEffect: function( e )
-  {
-    RemoveFromList( this._effects[ e.GetEffectLayer() ], e );
-  },
+  removeEffect(e) {
+    removeFromList(this._effects[e.getEffectLayer()], e);
+  }
 
-  ClearInUse: function()
-  {
-    for ( var el = 0; el < this._effectLayers; ++el )
-    {
-      for ( var i = 0; i < 10; ++i )
-      {
-        var plist = this._inUse[ el ][ i ];
+  clearInUse() {
+    for (let el = 0; el < this._effectLayers; ++el) {
+      for (let i = 0; i < 10; ++i) {
+        let plist = this._inUse[el][i];
 
-        for ( var j = 0; j < plist.length; j++ )
-        {
-          var p = plist[ j ];
-          this._unused.push( p );
+        for (let j = 0; j < plist.length; j++) {
+          let p = plist[j];
+          this._unused.push(p);
           this._inUseCount--;
-          p.GetEmitter().GetParentEffect().RemoveInUse( p.GetLayer(), p );
-          p.Reset();
+          p.getEmitter()
+            .getParentEffect()
+            .removeInUse(p.getLayer(), p);
+          p.reset();
         }
 
-        this._inUse[ el ][ i ] = [];
+        this._inUse[el][i] = [];
       }
     }
-  },
+  }
 
-  Destroy: function()
-  {
-    this.ClearAll();
-    this.ClearInUse();
-  },
+  destroy() {
+    this.clearAll();
+    this.clearInUse();
+  }
 
-  ClearAll: function()
-  {
-    for ( var el = 0; el < this._effectLayers; ++el )
-    {
-      var elist = this._effects[ el ];
-      for ( var j = 0; j < elist.length; j++ )
-      {
-        elist[ j ].Destroy();
+  clearAll() {
+    for (let el = 0; el < this._effectLayers; ++el) {
+      let elist = this._effects[el];
+      for (let j = 0; j < elist.length; j++) {
+        elist[j].destroy();
       }
-      this._effects[ el ] = [];
+      this._effects[el] = [];
     }
-  },
+  }
 
-  ClearLayer: function( layer )
-  {
-    var list = this._effects[ layer ];
+  clearLayer(layer) {
+    let list = this._effects[layer];
 
-    for ( var i = 0; i < list.length; i++ )
-      list[ i ].Destroy();
+    for (let i = 0; i < list.length; i++) list[i].destroy();
 
-    this._effects[ layer ] = [];
-  },
+    this._effects[layer] = [];
+  }
 
-  ReleaseSingleParticles: function()
-  {
-    for ( var i = 0; i < this._inUse.length; i++ )
-    {
-      var list = this._inUse[ i ];
-      for ( var j = 0; j < list.length; j++ )
-      {
-        for ( var k = 0; k < list[ j ].length; k++ )
-          list[ j ][ k ].SetReleaseSingleParticles( true );
+  releaseSingleParticles() {
+    for (let i = 0; i < this._inUse.length; i++) {
+      let list = this._inUse[i];
+      for (let j = 0; j < list.length; j++) {
+        for (let k = 0; k < list[j].length; k++)
+          list[j][k].setReleaseSingleParticles(true);
       }
     }
-  },
+  }
 
-  TogglePause: function()
-  {
+  togglePause() {
     this._paused = !this._paused;
-  },
+  }
 
-  DrawEffects: function()
-  {
-    for ( var el = 0; el < this._effects.length; ++el )
-    {
-      var elist = this._effects[ el ];
-      for ( var j = 0; j < elist.length; j++ )
-        this.DrawEffect( elist[ j ] );
+  drawEffects() {
+    for (let el = 0; el < this._effects.length; ++el) {
+      let elist = this._effects[el];
+      for (let j = 0; j < elist.length; j++) this.drawEffect(elist[j]);
     }
-  },
+  }
 
-  DrawEffect: function( e )
-  {
-    for ( var i = 0; i < 10; ++i )
-    {
+  drawEffect(e) {
+    for (let i = 0; i < 10; ++i) {
       // particle
-      var plist = e.GetParticles( i );
-      for ( var j = 0; j < plist.length; j++ )
-      {
-        this.DrawParticle( plist[ j ] );
+      let plist = e.getParticles(i);
+      for (let j = 0; j < plist.length; j++) {
+        this.drawParticle(plist[j]);
         // effect
-        var subeffects = plist[ j ].GetChildren();
-        for ( var k = 0; k < subeffects.length; k++ )
-        {
-          this.DrawEffect( subeffects[ k ] );
+        let subeffects = plist[j].getChildren();
+        for (let k = 0; k < subeffects.length; k++) {
+          this.drawEffect(subeffects[k]);
         }
       }
     }
-  },
+  }
 
-  DrawParticle: function( p )
-  {
-    if ( p.GetAge() !== 0 || p.GetEmitter().IsSingleParticle() )
-    {
-      var px = Lerp( p.GetOldWX(), p.GetWX(), this._currentTween );
-      var py = Lerp( p.GetOldWY(), p.GetWY(), this._currentTween );
+  drawParticle(p) {
+    // p: Particle
+    if (p.GetAge() !== 0 || p.getEmitter().isSingleParticle()) {
+      let px = lerp(p.getOldWX(), p.getWX(), this._currentTween);
+      let py = lerp(p.getOldWY(), p.getWY(), this._currentTween);
 
-      if ( this._angle !== 0 )
-      {
-        var rotVec = this._matrix.TransformVector( new Vector2( px, py ) );
-        px = ( rotVec.x * this._camtz ) + this._centerX + ( this._camtz * this._camtx );
-        py = ( rotVec.y * this._camtz ) + this._centerY + ( this._camtz * this._camty );
-      }
-      else
-      {
-        px = ( px * this._camtz ) + this._centerX + ( this._camtz * this._camtx );
-        py = ( py * this._camtz ) + this._centerY + ( this._camtz * this._camty );
+      if (this._angle !== 0) {
+        let rotVec = this._matrix.transformVector(new Vector2(px, py));
+        px = rotVec.x * this._camtz + this._centerX + this._camtz * this._camtx;
+        py = rotVec.y * this._camtz + this._centerY + this._camtz * this._camty;
+      } else {
+        px = px * this._camtz + this._centerX + this._camtz * this._camtx;
+        py = py * this._camtz + this._centerY + this._camtz * this._camty;
       }
 
-      var imageDiam = p.GetImageDiameter();
-      if ( px > this._vpX - imageDiam && px < this._vpX + this._vpW + imageDiam && py > this._vpY - imageDiam && py < this._vpY + this._vpH + imageDiam )
-      {
-        if ( p.GetAvatar() )
-        {
-          var x, y;
-          var sprite = p.GetAvatar();
-          if ( p.GetEmitter().IsHandleCenter() )
-          {
-            x = sprite.GetWidth() / 2.0;
-            y = sprite.GetHeight() / 2.0;
-          }
-          else
-          {
-            x = p.GetHandleX();
-            y = p.GetHandleY();
+      let imageDiam = p.getImageDiameter();
+      if (
+        px > this._vpX - imageDiam &&
+        px < this._vpX + this._vpW + imageDiam &&
+        py > this._vpY - imageDiam &&
+        py < this._vpY + this._vpH + imageDiam
+      ) {
+        if (p.getAvatar()) {
+          let x, y;
+          let sprite = p.getAvatar();
+          if (p.getEmitter().isHandleCenter()) {
+            x = sprite.getWidth() / 2.0;
+            y = sprite.getHeight() / 2.0;
+          } else {
+            x = p.getHandleX();
+            y = p.getHandleY();
           }
 
-          var rotation;
+          let rotation;
 
-          var tv = Lerp( p.GetOldAngle(), p.GetAngle(), this._currentTween );
-          var tx = 0;
-          if ( p.GetEmitter().IsAngleRelative() )
-          {
-            if ( Math.abs( p.GetOldRelativeAngle() - p.GetRelativeAngle() ) > 180 )
-              tx = Lerp( p.GetOldRelativeAngle() - 360, p.GetRelativeAngle(), this._currentTween );
+          let tv = lerp(p.getOldAngle(), p.getAngle(), this._currentTween);
+          let tx = 0;
+          if (p.getEmitter().isAngleRelative()) {
+            if (Math.abs(p.getOldRelativeAngle() - p.getRelativeAngle()) > 180)
+              tx = lerp(
+                p.getOldRelativeAngle() - 360,
+                p.getRelativeAngle(),
+                this._currentTween
+              );
             else
-              tx = Lerp( p.GetOldRelativeAngle(), p.GetRelativeAngle(), this._currentTween );
+              tx = lerp(
+                p.getOldRelativeAngle(),
+                p.getRelativeAngle(),
+                this._currentTween
+              );
           }
           rotation = tv + tx + this._angleTweened;
 
-          tx = Lerp( p.GetOldScaleX(), p.GetScaleX(), this._currentTween );
-          var ty = Lerp( p.GetOldScaleY(), p.GetScaleY(), this._currentTween );
-          var tz = Lerp( p.GetOldZ(), p.GetZ(), this._currentTween );
+          tx = lerp(p.getOldScaleX(), p.getScaleX(), this._currentTween);
+          let ty = lerp(p.getOldScaleY(), p.getScaleY(), this._currentTween);
+          let tz = lerp(p.getOldZ(), p.getZ(), this._currentTween);
 
-          var scaleX = tx * tz * this._camtz;
-          var scaleY = ty * tz * this._camtz;
+          let scaleX = tx * tz * this._camtz;
+          let scaleY = ty * tz * this._camtz;
 
-          var a = p.GetEntityAlpha();
-          var r = p.GetRed();
-          var g = p.GetGreen();
-          var b = p.GetBlue();
+          let a = p.getEntityAlpha();
+          let r = p.getRed();
+          let g = p.getGreen();
+          let b = p.getBlue();
 
-          if ( p.IsAnimating() )
-          {
-            tv = Lerp( p.GetOldCurrentFrame(), p.GetCurrentFrame(), this._currentTween );
-            if ( tv < 0 )
-            {
-              tv = p.GetAvatar().GetFramesCount() + ( Math.fmod( tv, p.GetAvatar().GetFramesCount() ) );
-              if ( tv == p.GetAvatar().GetFramesCount() )
-                tv = 0;
+          if (p.isAnimating()) {
+            tv = lerp(
+              p.getOldCurrentFrame(),
+              p.getCurrentFrame(),
+              this._currentTween
+            );
+            if (tv < 0) {
+              tv =
+                p.getAvatar().getFramesCount() +
+                fmod(tv, p.getAvatar().getFramesCount());
+              if (tv == p.getAvatar().getFramesCount()) tv = 0;
+            } else {
+              tv = fmod(tv, p.getAvatar().getFramesCount());
             }
-            else
-            {
-              tv = Math.fmod( tv, p.GetAvatar().GetFramesCount() );
-            }
-          }
-          else
-          {
-            tv = p.GetCurrentFrame();
+          } else {
+            tv = p.getCurrentFrame();
           }
           // tidy with above
-          tv = Math.round( tv ) % p.GetAvatar().GetFramesCount();
+          tv = Math.round(tv) % p.getAvatar().getFramesCount();
 
-          var blend = p.GetEmitter().GetBlendMode();
+          let blend = p.getEmitter().getBlendMode();
 
-
-          DrawSprite( p, sprite, px, py, tv, x, y, rotation, scaleX, scaleY, r, g, b, a, blend );
-
+          DrawSprite(
+            p,
+            sprite,
+            px,
+            py,
+            tv,
+            x,
+            y,
+            rotation,
+            scaleX,
+            scaleY,
+            r,
+            g,
+            b,
+            a,
+            blend
+          );
         }
       }
     }
-  },
-
-  GetIdleTimeLimit: function()
-  {
-    return this._idleTimeLimit;
-  },
-  IsSpawningAllowed: function()
-  {
-    return this._spawningAllowed;
-  },
-
-  GetCurrentTime: function()
-  {
-    return this._currentTick * EffectsLibrary.GetUpdateTime();
   }
-} );
+
+  getIdleTimeLimit() {
+    return this._idleTimeLimit;
+  }
+  isSpawningAllowed() {
+    return this._spawningAllowed;
+  }
+
+  getCurrentTime() {
+    return this._currentTick * EffectsLibrary.getUpdateTime();
+  }
+}

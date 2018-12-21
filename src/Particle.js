@@ -1,8 +1,8 @@
-var Particle = Class( Entity,
-{
-  constructor: function()
-  {
-    Particle.$super.call( this ); // Call parent's constructor
+import Entity from "./Entity";
+
+class Particle extends Entity // Class(Entity, ...) {
+  constructor() {
+    super(this); // Call parent's constructor
 
     this._emitter = null;
 
@@ -26,11 +26,9 @@ var Particle = Class( Entity,
     this._layer = 0;
     this._groupParticles = false;
     this._effectLayer = 0;
+  }
 
-  },
-
-  Reset: function()
-  {
+  reset() {
     this._age = 0;
     this._wx = 0;
     this._wy = 0;
@@ -39,7 +37,7 @@ var Particle = Class( Entity,
 
     this._avatar = null;
     this._dead = 0;
-    this.ClearChildren();
+    this.clearChildren();
     this._directionVariation = 0;
     this._direction = 0;
     this._directionLocked = false;
@@ -55,208 +53,173 @@ var Particle = Class( Entity,
     this._gravity = 0;
     this._weight = 0;
     this._emitter = null;
-  },
+  }
 
-  Update: function()
-  {
-    this.Capture();
+  update() {
+    this.capture();
 
-    if ( this._emitter.IsDying() || this._emitter.IsOneShot() || this._dead )
+    if (this._emitter.isDying() || this._emitter.isOneShot() || this._dead)
       this._releaseSingleParticle = true;
 
-    if ( this._emitter.IsSingleParticle() && !this._releaseSingleParticle )
-    {
-      this._age = this._particleManager.GetCurrentTime() - this._dob;
-      if ( this._age > this._lifeTime )
-      {
+    if (this._emitter.isSingleParticle() && !this._releaseSingleParticle) {
+      this._age = this._particleManager.getCurrentTime() - this._dob;
+      if (this._age > this._lifeTime) {
         this._age = 0;
-        this._dob = this._particleManager.GetCurrentTime();
+        this._dob = this._particleManager.getCurrentTime();
       }
-    }
-    else
-    {
-      this._age = this._particleManager.GetCurrentTime() - this._dob;
+    } else {
+      this._age = this._particleManager.getCurrentTime() - this._dob;
     }
 
-    Particle.$superp.Update.call( this );
+    super.update(); // Particle.$superp.Update.call(this);
 
-    if ( this._age > this._lifeTime || this._dead == 2 ) // if dead=2 then that means its reached the end of the line (in kill mode) for line traversal effects
-    {
+    if (this._age > this._lifeTime || this._dead == 2) {
+      // if dead=2 then that means its reached the end of the line (in kill mode) for line traversal effects
       this._dead = 1;
-      if ( this._children.length === 0 )
-      {
-        this._particleManager.ReleaseParticle( this );
-        if ( this._emitter.IsGroupParticles() )
-          this._emitter.GetParentEffect().RemoveInUse( this._layer, this );
+      if (this._children.length === 0) {
+        this._particleManager.releaseParticle(this); // TODO
+        if (this._emitter.isGroupParticles())
+          this._emitter.getParentEffect().removeInUse(this._layer, this); // TODO
 
-        this.Reset();
+        this.reset();
         return false; // RemoveChild
-      }
-      else
-      {
-        this._emitter.ControlParticle( this );
-        this.KillChildren();
+      } else {
+        this._emitter.controlParticle(this);
+        this.killChildren();
       }
 
       return true;
     }
 
-    this._emitter.ControlParticle( this );
+    this._emitter.controlParticle(this);
     return true;
-  },
+  }
 
-  Destroy: function( releaseChildren )
-  {
-    this._particleManager.ReleaseParticle( this );
-    Particle.$superp.Destroy();
-    this.Reset();
-  },
-  SetX: function( x )
-  {
-    this._oldX = ( this._age > 0 ) ? this._x : x;
+  destroy(releaseChildren) {
+    this._particleManager.releaseParticle(this); // TODO
+    super.destroy(); // Particle.$superp.Destroy();
+    this.reset();
+  }
+  setX(x) {
+    this._oldX = this._age > 0 ? this._x : x;
     this._x = x;
-  },
-  SetY: function( y )
-  {
-    this._oldY = ( this._age > 0 ) ? this._y : y;
+  }
+  setY(y) {
+    this._oldY = this._age > 0 ? this._y : y;
     this._y = y;
-  },
-  SetZ: function( z )
-  {
-    this._oldZ = ( this._age > 0 ) ? this._z : z;
+  }
+  setZ(z) {
+    this._oldZ = this._age > 0 ? this._z : z;
     this._z = z;
-  },
+  }
 
-  SetGroupParticles: function( value )
-  {
+  setGroupParticles(value) {
     this._groupParticles = value;
-  },
-  IsGroupParticles: function()
-  {
+  }
+
+  isGroupParticles() {
     return this._groupParticles;
-  },
+  }
 
-  SetLayer: function( layer )
-  {
+  setLayer(layer) {
     this._layer = layer;
-  },
-  GetLayer: function()
-  {
+  }
+
+  getLayer() {
     return this._layer;
-  },
+  }
 
-  SetEmitter: function( e )
-  {
+  setEmitter(e) {
     this._emitter = e;
-  },
-  GetEmitter: function()
-  {
+  }
+
+  getEmitter() {
     return this._emitter;
-  },
+  }
 
-  GetEffectLayer: function()
-  {
+  getEffectLayer() {
     return this._effectLayer;
-  },
+  }
 
-  SetParticleManager: function( pm )
-  {
+  setParticleManager(pm) {
     this._particleManager = pm;
-  },
+  }
 
-  SetEffectLayer: function( layer )
-  {
+  setEffectLayer(layer) {
     this._effectLayer = layer;
-  },
+  }
 
-  SetVelVariation: function( velVariation )
-  {
+  setVelVariation(velVariation) {
     this._velVariation = velVariation;
-  },
+  }
 
-  GetVelVariation: function()
-  {
+  getVelVariation() {
     return this._velVariation;
-  },
+  }
 
-  SetGSizeX: function( gSizeX )
-  {
+  setGSizeX(gSizeX) {
     this._gSizeX = gSizeX;
-  },
+  }
 
-  SetGSizeY: function( gSizeY )
-  {
+  setGSizeY(gSizeY) {
     this._gSizeY = gSizeY;
-  },
+  }
 
-  GetGSizeX: function()
-  {
+  getGSizeX() {
     return this._gSizeX;
-  },
+  }
 
-  GetGSizeY: function()
-  {
+  getGSizeY() {
     return this._gSizeY;
-  },
+  }
 
-  SetScaleVariationX: function( scaleVarX )
-  {
+  setScaleVariationX(scaleVarX) {
     this._scaleVariationX = scaleVarX;
-  },
-  GetScaleVariationX: function()
-  {
+  }
+
+  getScaleVariationX() {
     return this._scaleVariationX;
-  },
+  }
 
-  SetScaleVariationY: function( scaleVarY )
-  {
+  setScaleVariationY(scaleVarY) {
     this._scaleVariationY = scaleVarY;
-  },
+  }
 
-  GetScaleVariationY: function()
-  {
+  getScaleVariationY() {
     return this._scaleVariationY;
-  },
+  }
 
-  SetEmissionAngle: function( emissionAngle )
-  {
+  setEmissionAngle(emissionAngle) {
     this._emissionAngle = emissionAngle;
-  },
+  }
 
-  GetEmissionAngle: function()
-  {
+  getEmissionAngle() {
     return this._emissionAngle;
-  },
+  }
 
-  SetDirectionVairation: function( dirVar )
-  {
+  setDirectionVairation(dirVar) {
     this._directionVariation = dirVar;
-  },
+  }
 
-  GetDirectionVariation: function()
-  {
+  getDirectionVariation() {
     return this._directionVariation;
-  },
+  }
 
-  SetSpinVariation: function( spinVar )
-  {
+  setSpinVariation(spinVar) {
     this._spinVariation = spinVar;
-  },
+  }
 
-  GetSpinVariation: function()
-  {
+  getSpinVariation() {
     return this._spinVariation;
-  },
+  }
 
-  SetWeightVariation: function( weightVar )
-  {
+  setWeightVariation(weightVar) {
     this._weightVariation = weightVar;
-  },
+  }
 
-  GetWeightVariation: function()
-  {
+  getWeightVariation() {
     return this._weightVariation;
-  },
+  }
+}
 
-
-} );
+export default Particle;

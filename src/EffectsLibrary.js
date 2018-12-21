@@ -1,207 +1,218 @@
-var EffectsLibrary = Class(
+class EffectsLibrary  
 {
-  $singleton: true, // or is it
+  // $singleton: true, // or is it
+  static instance;
 
-  $const: {
-    c_particleLimit: 5000,
+    static c_particleLimit = 5000;
 
-    globalPercentMin        : 0,
-    globalPercentMax        : 20.0,
-    globalPercentSteps      : 100.0,
+    static globalPercentMin        = 0;
+    static globalPercentMax        = 20.0;
+    static globalPercentSteps      = 100.0;
 
-    globalPercentVMin       : 0,
-    globalPercentVMax       : 10.0,
-    globalPercentVSteps     : 200.0,
+    static globalPercentVMin       = 0;
+    static globalPercentVMax       = 10.0;
+    static globalPercentVSteps     = 200.0;
 
-    angleMin                : 0,
-    angleMax                : 1080.0,
-    angleSteps              : 54.0,
+    static angleMin                = 0;
+    static angleMax                = 1080.0;
+    static angleSteps              = 54.0;
 
-    emissionRangeMin        : 0,
-    emissionRangeMax        : 180.0,
-    emissionRangeSteps      : 30.0,
+   static emissionRangeMin        = 0;
+   static emissionRangeMax        = 180.0;
+   static emissionRangeSteps      = 30.0;
 
-    dimensionsMin           : 0,
-    dimensionsMax           : 200.0,
-    dimensionsSteps         : 40.0,
+   static    dimensionsMin           = 0;
+   static    dimensionsMax           = 200.0;
+   static    dimensionsSteps         = 40.0;
 
-    lifeMin                 : 0,
-    lifeMax                 : 100000.0,
-    lifeSteps               : 200.0,
+    static lifeMin                 = 0;
+    static lifeMax                 = 100000.0;
+    static lifeSteps               = 200.0;
 
-    amountMin               : 0,
-    amountMax               : 2000,
-    amountSteps             : 100,
+    static amountMin               = 0;
+    static amountMax               = 2000;
+    static amountSteps             = 100;
 
-    velocityMin             : 0,
-    velocityMax             : 10000.0,
-    velocitySteps           : 100.0,
+    static velocityMin             = 0;
+    static velocityMax             = 10000.0;
+    static velocitySteps           = 100.0;
 
-    velocityOverTimeMin     : -20.0,
-    velocityOverTimeMax     : 20.0,
-    velocityOverTimeSteps   : 200,
+    static velocityOverTimeMin     = -20.0;
+    static velocityOverTimeMax     = 20.0;
+    static velocityOverTimeSteps   = 200;
 
-    weightMin               : -2500.0,
-    weightMax               : 2500.0,
-    weightSteps             : 200.0,
+    static weightMin               = -2500.0;
+    static weightMax               = 2500.0;
+    static weightSteps             = 200.0;
 
-    weightVariationMin      : 0,
-    weightVariationMax      : 2500.0,
-    weightVariationSteps    : 250.0,
+    static weightVariationMin      = 0;
+    static weightVariationMax      = 2500.0;
+    static weightVariationSteps    = 250.0;
 
-    spinMin                 : -2000.0,
-    spinMax                 : 2000.0,
-    spinSteps               : 100.0,
+    static spinMin                 = -2000.0;
+    static spinMax                 = 2000.0;
+    static spinSteps               = 100.0;
 
-    spinVariationMin        : 0,
-    spinVariationMax        : 2000.0,
-    spinVariationSteps      : 100.0,
+    static spinVariationMin        = 0;
+    static spinVariationMax        = 2000.0;
+    static spinVariationSteps      = 100.0;
 
-    spinOverTimeMin         : -20.0,
-    spinOverTimeMax         : 20.0,
-    spinOverTimeSteps       : 200.0,
+    static spinOverTimeMin         = -20.0;
+    static spinOverTimeMax         = 20.0;
+    static spinOverTimeSteps       = 200.0;
 
-    directionOverTimeMin    : 0,
-    directionOverTimeMax    : 4320.0,
-    directionOverTimeSteps  : 216.0,
+    static directionOverTimeMin    = 0,
+    static directionOverTimeMax    = 4320.0,
+    static directionOverTimeSteps  = 216.0,
 
-    framerateMin            : 0,
-    framerateMax            : 200.0,
-    framerateSteps          : 100.0,
+    static framerateMin            = 0,
+    static framerateMax            = 200.0,
+    static framerateSteps          = 100.0,
 
-    maxDirectionVariation   : 22.5,
-    maxVelocityVariation    : 30.0,
-    motionVariationInterval : 30
-  },
+    static maxDirectionVariation   = 22.5,
+    static maxVelocityVariation    = 30.0,
+    static motionVariationInterval = 30
+  }
 
-  Init:function()
+  constructor() {
+    if (!EffectsLibrary.instance) {
+      EffectsLibrary.instance = this;
+    }
+    return EffectsLibrary.instance;
+  }
+  init() 
   {
-    this.SetUpdateFrequency( 30.0 );
+    this.setUpdateFrequency( 30.0 );
     this._lookupFrequency = this._updateTime;
     this._lookupFrequencyOverTime = 1.0;
 
-    this.ClearAll();
-  },
+    this.clearAll();
+  }
 
-  Load:function(xml)
+  load(xml)
   {
   //  console.log(xml);
 
     // Only allow loading one library
-    this.ClearAll();
+    this.clearAll();
 
-    var shapes = xml.getElementsByTagName("SHAPES")[0];
+    let shapes = xml.getElementsByTagName("SHAPES")[0];
     shapes = shapes.getElementsByTagName("IMAGE");
 
-    for (var i=0;i<shapes.length;i++)
+    for (let i=0;i<shapes.length;i++)
     {
   //    console.log(shapes[i].attributes.getNamedItem("URL").nodeValue);
-      var img = new AnimImage();
-      img.LoadFromXML(shapes[i]);
+      let img = new AnimImage();
+      img.loadFromXML(shapes[i]);
       this._shapeList.push(img);
     }
 
     // Traverse top down
     this.m_currentFolder = null;
-    this.LoadEffectElements( xml.getElementsByTagName("EFFECTS")[0].children );
-  },
+    this.loadEffectElements( xml.getElementsByTagName("EFFECTS")[0].children );
+  }
 
-  LoadEffectElements:function(effects)
+  loadEffectElements(effects)
   {
-    for (var i=0;i<effects.length;i++)
+    for (let i=0;i<effects.length;i++)
     {
       if( effects[i].tagName === "FOLDER" )
       {
-        this.LoadEffectElements(effects[i].children);
+        this.loadEffectElements(effects[i].children);
       }
       else if( effects[i].tagName === "EFFECT" )
       {
-        var e = new Effect();
-        e.LoadFromXML(effects[i]);
+        let e = new Effect();
+        e.loadFromXML(effects[i]);
 
-        this.AddEffect(e);
+        this.addEffect(e);
       }
         //console.log(effects[i].tagName);
       //console.log(effects[i].attributes.getNamedItem("NAME").nodeValue);
     }
-  },
+  }
 
-  ClearAll:function()
+  clearAll()
   {
     this._name = "";
 
     this._effects = []; // indexed by name
     this._emitters = [];// indexed by name
     this._shapeList = [];
-  },
+  }
 
-  GetShapes:function()
+  getShapes()
   {
       return this._shapeList;
-  },
+  }
 
-  GetImage:function(index)
+  getImage(index)
   {
     return this._shapeList[index];
-  },
+  }
 
-  GetEffect:function(name)
+  getEffect(name)
   {
     return this._effects[name];
-  },
+  }
 
-  GetEmitter:function(name)
+  getEmitter(name)
   {
     return this._emitters[name];
-  },
+  }
 
-  AddEffect:function( e )
+  addEffect( e )
   {
-      var name = e.GetPath();
+      let name = e.getPath();
 
       this._effects[name] = e;
 
-      var emitters = e.GetChildren();
+      let emitters = e.getChildren();
 
-      for (var i=0;i<e.EmitterCount();i++)
+      for (let i=0;i<e.emitterCount();i++)
       {
-        this.AddEmitter(emitters[i]);
+        this.addEmitter(emitters[i]);
       }
-  },
+  }
 
-  AddEmitter:function( e )
+  addEmitter( e )
   {
-      var name = e.GetPath();
+      let name = e.getPath();
 
       this._emitters[name] = e;
 
-      var effects = e.GetEffects();
-      for (var i=0;i<effects.length;i++)
+      let effects = e.getEffects();
+      for (let i=0;i<effects.length;i++)
       {
-        this.AddEffect(effects[i]);
+        this.addEffect(effects[i]);
       }
-  },
+  }
 
-  SetUpdateFrequency: function( freq )
+  setUpdateFrequency( freq )
   {
     this._updateFrequency = freq; //  fps
     this._updateTime = 1000.0 / this._updateFrequency;
     this._currentUpdateTime = this._updateFrequency;
-  },
+  }
 
-  SetLookupFrequency: function( freq )
+  setLookupFrequency( freq )
   {
     this._lookupFrequency = freq;
-  },
-  SetLookupFrequencyOverTime: function( freq )
+  }
+  setLookupFrequencyOverTime( freq )
   {
     this._lookupFrequencyOverTime = freq;
-  },
+  }
 
-  GetUpdateFrequency: function(){ return this._updateFrequency; },
-  GetUpdateTime:  function(){ return this._updateTime; },
-  GetCurrentUpdateTime: function(){ return this._currentUpdateTime; },
-  GetLookupFrequency: function(){ return this._lookupFrequency; },
-  GetLookupFrequencyOverTime: function(){ return this._lookupFrequencyOverTime; },
+  getUpdateFrequency(){ return this._updateFrequency; }
+  getUpdateTime(){ return this._updateTime; }
+  getCurrentUpdateTime(){ return this._currentUpdateTime; }
+  getLookupFrequency(){ return this._lookupFrequency; }
+  getLookupFrequencyOverTime(){ return this._lookupFrequencyOverTime; }
 
-} );
+} 
+
+const instance = new EffectsLibrary();
+Object.freeze(instance);
+
+export default instance;

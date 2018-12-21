@@ -1,10 +1,13 @@
-var Blend = {
+import { removeFromList, getDistance2D } from "./Utils";
+import Matrix2 from "./Matrix2";
+
+const Blend = {
   BMAlphaBlend: 3,
   BMLightBlend: 4
-    // check loading values are one of these
+  // check loading values are one of these
 };
 
-var g_defaultEntity = {
+const g_defaultEntity = {
   _x: 0,
   _y: 0,
   _name: "",
@@ -111,70 +114,54 @@ var g_defaultEntity = {
   _pixelsPerSecond: 0
 };
 
-var Entity = Class(
-{
-
-  constructor: function( other )
-  {
-
-    if ( other )
-    {
-      for ( var key in g_defaultEntity )
-        this[ key ] = other[ key ];
-    }
-    else
-    {
-      for ( var key in g_defaultEntity )
-        this[ key ] = g_defaultEntity[ key ];
+class Entity {
+  constructor(other) {
+    if (other) {
+      for (let key in g_defaultEntity) this[key] = other[key];
+    } else {
+      for (let key in g_defaultEntity) this[key] = g_defaultEntity[key];
     }
 
     this._matrix = new Matrix2();
     this._speedVec = new Vector2();
 
     this._children = [];
-  },
+  }
 
-  IsDestroyed: function()
-  {
+  isDestroyed() {
     return this._destroyed;
-  },
-  GetName: function()
-  {
+  }
+  getName() {
     return this._name;
-  },
-  SetName: function( name )
-  {
+  }
+  setName(name) {
     this._name = name;
-  },
+  }
 
-  SetX: function( x )
-  {
+  setX(x) {
     this._x = x;
-  },
-  SetY: function( y )
-  {
+  }
+
+  setY(y) {
     this._y = y;
-  },
-  SetZ: function( z )
-  {
+  }
+
+  setZ(z) {
     this._z = z;
-  },
+  }
 
-  GetX: function()
-  {
+  getX() {
     return this._x;
-  },
-  GetY: function()
-  {
-    return this._y;
-  },
-  GetZ: function()
-  {
-    return this._z;
-  },
+  }
 
-  Capture: function()
-  {
+  getY() {
+    return this._y;
+  }
+  getZ() {
+    return this._z;
+  }
+
+  capture() {
     this._oldZ = this._z;
     this._oldWX = this._wx;
     this._oldWY = this._wy;
@@ -185,193 +172,167 @@ var Entity = Class(
     this._oldScaleX = this._scaleX;
     this._oldScaleY = this._scaleY;
     this._oldCurrentFrame = this._currentFrame;
-  },
+  }
 
-  CaptureAll: function()
-  {
-    this.Capture();
-    for ( var i = 0; i < this._children.length; i++ )
-    {
-      this._children[ i ].Capture();
+  captureAll() {
+    this.capture();
+    for (let i = 0; i < this._children.length; i++) {
+      this._children[i].capture();
     }
-  },
+  }
 
-  SetOKtoRender: function( ok )
-  {
+  setOKtoRender(ok) {
     this._okToRender = ok;
-  },
+  }
 
-  Destroy: function()
-  {
+  destroy() {
     this._parent = null;
     this._avatar = null;
     this._rootParent = null;
-    this.ClearChildren();
+    this.clearChildren();
     this._destroyed = true;
-  },
+  }
 
-  RemoveChild: function( e )
-  {
-    RemoveFromList( this._children, e );
+  removeChild(e) {
+    removeFromList(this._children, e);
     e._parent = null;
-  },
+  }
 
-  ClearChildren: function()
-  {
-    if ( this._children )
-    {
-      for ( var i = 0; i < this._children.length; i++ )
-      {
-        this._children[ i ].Destroy();
+  clearChildren() {
+    if (this._children) {
+      for (let i = 0; i < this._children.length; i++) {
+        this._children[i].destroy();
       }
     }
     this._children = [];
-  },
+  }
 
-  KillChildren: function()
-  {
-    for ( var i = 0; i < this._children.length; i++ )
-    {
-      this._children[ i ].KillChildren();
-      this._children[ i ]._dead = true;
+  killChildren() {
+    for (let i = 0; i < this._children.length; i++) {
+      this._children[i].killChildren();
+      this._children[i]._dead = true;
     }
-  },
+  }
 
-  GetChildren: function()
-  {
+  getChildren() {
     return this._children;
-  },
+  }
 
-  Update: function()
-  {
-    var currentUpdateTime = EffectsLibrary.GetCurrentUpdateTime();
+  update() {
+    let currentUpdateTime = EffectsLibrary.getCurrentUpdateTime();
 
     // Update speed in pixels per second
-    if ( this._updateSpeed && this._speed )
-    {
+    if (this._updateSpeed && this._speed) {
       this._pixelsPerSecond = this._speed / currentUpdateTime;
-      this._speedVec.x = Math.sin( this._direction / 180.0 * M_PI ) * this._pixelsPerSecond;
-      this._speedVec.y = Math.cos( this._direction / 180.0 * M_PI ) * this._pixelsPerSecond;
+      this._speedVec.x =
+        Math.sin((this._direction / 180.0) * M_PI) * this._pixelsPerSecond;
+      this._speedVec.y =
+        Math.cos((this._direction / 180.0) * M_PI) * this._pixelsPerSecond;
 
       this._x += this._speedVec.x * this._z;
       this._y -= this._speedVec.y * this._z;
     }
 
     // update the gravity
-    if ( this._weight !== 0 )
-    {
+    if (this._weight !== 0) {
       this._gravity += this._weight / currentUpdateTime;
-      this._y += ( this._gravity / currentUpdateTime ) * this._z;
+      this._y += (this._gravity / currentUpdateTime) * this._z;
     }
 
     // set the matrix if it is relative to the parent
-    if ( this._relative )
-    {
-      var radians = this._angle / 180 * M_PI;
-      this._matrix.Set( Math.cos( radians ), Math.sin( radians ), -Math.sin( radians ), Math.cos( radians ) );
+    if (this._relative) {
+      let radians = (this._angle / 180) * M_PI;
+      this._matrix.set(
+        Math.cos(radians),
+        Math.sin(radians),
+        -Math.sin(radians),
+        Math.cos(radians)
+      );
     }
     // calculate where the entity is in the world
-    if ( this._parent && this._relative )
-    {
+    if (this._parent && this._relative) {
       this._z = this._parent._z;
-      this._matrix.TransformSelf( this._parent._matrix );
-      var rotVec = this._parent._matrix.TransformVector( this._x, this._y );
+      this._matrix.transformSelf(this._parent._matrix);
+      let rotVec = this._parent._matrix.transformVector(this._x, this._y);
 
       this._wx = this._parent._wx + rotVec.x * this._z;
       this._wy = this._parent._wy + rotVec.y * this._z;
 
       this._relativeAngle = this._parent._relativeAngle + this._angle;
-    }
-    else
-    {
+    } else {
       // If parent setz(parent.z)
       this._wx = this._x;
       this._wy = this._y;
     }
 
-    if ( !this._parent )
-      this._relativeAngle = this._angle;
+    if (!this._parent) this._relativeAngle = this._angle;
 
     // update animation frame
-    if ( this._avatar && this._animating )
-    {
+    if (this._avatar && this._animating) {
       this._currentFrame += this._framerate / currentUpdateTime;
-      if ( this._animateOnce )
-      {
-        if ( this._currentFrame > this._avatar.GetFramesCount() - 1 )
-        {
-          this._currentFrame = ( this._avatar.GetFramesCount() - 1 );
-        }
-        else if ( this._currentFrame <= 0 )
-        {
+      if (this._animateOnce) {
+        if (this._currentFrame > this._avatar.getFramesCount() - 1) {
+          this._currentFrame = this._avatar.getFramesCount() - 1;
+        } else if (this._currentFrame <= 0) {
           this._currentFrame = 0;
         }
       }
     }
 
     // update the Axis Aligned Bounding Box
-    if ( this._AABB_Calculate )
-      this.UpdateBoundingBox();
+    if (this._AABB_Calculate) this.updateBoundingBox();
 
     // update the radius of influence
-    if ( this._radiusCalculate )
-      this.UpdateEntityRadius();
+    if (this._radiusCalculate) this.updateEntityRadius();
 
     // update the children
-    this.UpdateChildren();
+    this.updateChildren();
 
     return true;
-  },
+  }
 
-  UpdateChildren: function()
-  {
-    for ( var i = 0; i < this._children.length; i++ )
-    {
-      if ( !this._children[ i ].Update() )
-      {
-        this._children.splice( i, 1 );
+  updateChildren() {
+    for (let i = 0; i < this._children.length; i++) {
+      if (!this._children[i].update()) {
+        this._children.splice(i, 1);
         i--;
       }
     }
-  },
-
-  MiniUpdate: function()
-  {
-    var radians = this._angle / 180.0 * M_PI;
-
-  if(isNaN(this._angle))
-  {
-    console.log("MiniUpdate NaN");
   }
 
-    this._matrix.Set( Math.cos( radians ), Math.sin( radians ), -Math.sin( radians ), Math.cos( radians ) );
+  miniUpdate() {
+    let radians = (this._angle / 180.0) * M_PI;
 
-    if ( this._parent && this._relative )
-    {
+    if (isNaN(this._angle)) {
+      console.log("MiniUpdate NaN");
+    }
+
+    this._matrix.set(
+      Math.cos(radians),
+      Math.sin(radians),
+      -Math.sin(radians),
+      Math.cos(radians)
+    );
+
+    if (this._parent && this._relative) {
       this._z = this._parent._z;
-      this._matrix.TransformSelf( this._parent._matrix );
-      var rotVec = this._parent._matrix.TransformVector( this._x, this._y );
+      this._matrix.transformSelf(this._parent._matrix);
+      let rotVec = this._parent._matrix.transformVector(this._x, this._y);
 
       this._wx = this._parent._wx + rotVec.x * this._z;
       this._wy = this._parent._wy + rotVec.y * this._z;
-    }
-    else
-    {
-      if ( this._parent )
-        this._z = this._parent._z;
+    } else {
+      if (this._parent) this._z = this._parent._z;
       this._wx = this._x;
       this._wy = this._y;
     }
-  },
+  }
 
-
-  GetChildCount: function()
-  {
+  getChildCount() {
     return this._children.length;
-  },
+  }
 
-  UpdateBoundingBox: function()
-  {
+  updateBoundingBox() {
     this._collisionXMin = this._AABB_MinWidth * this._scaleX * this._z;
     this._collisionYMin = this._AABB_MinHeight * this._scaleY * this._z;
     this._collisionXMax = this._AABB_MaxWidth * this._scaleX * this._z;
@@ -382,503 +343,468 @@ var Entity = Class(
     this._AABB_XMax = this._collisionXMax;
     this._AABB_YMax = this._collisionYMax;
 
-    if ( this._children.length === 0 )
-      this.UpdateParentBoundingBox();
-  },
+    if (this._children.length === 0) this.updateParentBoundingBox();
+  }
 
-  UpdateEntityRadius: function()
-  {
-    if ( this._autoCenter )
-    {
-      if ( this._avatar )
-      {
-        var aMaxRadius = this._avatar.GetMaxRadius();
-        var aWidth = this._avatar.GetWidth();
-        var aHeight = this._avatar.GetHeight();
+  updateEntityRadius() {
+    if (this._autoCenter) {
+      if (this._avatar) {
+        let aMaxRadius = this._avatar.getMaxRadius();
+        let aWidth = this._avatar.getWidth();
+        let aHeight = this._avatar.getHeight();
 
-        if ( aMaxRadius !== 0 )
-          this._imageRadius = Math.max( aMaxRadius * this._scaleX * this._z, aMaxRadius * this._scaleY * this._z );
+        if (aMaxRadius !== 0)
+          this._imageRadius = Math.max(
+            aMaxRadius * this._scaleX * this._z,
+            aMaxRadius * this._scaleY * this._z
+          );
         else
-          this._imageRadius = GetDistance2D( aWidth / 2.0 * this._scaleX * this._z, aHeight / 2.0 * this._scaleY * this._z, aWidth * this._scaleX * this._z, aHeight * this._scaleY * this._z );
-      }
-      else
-      {
+          this._imageRadius = getDistance2D(
+            (aWidth / 2.0) * this._scaleX * this._z,
+            (aHeight / 2.0) * this._scaleY * this._z,
+            aWidth * this._scaleX * this._z,
+            aHeight * this._scaleY * this._z
+          );
+      } else {
         this._imageRadius = 0;
       }
-    }
-    else
-    {
-      var aMaxRadius = this._avatar.GetMaxRadius();
-      var aWidth = this._avatar.GetWidth();
-      var aHeight = this._avatar.GetHeight();
+    } else {
+      let aMaxRadius = this._avatar.getMaxRadius();
+      let aWidth = this._avatar.getWidth();
+      let aHeight = this._avatar.getHeight();
 
-      if ( aMaxRadius !== 0 )
-        this._imageRadius = GetDistance2D( this._handleX * this._scaleX * this._z, this._handleY * this._scaleY * this._z, aWidth / 2.0 * this._scaleX * this._z, aHeight / 2.0 * this._scaleY * this._z ) + Math.max( aMaxRadius * this._scaleX * this._z, aMaxRadius * this._scaleY * this._z );
+      if (aMaxRadius !== 0)
+        this._imageRadius =
+          getDistance2D(
+            this._handleX * this._scaleX * this._z,
+            this._handleY * this._scaleY * this._z,
+            (aWidth / 2.0) * this._scaleX * this._z,
+            (aHeight / 2.0) * this._scaleY * this._z
+          ) +
+          Math.max(
+            aMaxRadius * this._scaleX * this._z,
+            aMaxRadius * this._scaleY * this._z
+          );
       else
-        this._imageRadius = GetDistance2D( this._handleX * this._scaleX * this._z, this._handleY * this._scaleY * this._z, aWidth * this._scaleX * this._z, aHeight * this._scaleY * this._z );
+        this._imageRadius = getDistance2D(
+          this._handleX * this._scaleX * this._z,
+          this._handleY * this._scaleY * this._z,
+          aWidth * this._scaleX * this._z,
+          aHeight * this._scaleY * this._z
+        );
     }
 
     this._entityRadius = this._imageRadius;
     this._imageDiameter = this._imageRadius * 2.0;
 
-    if ( this._rootParent )
-      this.UpdateRootParentEntityRadius();
-  },
+    if (this._rootParent) this.updateRootParentEntityRadius();
+  }
 
-  UpdateParentEntityRadius: function()
-  {
-    if ( this._parent )
-    {
-      if ( this._children.length > 0 )
-        this._parent._entityRadius += Math.max( 0.0, GetDistance2D( this._wx, this._wy, this._parent._wx, this._parent._wy ) + this._entityRadius - this._parent._entityRadius );
+  updateParentEntityRadius() {
+    if (this._parent) {
+      if (this._children.length > 0)
+        this._parent._entityRadius += Math.max(
+          0.0,
+          getDistance2D(
+            this._wx,
+            this._wy,
+            this._parent._wx,
+            this._parent._wy
+          ) +
+            this._entityRadius -
+            this._parent._entityRadius
+        );
       else
-        this._parent._entityRadius += Math.max( 0.0, GetDistance2D( this._wx, this._wy, this._parent._wx, this._parent._wy ) + this._imageRadius - this._parent._entityRadius );
+        this._parent._entityRadius += Math.max(
+          0.0,
+          getDistance2D(
+            this._wx,
+            this._wy,
+            this._parent._wx,
+            this._parent._wy
+          ) +
+            this._imageRadius -
+            this._parent._entityRadius
+        );
       // DebugLog name + " - Radius: " + entity_Radius + " | Distance to Parent: " + getdistance(wx, wy, parent.wx, parent.wy)
-      this._parent.UpdateParentEntityRadius();
+      this._parent.updateParentEntityRadius();
     }
-  },
+  }
 
-  UpdateRootParentEntityRadius: function()
-  {
-    if ( this._rootParent )
-    {
-      if ( this._alpha !== 0 )
-        this._rootParent._entityRadius += Math.max( 0.0, GetDistance2D( this._wx, this._wy, this._rootParent._wx, this._rootParent._wy ) + this._imageRadius - this._rootParent._entityRadius );
+  updateRootParentEntityRadius() {
+    if (this._rootParent) {
+      if (this._alpha !== 0)
+        this._rootParent._entityRadius += Math.max(
+          0.0,
+          getDistance2D(
+            this._wx,
+            this._wy,
+            this._rootParent._wx,
+            this._rootParent._wy
+          ) +
+            this._imageRadius -
+            this._rootParent._entityRadius
+        );
       // DebugLog name + " - Radius: " + entity_Radius + " | Distance to Parent: " + getdistance(wx, wy, rootparent.wx, rootparent.wy)
     }
-  },
+  }
 
-  UpdateParentBoundingBox: function()
-  {
-    if ( this._parent )
-    {
-      var parent = this._parent;
-      parent._AABB_XMax += Math.max( 0.0, this._wx - parent._wx + this._AABB_XMax - parent._AABB_XMax );
-      parent._AABB_YMax += Math.max( 0.0, this._wy - parent._wx + this._AABB_YMax - parent._AABB_YMax );
-      parent._AABB_XMin += Math.max( 0.0, this._wx - parent._wx + this._AABB_XMin - parent._AABB_XMin );
-      parent._AABB_YMin += Math.max( 0.0, this._wy - parent._wy + this._AABB_YMin - parent._AABB_YMin );
+  updateParentBoundingBox() {
+    if (this._parent) {
+      let parent = this._parent;
+      parent._AABB_XMax += Math.max(
+        0.0,
+        this._wx - parent._wx + this._AABB_XMax - parent._AABB_XMax
+      );
+      parent._AABB_YMax += Math.max(
+        0.0,
+        this._wy - parent._wx + this._AABB_YMax - parent._AABB_YMax
+      );
+      parent._AABB_XMin += Math.max(
+        0.0,
+        this._wx - parent._wx + this._AABB_XMin - parent._AABB_XMin
+      );
+      parent._AABB_YMin += Math.max(
+        0.0,
+        this._wy - parent._wy + this._AABB_YMin - parent._AABB_YMin
+      );
     }
-  },
+  }
 
-  AssignRootParent: function( e )
-  {
-    if ( this._parent )
-      this._parent.AssignRootParent( e );
-    else
-      e._rootParent = this;
-  },
+  assignRootParent(e) {
+    if (this._parent) this._parent.assignRootParent(e);
+    else e._rootParent = this;
+  }
 
-  SetHandleX: function( x )
-  {
+  setHandleX(x) {
     this._handleX = x;
-  },
+  }
 
-  SetHandleY: function( y )
-  {
+  setHandleY(y) {
     this._handleY = y;
-  },
+  }
 
-  SetParent: function( e )
-  {
-    e.AddChild( this );
-  },
+  setParent(e) {
+    e.addChild(this);
+  }
 
-  SetRelative: function( value )
-  {
+  setRelative(value) {
     this._relative = value;
-  },
+  }
 
-  SetEntityScale: function( sx, sy )
-  {
+  setEntityScale(sx, sy) {
     this._scaleX = sx;
     this._scaleY = sy;
-  },
+  }
 
-  SetSpeed: function( speed )
-  {
+  setSpeed(speed) {
     this._speed = speed;
-  },
+  }
 
-  GetSpeed: function()
-  {
+  getSpeed() {
     return this._speed;
-  },
+  }
 
-  SetBlendMode: function( mode )
-  {
+  setBlendMode(mode) {
     this._blendMode = mode;
-  },
+  }
 
-  GetCurrentFrame: function()
-  {
+  getCurrentFrame() {
     return this._currentFrame;
-  },
+  }
 
-  SetCurrentFrame: function( frame )
-  {
+  setCurrentFrame(frame) {
     this._currentFrame = frame;
-  },
+  }
 
-  AddChild: function( e )
-  {
-    this._children.push( e );
+  addChild(e) {
+    this._children.push(e);
     e._parent = this;
     e._radiusCalculate = this._radiusCalculate;
-    e.AssignRootParent( e );
-  },
+    e.assignRootParent(e);
+  }
 
-  GetMatrix: function()
-  {
+  getMatrix() {
     return this._matrix;
-  },
+  }
 
-  GetWX: function()
-  {
+  getWX() {
     return this._wx;
-  },
+  }
 
-  GetWY: function()
-  {
+  getWY() {
     return this._wy;
-  },
+  }
 
-
-  GetRelativeAngle: function()
-  {
+  getRelativeAngle() {
     return this._relativeAngle;
-  },
+  }
 
-  SetDoB: function( dob )
-  {
+  setDoB(dob) {
     this._dob = dob;
-  },
+  }
 
-  GetOldCurrentFrame: function()
-  {
+  getOldCurrentFrame() {
     return this._oldCurrentFrame;
-  },
+  }
 
-  SetAvatar: function( avatar )
-  {
+  setAvatar(avatar) {
     this._avatar = avatar;
-    this._AABB_MaxWidth = this._avatar.GetWidth() * 0.5;
-    this._AABB_MaxHeight = this._avatar.GetHeight() * 0.5;
-    this._AABB_MinWidth = this._avatar.GetWidth() * -0.5;
-    this._AABB_MinHeight = this._avatar.GetHeight() * -0.5;
-  },
+    this._AABB_MaxWidth = this._avatar.getWidth() * 0.5;
+    this._AABB_MaxHeight = this._avatar.getHeight() * 0.5;
+    this._AABB_MinWidth = this._avatar.getWidth() * -0.5;
+    this._AABB_MinHeight = this._avatar.getHeight() * -0.5;
+  }
 
-  SetAutocenter: function( value )
-  {
+  setAutocenter(value) {
     this._autoCenter = value;
-  },
+  }
 
-  GetLifeTime: function()
-  {
+  getLifeTime() {
     return this._lifeTime;
-  },
+  }
 
-  SetLifeTime: function( lifeTime )
-  {
+  setLifeTime(lifeTime) {
     this._lifeTime = lifeTime;
-  },
+  }
 
-  SetSpeedVecX: function( x )
-  {
+  setSpeedVecX(x) {
     this._speedVec.x = x;
-  },
+  }
 
-  SetSpeedVecY: function( y )
-  {
+  setSpeedVecY(y) {
     this._speedVec.y = y;
-  },
+  }
 
-  SetBaseSpeed: function( speed )
-  {
+  setBaseSpeed(speed) {
     this._baseSpeed = speed;
-  },
+  }
 
-  GetBaseSpeed: function()
-  {
+  getBaseSpeed() {
     return this._baseSpeed;
-  },
+  }
 
-  SetWidth: function( width )
-  {
+  setWidth(width) {
     this._width = width;
-  },
+  }
 
-  GetWidth: function()
-  {
+  getWidth() {
     return this._width;
-  },
+  }
 
-  SetScaleX: function( scaleX )
-  {
+  setScaleX(scaleX) {
     this._scaleX = scaleX;
-  },
+  }
 
-  SetScaleY: function( scaleY )
-  {
+  setScaleY(scaleY) {
     this._scaleY = scaleY;
-  },
+  }
 
-  GetScaleX: function()
-  {
+  getScaleX() {
     return this._scaleX;
-  },
+  }
 
-  GetScaleY: function()
-  {
+  getScaleY() {
     return this._scaleY;
-  },
+  }
 
-  SetWidthHeightAABB: function( minWidth, minHeight, maxWidth, maxHeight )
-  {
+  setWidthHeightAABB(minWidth, minHeight, maxWidth, maxHeight) {
     this._AABB_MaxWidth = maxWidth;
     this._AABB_MaxHeight = maxHeight;
     this._AABB_MinWidth = minWidth;
     this._AABB_MinHeight = minHeight;
-  },
+  }
 
-  SetDirectionLocked: function( value )
-  {
-
-
+  setDirectionLocked(value) {
     this._directionLocked = value;
-  },
+  }
 
-  IsDirectionLocked: function()
-  {
+  isDirectionLocked() {
     return this._directionLocked;
-  },
+  }
 
-  GetEntityDirection: function()
-  {
+  getEntityDirection() {
     return this._direction;
-  },
+  }
 
-  SetEntityDirection: function( direction )
-  {
-    if(isNaN(direction))
-    {
+  setEntityDirection(direction) {
+    if (isNaN(direction)) {
       console.log("SetEntityDirection NaN");
     }
 
     this._direction = direction;
-  },
+  }
 
-  SetWeight: function( weight )
-  {
+  setWeight(weight) {
     this._weight = weight;
-  },
+  }
 
-  GetWeight: function()
-  {
+  getWeight() {
     return this._weight;
-  },
+  }
 
-  SetBaseWeight: function( weight )
-  {
+  setBaseWeight(weight) {
     this._baseWeight = weight;
-  },
+  }
 
-  GetBaseWeight: function()
-  {
+  getBaseWeight() {
     return this._weight;
-  },
+  }
 
-
-  GetRed: function()
-  {
+  getRed() {
     return this._red;
-  },
+  }
 
-  SetRed: function( r )
-  {
+  setRed(r) {
     this._red = r;
-  },
+  }
 
-  GetGreen: function()
-  {
+  getGreen() {
     return this._green;
-  },
+  }
 
-  SetGreen: function( g )
-  {
+  setGreen(g) {
     this._green = g;
-  },
+  }
 
-  GetBlue: function()
-  {
+  getBlue() {
     return this._blue;
-  },
+  }
 
-  SetBlue: function( b )
-  {
+  setBlue(b) {
     this._blue = b;
-  },
+  }
 
-  GetAge: function()
-  {
+  getAge() {
     return this._age;
-  },
+  }
 
-  SetAge: function( age )
-  {
+  setAge(age) {
     this._age = age;
-  },
+  }
 
-  SetEntityAlpha: function( alpha )
-  {
+  setEntityAlpha(alpha) {
     this._alpha = alpha;
-  },
+  }
 
-  GetOldWX: function()
-  {
+  getOldWX() {
     return this._oldWX;
-  },
+  }
 
-  GetOldWY: function()
-  {
+  getOldWY() {
     return this._oldWY;
-  },
+  }
 
-  GetImageDiameter: function()
-  {
+  getImageDiameter() {
     return this._imageDiameter;
-  },
+  }
 
-  GetOldAngle: function()
-  {
+  getOldAngle() {
     return this._oldAngle;
-  },
+  }
 
-  GetOldRelativeAngle: function()
-  {
+  getOldRelativeAngle() {
     return this._oldRelativeAngle;
-  },
+  }
 
-  GetAvatar: function()
-  {
+  getAvatar() {
     return this._avatar;
-  },
+  }
 
-
-  GetHandleX: function()
-  {
+  getHandleX() {
     return this._handleX;
-  },
+  }
 
-  GetHandleY: function()
-  {
+  getHandleY() {
     return this._handleY;
-  },
+  }
 
-  GetBlendMode: function()
-  {
+  getBlendMode() {
     return this._blendMode;
-  },
+  }
 
-  GetAngle: function()
-  {
+  getAngle() {
     return this._angle;
-  },
+  }
 
-  GetOldScaleX: function()
-  {
+  getOldScaleX() {
     return this._oldScaleX;
-  },
+  }
 
-  GetOldScaleY: function()
-  {
+  getOldScaleY() {
     return this._oldScaleY;
-  },
+  }
 
-  GetOldZ: function()
-  {
+  getOldZ() {
     return this._oldZ;
-  },
+  }
 
-  SetEntityColor: function( r, g, b )
-  {
+  setEntityColor(r, g, b) {
     this._red = r;
     this._green = g;
     this._blue = b;
-  },
+  }
 
-  GetEntityAlpha: function()
-  {
+  getEntityAlpha() {
     return this._alpha;
-  },
+  }
 
-  GetImageRadius: function()
-  {
+  getImageRadius() {
     return this._imageRadius;
-  },
+  }
 
-  GetFramerate: function()
-  {
+  getFramerate() {
     return this._framerate;
-  },
+  }
 
-  SetFramerate: function( framerate )
-  {
+  setFramerate(framerate) {
     this._framerate = framerate;
-  },
+  }
 
-  IsAnimating: function()
-  {
+  isAnimating() {
     return this._animating;
-  },
+  }
 
-  SetAnimating: function( value )
-  {
+  setAnimating(value) {
     this._animating = value;
-  },
-  IsRelative: function()
-  {
+  }
+
+  isRelative() {
     return this._relative;
-  },
+  }
 
-  SetWX: function( wx )
-  {
+  setWX(wx) {
     this._wx = wx;
-  },
+  }
 
-  SetWY: function( wy )
-  {
+  setWY(wy) {
     this._wy = wy;
-  },
+  }
 
-  SetAngle: function( degrees )
-  {
-    if(isNaN(degrees))
-    {
+  setAngle(degrees) {
+    if (isNaN(degrees)) {
       console.log("SetAngle NaN");
     }
 
     this._angle = degrees;
-  },
+  }
 
-  SetHeight: function( height )
-  {
+  setHeight(height) {
     this._height = height;
-  },
+  }
 
-  GetHeight: function()
-  {
+  getHeight() {
     return this._height;
-  },
+  }
 
-  GetParent: function()
-  {
+  getParent() {
     return this._parent;
-  },
+  }
 
-  Move: function( xamount, yamount )
-  {
+  move(xamount, yamount) {
     this._x += xamount;
     this._y += yamount;
-  },
+  }
+}
 
-} );
+export default Entity;
