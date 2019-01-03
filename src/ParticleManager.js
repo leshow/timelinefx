@@ -2,12 +2,12 @@ import { fmod, lerp } from "./Utils";
 import { drawSprite } from "../exp/pixi_main";
 import EffectsLibrary from "./EffectsLibrary";
 
-const c_particleLimit = 5000;
-
 class ParticleManager {
   // $const: {
   //   c_particleLimit: 5000
   // }
+
+  static c_particleLimit = 5000;
 
   constructor(particles = this.c_particleLimit, layers = 1) {
     this._effectLayers = layers;

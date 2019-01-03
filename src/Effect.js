@@ -443,7 +443,6 @@ class Effect extends Entity {
     }
 
     super.destroy(releaseChildren); //Effect.$superp.Destroy.call(this, releaseChildren);
-    // Need an explanation here
   }
 
   setEndBehavior(behavior) {
