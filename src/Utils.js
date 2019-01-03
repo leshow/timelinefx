@@ -126,7 +126,7 @@ export function getDistance2D(fromx, fromy, tox, toy, fast = false) {
   w = tox - fromx;
   h = toy - fromy;
 
-  if (fast)
+  if (fast) {
     return w * w + h * h;
   } else {
     return Math.sqrt(w * w + h * h);
