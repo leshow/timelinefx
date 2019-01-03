@@ -6,6 +6,7 @@ export function removeFromList(array, elem) {
 }
 
 export const M_PI = 3.14159265358979323846;
+export const g_randomSeed = 17;
 
 export function stripFilePath(filename) {
   let index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
@@ -108,10 +109,8 @@ export function lerp(a, b, fract) {
 }
 
 // http://stackoverflow.com/questions/521295/javascript-random-seeds
-export const g_randomSeed = 17;
-
 export function randomUnit() {
-  let x = Math.sin(this.g_randomSeed++) * 10000;
+  let x = Math.sin(g_randomSeed++) * 10000;
   return x - Math.floor(x);
 }
 
@@ -123,12 +122,15 @@ export function randomBetween(low, high) {
   return lerp(low, high, randomUnit());
 }
 
-export function getDistance2D(fromx, fromy, tox, toy) /* ,false=false */ {
+export function getDistance2D(fromx, fromy, tox, toy, fast) {
   w = tox - fromx;
   h = toy - fromy;
 
-  if (GetDefaultArg(fast, false)) return w * w + h * h;
-  else return Math.sqrt(w * w + h * h);
+  if (typeof fast === "undefined") {
+    return w * w + h * h;
+  } else {
+    return Math.sqrt(w * w + h * h);
+  }
 }
 
 /**
