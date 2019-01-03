@@ -145,15 +145,12 @@ export function getDirection(fromx, fromy, tox, toy) {
 }
 
 export function loadXMLDoc(filename) {
-
-  let xhttp = new XMLHttpRequest();
-
-  // if (window.XMLHttpRequest) {
-  //   xhttp = new XMLHttpRequest();
-  // } // code for IE5 and IE6
-  // else {
-  //   xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  // }
+  if (window.XMLHttpRequest) {
+    xhttp = new XMLHttpRequest();
+  } // code for IE5 and IE6
+  else {
+    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
   xhttp.open("GET", filename, false);
   xhttp.send();
   return xhttp.responseXML;
