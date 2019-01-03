@@ -122,11 +122,11 @@ export function randomBetween(low, high) {
   return lerp(low, high, randomUnit());
 }
 
-export function getDistance2D(fromx, fromy, tox, toy, fast) {
+export function getDistance2D(fromx, fromy, tox, toy, fast = false) {
   w = tox - fromx;
   h = toy - fromy;
 
-  if (typeof fast === "undefined") {
+  if (fast)
     return w * w + h * h;
   } else {
     return Math.sqrt(w * w + h * h);
@@ -147,12 +147,7 @@ export function getDirection(fromx, fromy, tox, toy) {
 }
 
 export function loadXMLDoc(filename) {
-  if (window.XMLHttpRequest) {
-    xhttp = new XMLHttpRequest();
-  } // code for IE5 and IE6
-  else {
-    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
+  let xhttp = new XMLHttpRequest();
   xhttp.open("GET", filename, false);
   xhttp.send();
   return xhttp.responseXML;

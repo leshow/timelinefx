@@ -3,13 +3,9 @@ import { drawSprite } from "../exp/pixi_main";
 import EffectsLibrary from "./EffectsLibrary";
 
 class ParticleManager {
-  // $const: {
-  //   c_particleLimit: 5000
-  // }
-
   static c_particleLimit = 5000;
 
-  constructor(particles = this.c_particleLimit, layers = 1) {
+  constructor(particles = ParticleManager.c_particleLimit, layers = 1) {
     this._effectLayers = layers;
 
     this._originX = 0;
@@ -458,3 +454,5 @@ class ParticleManager {
     return this._currentTick * EffectsLibrary.getUpdateTime();
   }
 }
+
+export default ParticleManager;
