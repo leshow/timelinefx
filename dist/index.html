@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A layout example with a side menu that hides on mobile, just like the Pure website."
+    />
+    <title>timelinefxjs</title>
+    <link rel="stylesheet" href="./pure-min.css" />
+    <link rel="stylesheet" href="./side-menu.css" />
+    <style>
+      .fx div {
+        padding: 0;
+        margin: 0;
+        float: left;
+      }
+    </style>
+
+    <script>
+      var exports = {};
+    </script>
+
+    <script language="javascript" src="extern/pixi.min.js"></script>
+
+    <!-- <script language="javascript" src="./Utils.js"></script>
+    <script language="javascript" src="./Matrix2.js"></script>
+    <script language="javascript" src="./Vector2.js"></script>
+    <script language="javascript" src="./Entity.js"></script>
+    <script language="javascript" src="./Particle.js"></script>
+    <script language="javascript" src="./Effect.js"></script>
+    <script language="javascript" src="./Emitter.js"></script>
+    <script language="javascript" src="./EmitterArray.js"></script>
+    <script language="javascript" src="./AnimImage.js"></script>
+    <script language="javascript" src="./AttributeNode.js"></script>
+    <script language="javascript" src="./ParticleManager.js"></script>
+    <script language="javascript" src="./EffectsLibrary.js"></script> -->
+
+    <script language="javascript" src="./bundle.js"></script>
+    <script language="javascript" src="./main.js"></script>
+  </head>
+
+  <body>
+    <div id="layout">
+      <!-- Menu toggle -->
+      <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+      </a>
+      <div id="menu">
+        <div class="pure-menu">
+          <a class="pure-menu-heading" href="#" onClick="Home()"
+            >timelinefxjs demo</a
+          >
+          <ul class="pure-menu-list" id="fxMenu"></ul>
+          <!-- <ul class="pure-menu-list" id="fxMenu">
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Flame Burst 3')"
+                >Flame Burst 3</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('FireBall1')"
+                >FireBall1</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('MultiStage Explosion')"
+                >MultiStage Explosion</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Mushroom 2')"
+                >Mushroom 2</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Cloud Explosion 2')"
+                >Cloud Explosion 2</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Flame Puff 1')"
+                >Flame Puff 1</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Debrie Explosion 2')"
+                >Debrie Explosion 2</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Debrie Explosion 5')"
+                >Debrie Explosion 5</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Cloud Explosion 4')"
+                >Cloud Explosion 4</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Burst Flare 2')"
+                >Burst Flare 2</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Magic Fire')"
+                >Magic Fire</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Whilrpool Flare 2')"
+                >Whilrpool Flare 2</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Electric Energy Ball')"
+                >Electric Energy Ball</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Blaze with smoke')"
+                >Blaze with smoke</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Smoke Column')"
+                >Smoke Column</a
+              >
+            </li>
+            <li class="pure-menu-item">
+              <a
+                href="#"
+                class="pure-menu-link"
+                onclick="playEffect('Fire Jet 2')"
+                >Fire Jet 2</a
+              >
+            </li>
+          </ul> -->
+        </div>
+      </div>
+      <div id="main">
+        <div class="header">
+          <h1>timelinefxjs demo</h1>
+          <h2>
+            JavaScript port of the <a href="pixijs">timelinefx</a> particle
+            system <br />with <a href="pixijs">pixijs</a> rendering
+          </h2>
+        </div>
+        <div class="content">
+          <p>Select a particle effect from the menu at left.</p>
+          <p>
+            The timelinefxjs Github repository (including this demo) can be
+            found <a href="https://github.com/gooddoggy/timelinefx">here</a>
+          </p>
+          <p>
+            This demo works best in modern browsers with WebGL support. While
+            pixijs will fallback to canvas mode rendering, performance will
+            sufffer particulary for effects with many particles. The
+            timelinefxjs module itself is independant of rendering, and can be
+            integrated with other html5 game engines or renderers.
+          </p>
+        </div>
+      </div>
+      <div id="fxdiv" class="fx" style="padding: 0; margin: 0;"></div>
+    </div>
+
+    <script src="./ui.js"></script>
+    <script>
+      function home() {
+        var main = document.getElementById("main");
+        main.style.display = "block";
+
+        var fxdiv = document.getElementById("fxdiv");
+        fxdiv.style.display = "none";
+      }
+
+      function hideHome() {
+        var main = document.getElementById("main");
+        main.style.display = "none";
+
+        var fxdiv = document.getElementById("fxdiv");
+        fxdiv.style.display = "block";
+
+        fxdiv.style.backgroundColor = "black";
+      }
+
+      home();
+    </script>
+  </body>
+</html>

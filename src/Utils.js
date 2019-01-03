@@ -6,9 +6,10 @@ export function removeFromList(array, elem) {
 }
 
 export const M_PI = 3.14159265358979323846;
+export const g_randomSeed = 17;
 
 export function stripFilePath(filename) {
-  var index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
+  let index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
   return filename.substring(index + 1);
 }
 
@@ -84,13 +85,13 @@ function getNodeAttrValue(elem, attrName) {
 }
 
 function forEachInXMLNodeList(nodelist, fn) {
-  for (var i = 0; i < nodelist.length; i++) {
+  for (let i = 0; i < nodelist.length; i++) {
     fn(nodelist[i]);
   }
 }
 
 function forEachXMLChild(xmlNode, tag, fn) {
-  var nodelist = xmlNode.getElementsByTagName(tag);
+  let nodelist = xmlNode.getElementsByTagName(tag);
   for (var i = 0; i < nodelist.length; i++) {
     if (nodelist[i].parentElement == xmlNode) fn(nodelist[i]);
   }
@@ -108,10 +109,8 @@ export function lerp(a, b, fract) {
 }
 
 // http://stackoverflow.com/questions/521295/javascript-random-seeds
-export const g_randomSeed = 17;
-
 export function randomUnit() {
-  var x = Math.sin(g_randomSeed++) * 10000;
+  let x = Math.sin(g_randomSeed++) * 10000;
   return x - Math.floor(x);
 }
 
@@ -123,12 +122,15 @@ export function randomBetween(low, high) {
   return lerp(low, high, randomUnit());
 }
 
-export function getDistance2D(fromx, fromy, tox, toy) /* ,false=false */ {
+export function getDistance2D(fromx, fromy, tox, toy, fast = false) {
   w = tox - fromx;
   h = toy - fromy;
 
-  // if (GetDefaultArg(fast, false)) return w * w + h * h;
-  else return Math.sqrt(w * w + h * h);
+  if (fast)
+    return w * w + h * h;
+  } else {
+    return Math.sqrt(w * w + h * h);
+  }
 }
 
 /**
@@ -145,12 +147,7 @@ export function getDirection(fromx, fromy, tox, toy) {
 }
 
 export function loadXMLDoc(filename) {
-  if (window.XMLHttpRequest) {
-    xhttp = new XMLHttpRequest();
-  } // code for IE5 and IE6
-  else {
-    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
+  let xhttp = new XMLHttpRequest();
   xhttp.open("GET", filename, false);
   xhttp.send();
   return xhttp.responseXML;
