@@ -7,7 +7,7 @@ var g_xml = null;
 var g_stage = null;
 var g_renderer = null;
 var g_loadingTextures = [];
-var g_path = "../data/demo/";
+var g_path = "./data/demo/";
 var g_currentEffectPrototype = null;
 var g_currentEffectInstance = null;
 

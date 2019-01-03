@@ -1,9 +1,13 @@
+import { getDistance2D } from "./Utils";
+import Entity from "./Entity";
 import Matrix2 from "./Matrix2";
-var AngAlign = 0;
-var AngRandom = 1;
-var AngSpecify = 2;
+import EmitterArray from "./EmitterArray";
 
-var g_defaultEmitter = {
+const AngAlign = 0;
+const AngRandom = 1;
+const AngSpecify = 2;
+
+const g_defaultEmitter = {
   _currentLife: 0,
   _uniform: true,
   _parentEffect: null,
@@ -75,25 +79,25 @@ var g_defaultEmitter = {
   _currentFramerate: 0
 };
 
-var Emitter = Class(Entity, {
-  constructor: function(other, pm) {
-    Emitter.$super.call(this, other); // Call parent consructor
+class Emitter extends Entity {
+  constructor(other, pm) {
+    super(other);
 
     this._effects = [];
     this._childrenOwner = false; // the Particles are managing by pool
     this._matrix = new Matrix2();
 
     if (other) {
-      for (var key in g_defaultEmitter) this[key] = other[key];
+      for (let key in g_defaultEmitter) this[key] = other[key];
 
-      this._dob = pm.GetCurrentTime();
-      this.SetOKtoRender(false);
+      this._dob = pm.getCurrentTime();
+      this.setOKtoRender(false);
       this._arrayOwner = false;
 
       this._children = [];
 
-      for (var i = 0; i < other._effects.length; i++) {
-        this.AddEffect(new Effect(other._effects[i], pm));
+      for (let i = 0; i < other._effects.length; i++) {
+        this.addEffect(new Effect(other._effects[i], pm));
       }
 
       this._cAmount = other._cAmount;
@@ -129,7 +133,7 @@ var Emitter = Class(Entity, {
       this._cStretch = other._cStretch;
       this._cGlobalVelocity = other._cGlobalVelocity;
     } else {
-      for (var key in g_defaultEmitter) this[key] = g_defaultEmitter[key];
+      for (let key in g_defaultEmitter) this[key] = g_defaultEmitter[key];
 
       this._arrayOwner = true;
 
@@ -250,412 +254,413 @@ var Emitter = Class(Entity, {
         EffectsLibrary.globalPercentMax
       );
     }
-  },
+  }
 
-  LoadFromXML: function(xml, parent) {
-    var x = new XMLHelper(xml);
+  loadFromXML(xml, parent) {
+    let x = new XMLHelper(xml);
 
-    this.SetHandleX(x.GetAttrAsInt("HANDLE_X"));
-    this.SetHandleY(x.GetAttrAsInt("HANDLE_Y"));
-    this.SetBlendMode(x.GetAttrAsInt("BLENDMODE"));
-    this.SetParticlesRelative(x.GetAttrAsBool("RELATIVE"));
-    this.SetRandomColor(x.GetAttrAsBool("RANDOM_COLOR"));
-    this.SetZLayer(x.GetAttrAsInt("LAYER"));
-    this.SetSingleParticle(x.GetAttrAsBool("SINGLE_PARTICLE"));
-    this.SetName(x.GetAttr("NAME"));
-    this.SetAnimate(x.GetAttrAsBool("ANIMATE"));
-    this.SetOnce(x.GetAttrAsBool("ANIMATE_ONCE"));
-    this.SetCurrentFrame(x.GetAttrAsFloat("FRAME"));
-    this.SetRandomStartFrame(x.GetAttrAsBool("RANDOM_START_FRAME"));
-    this.SetAnimationDirection(x.GetAttrAsInt("ANIMATION_DIRECTION"));
-    this.SetUniform(x.GetAttrAsBool("UNIFORM"));
-    this.SetAngleType(x.GetAttrAsInt("ANGLE_TYPE"));
-    this.SetAngleOffset(x.GetAttrAsInt("ANGLE_OFFSET"));
-    this.SetLockAngle(x.GetAttrAsBool("LOCK_ANGLE"));
-    this.SetAngleRelative(x.GetAttrAsBool("ANGLE_RELATIVE"));
-    this.SetUseEffectEmission(x.GetAttrAsBool("USE_EFFECT_EMISSION"));
-    this.SetColorRepeat(x.GetAttrAsInt("COLOR_REPEAT"));
-    this.SetAlphaRepeat(x.GetAttrAsInt("ALPHA_REPEAT"));
-    this.SetOneShot(x.GetAttrAsBool("ONE_SHOT"));
-    this.SetHandleCenter(x.GetAttrAsBool("HANDLE_CENTERED"));
-    this.SetGroupParticles(x.GetAttrAsBool("GROUP_PARTICLES"));
+    this.setHandleX(x.getAttrAsInt("HANDLE_X"));
+    this.setHandleY(x.getAttrAsInt("HANDLE_Y"));
+    this.setBlendMode(x.getAttrAsInt("BLENDMODE"));
+    this.setParticlesRelative(x.getAttrAsBool("RELATIVE"));
+    this.setRandomColor(x.getAttrAsBool("RANDOM_COLOR"));
+    this.setZLayer(x.getAttrAsInt("LAYER"));
+    this.setSingleParticle(x.getAttrAsBool("SINGLE_PARTICLE"));
+    this.setName(x.getAttr("NAME"));
+    this.setAnimate(x.getAttrAsBool("ANIMATE"));
+    this.setOnce(x.getAttrAsBool("ANIMATE_ONCE"));
+    this.setCurrentFrame(x.getAttrAsFloat("FRAME"));
+    this.setRandomStartFrame(x.getAttrAsBool("RANDOM_START_FRAME"));
+    this.setAnimationDirection(x.getAttrAsInt("ANIMATION_DIRECTION"));
+    this.setUniform(x.getAttrAsBool("UNIFORM"));
+    this.setAngleType(x.getAttrAsInt("ANGLE_TYPE"));
+    this.setAngleOffset(x.getAttrAsInt("ANGLE_OFFSET"));
+    this.setLockAngle(x.getAttrAsBool("LOCK_ANGLE"));
+    this.setAngleRelative(x.getAttrAsBool("ANGLE_RELATIVE"));
+    this.setUseEffectEmission(x.getAttrAsBool("USE_EFFECT_EMISSION"));
+    this.setColorRepeat(x.getAttrAsInt("COLOR_REPEAT"));
+    this.setAlphaRepeat(x.getAttrAsInt("ALPHA_REPEAT"));
+    this.setOneShot(x.getAttrAsBool("ONE_SHOT"));
+    this.setHandleCenter(x.getAttrAsBool("HANDLE_CENTERED"));
+    this.setGroupParticles(x.getAttrAsBool("GROUP_PARTICLES"));
 
     // ?
-    if (this.GetAnimationDirection() === 0) this.SetAnimationDirection(1);
+    if (this.getAnimationDirection() === 0) this.setAnimationDirection(1);
 
-    this.SetParentEffect(parent);
-    var path = parent.GetPath() + "/" + this.GetName();
-    this.SetPath(path);
+    this.setParentEffect(parent);
+    let path = parent.getPath() + "/" + this.getName();
+    this.setPath(path);
 
-    var imgNode = xml.getElementsByTagName("SHAPE_INDEX")[0];
-    this.SetImage(AsInt(imgNode.innerHTML));
+    let imgNode = xml.getElementsByTagName("SHAPE_INDEX")[0];
+    this.setImage(asInt(imgNode.innerHTML));
 
-    if (x.HasChildAttr("ANGLE_TYPE"))
-      this.SetAngleType(x.GetChildAttrAsInt("ANGLE_TYPE", "VALUE"));
-    if (x.HasChildAttr("ANGLE_OFFSET"))
-      this.SetAngleOffset(x.GetChildAttrAsInt("ANGLE_OFFSET", "VALUE"));
-    if (x.HasChildAttr("LOCKED_ANGLE"))
-      this.SetLockAngle(x.GetChildAttrAsBool("LOCKED_ANGLE", "VALUE"));
-    if (x.HasChildAttr("ANGLE_RELATIVE"))
-      this.SetAngleRelative(x.GetChildAttrAsBool("ANGLE_RELATIVE", "VALUE"));
-    if (x.HasChildAttr("USE_EFFECT_EMISSION"))
-      this.SetUseEffectEmission(
-        x.GetChildAttrAsBool("USE_EFFECT_EMISSION", "VALUE")
+    if (x.hasChildAttr("ANGLE_TYPE"))
+      this.setAngleType(x.getChildAttrAsInt("ANGLE_TYPE", "VALUE"));
+    if (x.hasChildAttr("ANGLE_OFFSET"))
+      this.setAngleOffset(x.getChildAttrAsInt("ANGLE_OFFSET", "VALUE"));
+    if (x.hasChildAttr("LOCKED_ANGLE"))
+      this.setLockAngle(x.getChildAttrAsBool("LOCKED_ANGLE", "VALUE"));
+    if (x.hasChildAttr("ANGLE_RELATIVE"))
+      this.setAngleRelative(x.getChildAttrAsBool("ANGLE_RELATIVE", "VALUE"));
+    if (x.hasChildAttr("USE_EFFECT_EMISSION"))
+      this.setUseEffectEmission(
+        x.getChildAttrAsBool("USE_EFFECT_EMISSION", "VALUE")
       );
-    if (x.HasChildAttr("COLOR_REPEAT"))
-      this.SetColorRepeat(x.GetChildAttrAsInt("COLOR_REPEAT", "VALUE"));
-    if (x.HasChildAttr("ALPHA_REPEAT"))
-      this.SetAlphaRepeat(x.GetChildAttrAsInt("ALPHA_REPEAT", "VALUE"));
-    if (x.HasChildAttr("ONE_SHOT"))
-      this.SetOneShot(x.GetChildAttrAsBool("ONE_SHOT", "VALUE"));
-    if (x.HasChildAttr("HANDLE_CENTERED"))
-      this.SetHandleCenter(x.GetChildAttrAsBool("HANDLE_CENTERED", "VALUE"));
+    if (x.hasChildAttr("COLOR_REPEAT"))
+      this.setColorRepeat(x.getChildAttrAsInt("COLOR_REPEAT", "VALUE"));
+    if (x.hasChildAttr("ALPHA_REPEAT"))
+      this.setAlphaRepeat(x.getChildAttrAsInt("ALPHA_REPEAT", "VALUE"));
+    if (x.hasChildAttr("ONE_SHOT"))
+      this.setOneShot(x.getChildAttrAsBool("ONE_SHOT", "VALUE"));
+    if (x.hasChildAttr("HANDLE_CENTERED"))
+      this.setHandleCenter(x.getChildAttrAsBool("HANDLE_CENTERED", "VALUE"));
 
-    this.ReadAttribute(xml, this._cLife, "LIFE");
-    this.ReadAttribute(xml, this._cAmount, "AMOUNT");
-    this.ReadAttribute(xml, this._cBaseSpeed, "BASE_SPEED");
-    this.ReadAttribute(xml, this._cBaseWeight, "BASE_WEIGHT");
-    this.ReadAttribute(xml, this._cSizeX, "BASE_SIZE_X");
-    this.ReadAttribute(xml, this._cSizeY, "BASE_SIZE_Y");
+    this.readAttribute(xml, this._cLife, "LIFE");
+    this.readAttribute(xml, this._cAmount, "AMOUNT");
+    this.readAttribute(xml, this._cBaseSpeed, "BASE_SPEED");
+    this.readAttribute(xml, this._cBaseWeight, "BASE_WEIGHT");
+    this.readAttribute(xml, this._cSizeX, "BASE_SIZE_X");
+    this.readAttribute(xml, this._cSizeY, "BASE_SIZE_Y");
 
-    this.ReadAttribute(xml, this._cBaseSpin, "BASE_SPIN");
-    this.ReadAttribute(xml, this._cSplatter, "SPLATTER");
-    this.ReadAttribute(xml, this._cLifeVariation, "LIFE_VARIATION");
-    this.ReadAttribute(xml, this._cAmountVariation, "AMOUNT_VARIATION");
-    this.ReadAttribute(xml, this._cVelVariation, "VELOCITY_VARIATION");
+    this.readAttribute(xml, this._cBaseSpin, "BASE_SPIN");
+    this.readAttribute(xml, this._cSplatter, "SPLATTER");
+    this.readAttribute(xml, this._cLifeVariation, "LIFE_VARIATION");
+    this.readAttribute(xml, this._cAmountVariation, "AMOUNT_VARIATION");
+    this.readAttribute(xml, this._cVelVariation, "VELOCITY_VARIATION");
 
-    this.ReadAttribute(xml, this._cWeightVariation, "WEIGHT_VARIATION");
-    this.ReadAttribute(xml, this._cSizeXVariation, "SIZE_X_VARIATION");
-    this.ReadAttribute(xml, this._cSizeYVariation, "SIZE_Y_VARIATION");
-    this.ReadAttribute(xml, this._cSpinVariation, "SPIN_VARIATION");
-    this.ReadAttribute(xml, this._cDirectionVariation, "DIRECTION_VARIATION");
+    this.readAttribute(xml, this._cWeightVariation, "WEIGHT_VARIATION");
+    this.readAttribute(xml, this._cSizeXVariation, "SIZE_X_VARIATION");
+    this.readAttribute(xml, this._cSizeYVariation, "SIZE_Y_VARIATION");
+    this.readAttribute(xml, this._cSpinVariation, "SPIN_VARIATION");
+    this.readAttribute(xml, this._cDirectionVariation, "DIRECTION_VARIATION");
 
-    this.ReadAttribute(xml, this._cAlpha, "ALPHA_OVERTIME");
-    this.ReadAttribute(xml, this._cVelocity, "VELOCITY_OVERTIME");
-    this.ReadAttribute(xml, this._cWeight, "WEIGHT_OVERTIME");
-    this.ReadAttribute(xml, this._cScaleX, "SCALE_X_OVERTIME");
-    this.ReadAttribute(xml, this._cScaleY, "SCALE_Y_OVERTIME");
+    this.readAttribute(xml, this._cAlpha, "ALPHA_OVERTIME");
+    this.readAttribute(xml, this._cVelocity, "VELOCITY_OVERTIME");
+    this.readAttribute(xml, this._cWeight, "WEIGHT_OVERTIME");
+    this.readAttribute(xml, this._cScaleX, "SCALE_X_OVERTIME");
+    this.readAttribute(xml, this._cScaleY, "SCALE_Y_OVERTIME");
 
-    this.ReadAttribute(xml, this._cSpin, "SPIN_OVERTIME");
-    this.ReadAttribute(xml, this._cDirection, "DIRECTION");
-    this.ReadAttribute(
+    this.readAttribute(xml, this._cSpin, "SPIN_OVERTIME");
+    this.readAttribute(xml, this._cDirection, "DIRECTION");
+    this.readAttribute(
       xml,
       this._cDirectionVariationOT,
       "DIRECTION_VARIATIONOT"
     );
-    this.ReadAttribute(xml, this._cFramerate, "FRAMERATE_OVERTIME");
-    this.ReadAttribute(xml, this._cStretch, "STRETCH_OVERTIME");
+    this.readAttribute(xml, this._cFramerate, "FRAMERATE_OVERTIME");
+    this.readAttribute(xml, this._cStretch, "STRETCH_OVERTIME");
 
-    this.ReadAttribute(xml, this._cR, "RED_OVERTIME");
-    this.ReadAttribute(xml, this._cG, "GREEN_OVERTIME");
-    this.ReadAttribute(xml, this._cB, "BLUE_OVERTIME");
+    this.readAttribute(xml, this._cR, "RED_OVERTIME");
+    this.readAttribute(xml, this._cG, "GREEN_OVERTIME");
+    this.readAttribute(xml, this._cB, "BLUE_OVERTIME");
 
-    this.ReadAttribute(xml, this._cGlobalVelocity, "GLOBAL_VELOCITY");
-    this.ReadAttribute(xml, this._cEmissionAngle, "EMISSION_ANGLE");
-    this.ReadAttribute(xml, this._cEmissionRange, "EMISSION_RANGE");
+    this.readAttribute(xml, this._cGlobalVelocity, "GLOBAL_VELOCITY");
+    this.readAttribute(xml, this._cEmissionAngle, "EMISSION_ANGLE");
+    this.readAttribute(xml, this._cEmissionRange, "EMISSION_RANGE");
 
     // This seems suspect? only one child?
-    var childNode = xml.getElementsByTagName("EFFECT")[0];
+    let childNode = xml.getElementsByTagName("EFFECT")[0];
 
     if (childNode) {
-      var e = new Effect();
-      e.LoadFromXML(childNode);
+      let e = new Effect();
+      e.loadFromXML(childNode);
       //e.CompileAll();
 
-      e.SetParentEmitter(this);
+      e.setParentEmitter(this);
 
-      this.AddEffect(e);
+      this.addEffect(e);
     }
-  },
+  }
 
-  ReadAttribute: function(xml, emitArray, tag) {
-    ForEachXMLChild(xml, tag, function(n) {
-      var attr = emitArray.Add(
-        parseFloat(GetNodeAttrValue(n, "FRAME")),
-        parseFloat(GetNodeAttrValue(n, "VALUE"))
+  readAttribute(xml, emitArray, tag) {
+    forEachXmlChild(xml, tag, function(n) {
+      let attr = emitArray.add(
+        parseFloat(getNodeAttrValue(n, "FRAME")),
+        parseFloat(getNodeAttrValue(n, "VALUE"))
       );
-      attr.LoadFromXML(n.getElementsByTagName("CURVE")[0]);
+      attr.loadFromXML(n.getElementsByTagName("CURVE")[0]);
     });
-  },
+  }
 
-  SortAll: function() {
-    this._cR.Sort();
-    this._cG.Sort();
-    this._cB.Sort();
-    this._cBaseSpin.Sort();
-    this._cSpin.Sort();
-    this._cSpinVariation.Sort();
-    this._cVelocity.Sort();
-    this._cBaseSpeed.Sort();
-    this._cVelVariation.Sort();
+  sortAll() {
+    this._cR.sort();
+    this._cG.sort();
+    this._cB.sort();
+    this._cBaseSpin.sort();
+    this._cSpin.sort();
+    this._cSpinVariation.sort();
+    this._cVelocity.sort();
+    this._cBaseSpeed.sort();
+    this._cVelVariation.sort();
 
-    this._cAlpha.Sort();
-    this._cSizeX.Sort();
-    this._cSizeY.Sort();
-    this._cScaleX.Sort();
-    this._cScaleY.Sort();
-    this._cSizeXVariation.Sort();
-    this._cSizeYVariation.Sort();
-    this._cLifeVariation.Sort();
-    this._cLife.Sort();
-    this._cAmount.Sort();
-    this._cAmountVariation.Sort();
-    this._cEmissionAngle.Sort();
-    this._cEmissionRange.Sort();
-    this._cFramerate.Sort();
-    this._cStretch.Sort();
-    this._cGlobalVelocity.Sort();
-  },
+    this._cAlpha.sort();
+    this._cSizeX.sort();
+    this._cSizeY.sort();
+    this._cScaleX.sort();
+    this._cScaleY.sort();
+    this._cSizeXVariation.sort();
+    this._cSizeYVariation.sort();
+    this._cLifeVariation.sort();
+    this._cLife.sort();
+    this._cAmount.sort();
+    this._cAmountVariation.sort();
+    this._cEmissionAngle.sort();
+    this._cEmissionRange.sort();
+    this._cFramerate.sort();
+    this._cStretch.sort();
+    this._cGlobalVelocity.sort();
+  }
 
-  ShowAll: function() {
-    this.SetVisible(true);
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].ShowAll();
+  showAll() {
+    this.setVisible(true);
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].showAll();
     }
-  },
+  }
 
-  HideAll: function() {
-    this.SetVisible(false);
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].HideAll();
+  hideAll() {
+    this.setVisible(false);
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].hideAll();
     }
-  },
+  }
 
-  AddEffect: function(effect) {
+  addEffect(effect) {
     this._effects.push(effect);
-  },
+  }
 
-  SetParentEffect: function(parent) {
+  setParentEffect(parent) {
     this._parentEffect = parent;
-  },
+  }
 
-  SetImage: function(imageIndex) {
-    var image = EffectsLibrary.GetImage(imageIndex);
+  setImage(imageIndex) {
+    let image = EffectsLibrary.getImage(imageIndex);
     this._image = image;
-    this._AABB_ParticleMaxWidth = image.GetWidth() * 0.5;
-    this._AABB_ParticleMaxHeight = image.GetHeight() * 0.5;
-    this._AABB_ParticleMinWidth = image.GetWidth() * -0.5;
-    this._AABB_ParticleMinHeight = image.GetHeight() * -0.5;
-  },
+    this._AABB_ParticleMaxWidth = image.getWidth() * 0.5;
+    this._AABB_ParticleMaxHeight = image.getHeight() * 0.5;
+    this._AABB_ParticleMinWidth = image.getWidth() * -0.5;
+    this._AABB_ParticleMinHeight = image.getHeight() * -0.5;
+  }
 
-  SetAngleOffset: function(offset) {
+  setAngleOffset(offset) {
     this._angleOffset = offset;
-  },
+  }
 
-  SetUniform: function(value) {
+  setUniform(value) {
     this._uniform = value;
-  },
+  }
 
-  SetAngleType: function(angleType) {
+  setAngleType(angleType) {
     this._angleType = angleType;
-  },
+  }
 
-  SetUseEffectEmission: function(value) {
+  setUseEffectEmission(value) {
     this._useEffectEmission = value;
-  },
+  }
 
-  SetVisible: function(value) {
+  setVisible(value) {
     this._visible = value;
-  },
+  }
 
-  SetSingleParticle: function(value) {
+  setSingleParticle(value) {
     this._singleParticle = value;
-  },
+  }
 
-  SetRandomColor: function(value) {
+  setRandomColor(value) {
     this._randomColor = value;
-  },
+  }
 
-  SetZLayer: function(zLayer) {
+  setZLayer(zLayer) {
     this._zLayer = zLayer;
-  },
+  }
 
-  SetAnimate: function(value) {
+  setAnimate(value) {
     this._animate = value;
-  },
+  }
 
-  SetRandomStartFrame: function(value) {
+  setRandomStartFrame(value) {
     this._randomStartFrame = value;
-  },
+  }
 
-  SetAnimationDirection: function(direction) {
+  setAnimationDirection(direction) {
     this._animationDirection = direction;
-  },
+  }
 
-  SetColorRepeat: function(repeat) {
+  setColorRepeat(repeat) {
     this._colorRepeat = repeat;
-  },
+  }
 
-  SetAlphaRepeat: function(repeat) {
+  setAlphaRepeat(repeat) {
     this._alphaRepeat = repeat;
-  },
+  }
 
-  SetOneShot: function(value) {
+  setOneShot(value) {
     this._oneShot = value;
-  },
+  }
 
-  SetHandleCenter: function(value) {
+  setHandleCenter(value) {
     this._handleCenter = value;
-  },
+  }
 
-  SetParticlesRelative: function(value) {
+  setParticlesRelative(value) {
     this._particlesRelative = value;
-  },
+  }
 
-  SetTweenSpawns: function(value) {
+  setTweenSpawns(value) {
     this._tweenSpawns = value;
-  },
+  }
 
-  SetLockAngle: function(value) {
+  setLockAngle(value) {
     this._lockedAngle = value;
-  },
+  }
 
-  SetAngleRelative: function(value) {
+  setAngleRelative(value) {
     this._angleRelative = value;
-  },
+  }
 
-  SetOnce: function(value) {
+  setOnce(value) {
     this._once = value;
-  },
+  }
 
-  SetGroupParticles: function(value) {
+  setGroupParticles(value) {
     this._groupParticles = value;
-  },
+  }
 
-  GetParentEffect: function() {
+  getParentEffect() {
     return this._parentEffect;
-  },
+  }
 
-  GetImage: function() {
+  getImage() {
     return this._image;
-  },
+  }
 
-  GetAngleOffset: function() {
+  getAngleOffset() {
     return this._angleOffset;
-  },
+  }
 
-  IsUniform: function() {
+  isUniform() {
     return this._uniform;
-  },
+  }
 
-  GetAngleType: function() {
+  getAngleType() {
     return this._angleType;
-  },
+  }
 
-  IsUseEffectEmmision: function() {
+  isUseEffectEmmision() {
     return this._useEffectEmission;
-  },
+  }
 
-  IsVisible: function() {
+  isVisible() {
     return this._visible;
-  },
+  }
 
-  IsSingleParticle: function() {
+  isSingleParticle() {
     return this._singleParticle;
-  },
+  }
 
-  IsRandomColor: function() {
+  isRandomColor() {
     return this._randomColor;
-  },
+  }
 
-  GetZLayer: function() {
+  getZLayer() {
     return this._zLayer;
-  },
+  }
 
-  IsAnimate: function() {
+  isAnimate() {
     return this._animate;
-  },
+  }
 
-  IsRandomStartFrame: function() {
+  isRandomStartFrame() {
     return this._randomStartFrame;
-  },
+  }
 
-  GetAnimationDirection: function() {
+  getAnimationDirection() {
     return this._animationDirection;
-  },
+  }
 
-  GetColorRepeat: function() {
+  getColorRepeat() {
     return this._colorRepeat;
-  },
+  }
 
-  GetAlphaRepeat: function() {
+  getAlphaRepeat() {
     return this._alphaRepeat;
-  },
+  }
 
-  IsOneShot: function() {
+  isOneShot() {
     return this._oneShot;
-  },
+  }
 
-  IsHandleCenter: function() {
+  isHandleCenter() {
     return this._handleCenter;
-  },
+  }
 
-  IsParticlesRelative: function() {
+  isParticlesRelative() {
     return this._particlesRelative;
-  },
+  }
 
-  IsTweenSpawns: function() {
+  isTweenSpawns() {
     return this._tweenSpawns;
-  },
+  }
 
-  IsLockAngle: function() {
+  isLockAngle() {
     return this._lockedAngle;
-  },
+  }
 
-  IsAngleRelative: function() {
+  isAngleRelative() {
     return this._angleRelative;
-  },
+  }
 
-  IsOnce: function() {
+  isOnce() {
     return this._once;
-  },
+  }
 
-  IsGroupParticles: function() {
+  isGroupParticles() {
     return this._groupParticles;
-  },
+  }
 
-  GetPath: function() {
+  getPath() {
     return this._path;
-  },
+  }
 
-  SetRadiusCalculate: function(value) {
+  setRadiusCalculate(value) {
     this._radiusCalculate = value;
 
-    for (var i = 0; i < this._children.length; i++) {
-      this._children[i].SetRadiusCalculate(value);
+    for (let i = 0; i < this._children.length; i++) {
+      this._children[i].setRadiusCalculate(value);
     }
 
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].SetRadiusCalculate(value);
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].setRadiusCalculate(value);
     }
-  },
+  }
 
-  Destroy: function(releaseChildren) {
+  destroy(releaseChildren) {
     this._parentEffect = null;
     this._image = null;
 
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].Destroy();
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].destroy();
     }
 
     this._effects = [];
 
-    Emitter.$superp.Destroy.call(this, false);
-  },
+    super.destroy(false); // Emitter.$superp.Destroy.call(this, false);
+    // Explain!
+  }
 
-  ChangeDoB: function(dob) {
+  changeDoB(dob) {
     this._dob = dob;
 
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].ChangeDoB(dob);
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].changeDoB(dob);
     }
-  },
+  }
 
-  Update: function() {
-    this.Capture();
+  update() {
+    this.capture();
 
-    var radians = (this._angle / 180.0) * M_PI;
-    this._matrix.Set(
+    let radians = (this._angle / 180.0) * M_PI;
+    this._matrix.set(
       Math.cos(radians),
       Math.sin(radians),
       -Math.sin(radians),
@@ -663,68 +668,68 @@ var Emitter = Class(Entity, {
     );
 
     if (this._parent && this._relative) {
-      this.SetZ(this._parent.GetZ());
-      this._matrix.TransformSelf(this._parent.GetMatrix());
-      var rotvec = this._parent.GetMatrix().TransformVector(this._x, this._y);
+      this.setZ(this._parent.getZ());
+      this._matrix.transformSelf(this._parent.getMatrix());
+      let rotvec = this._parent.getMatrix().transformVector(this._x, this._y);
 
-      this._wx = this._parent.GetWX() + rotvec.x * this._z;
-      this._wy = this._parent.GetWY() + rotvec.y * this._z;
+      this._wx = this._parent.getWX() + rotvec.x * this._z;
+      this._wy = this._parent.getWY() + rotvec.y * this._z;
 
-      this._relativeAngle = this._parent.GetRelativeAngle() + this._angle;
+      this._relativeAngle = this._parent.getRelativeAngle() + this._angle;
     } else {
       this._wx = this._x;
       this._wy = this._y;
     }
 
     if (!this._tweenSpawns) {
-      this.Capture();
+      this.capture();
       this._tweenSpawns = true;
     }
 
-    this._dying = this._parentEffect.IsDying();
+    this._dying = this._parentEffect.isDying();
 
     Emitter.$superp.UpdateBoundingBox.call(this);
 
     if (this._radiusCalculate) Emitter.$superp.UpdateEntityRadius.call(this);
 
-    this.UpdateChildren();
+    this.updateChildren();
 
     if (!this._dead && !this._dying) {
       if (
         this._visible &&
-        this._parentEffect.GetParticleManager().IsSpawningAllowed()
+        this._parentEffect.getParticleManager().isSpawningAllowed()
       )
-        this.UpdateSpawns();
+        this.updateSpawns();
     } else {
       if (this._children.length === 0) {
-        this.Destroy();
+        this.destroy();
         return false;
       } else {
-        this.KillChildren();
+        this.killChildren();
       }
     }
     return true;
-  },
+  }
 
-  UpdateSpawns: function(eSingle /*= null*/) {
-    var intCounter;
-    var qty;
-    var er;
-    var e;
-    var parentEffect = this._parentEffect;
-    var curFrame = parentEffect.GetCurrentEffectFrame();
-    var pm = parentEffect.GetParticleManager();
+  updateSpawns(eSingle /*= null*/) {
+    let intCounter;
+    let qty;
+    let er;
+    let e;
+    let parentEffect = this._parentEffect;
+    let curFrame = parentEffect.getCurrentEffectFrame();
+    let pm = parentEffect.getParticleManager();
 
-    var a1 = this.GetEmitterAmount(curFrame);
-    var a2 = Random(this.GetEmitterAmountVariation(curFrame));
-    var a3 = parentEffect.GetCurrentAmount();
-    var a4 = pm.GetGlobalAmountScale();
+    let a1 = this.getEmitterAmount(curFrame);
+    let a2 = random(this.getEmitterAmountVariation(curFrame));
+    let a3 = parentEffect.getCurrentAmount();
+    let a4 = pm.getGlobalAmountScale();
     qty =
-      ((this.GetEmitterAmount(curFrame) +
-        Random(this.GetEmitterAmountVariation(curFrame))) *
-        parentEffect.GetCurrentAmount() *
-        pm.GetGlobalAmountScale()) /
-      EffectsLibrary.GetUpdateFrequency();
+      ((this.getEmitterAmount(curFrame) +
+        random(this.getEmitterAmountVariation(curFrame))) *
+        parentEffect.getCurrentAmount() *
+        pm.getGlobalAmountScale()) /
+      EffectsLibrary.getUpdateFrequency();
 
     if (!this._singleParticle) {
       this._counter += qty;
@@ -732,16 +737,16 @@ var Emitter = Class(Entity, {
     intCounter = Math.floor(this._counter);
     if (intCounter >= 1 || (this._singleParticle && !this._startedSpawning)) {
       if (!this._startedSpawning && this._singleParticle) {
-        switch (parentEffect.GetClass()) {
+        switch (parentEffect.getClass()) {
           case TypePoint:
             intCounter = 1;
             break;
           case TypeArea:
-            intCounter = parentEffect.GetMGX() * parentEffect.GetMGY();
+            intCounter = parentEffect.getMGX() * parentEffect.getMGY();
             break;
           case TypeLine:
           case TypeEllipse:
-            intCounter = parentEffect.GetMGX();
+            intCounter = parentEffect.getMGX();
             break;
         }
       } else if (this._singleParticle && this._startedSpawning) {
@@ -750,363 +755,363 @@ var Emitter = Class(Entity, {
 
       // preload attributes
       this._currentLife =
-        this.GetEmitterLife(curFrame) * parentEffect.GetCurrentLife();
+        this.getEmitterLife(curFrame) * parentEffect.getCurrentLife();
       if (!this._bypassWeight) {
-        this._currentWeight = this.GetEmitterBaseWeight(curFrame);
-        this._currentWeightVariation = this.GetEmitterWeightVariation(curFrame);
+        this._currentWeight = this.getEmitterBaseWeight(curFrame);
+        this._currentWeightVariation = this.getEmitterWeightVariation(curFrame);
       }
 
       if (!this._bypassSpeed) {
-        this._currentSpeed = this.GetEmitterBaseSpeed(curFrame);
-        this._currentSpeedVariation = this.GetEmitterVelVariation(curFrame);
+        this._currentSpeed = this.getEmitterBaseSpeed(curFrame);
+        this._currentSpeedVariation = this.getEmitterVelVariation(curFrame);
       }
 
       if (!this._bypassSpin) {
-        this._currentSpin = this.GetEmitterBaseSpin(curFrame);
-        this._currentSpinVariation = this.GetEmitterSpinVariation(curFrame);
+        this._currentSpin = this.getEmitterBaseSpin(curFrame);
+        this._currentSpinVariation = this.getEmitterSpinVariation(curFrame);
       }
 
-      this._currentDirectionVariation = this.GetEmitterDirectionVariation(
+      this._currentDirectionVariation = this.getEmitterDirectionVariation(
         curFrame
       );
 
       if (this._useEffectEmission) {
-        er = parentEffect.GetCurrentEmissionRange();
-        this._currentEmissionAngle = parentEffect.GetCurrentEmissionAngle();
+        er = parentEffect.getCurrentEmissionRange();
+        this._currentEmissionAngle = parentEffect.getCurrentEmissionAngle();
       } else {
-        er = this.GetEmitterEmissionRange(curFrame);
-        this._currentEmissionAngle = this.GetEmitterEmissionAngle(curFrame);
+        er = this.getEmitterEmissionRange(curFrame);
+        this._currentEmissionAngle = this.getEmitterEmissionAngle(curFrame);
       }
 
-      this._currentLifeVariation = this.GetEmitterLifeVariation(curFrame);
-      this._currentSizeX = this.GetEmitterSizeX(curFrame);
-      this._currentSizeY = this.GetEmitterSizeY(curFrame);
-      this._currentSizeXVariation = this.GetEmitterSizeXVariation(curFrame);
-      this._currentSizeYVariation = this.GetEmitterSizeYVariation(curFrame);
+      this._currentLifeVariation = this.getEmitterLifeVariation(curFrame);
+      this._currentSizeX = this.getEmitterSizeX(curFrame);
+      this._currentSizeY = this.getEmitterSizeY(curFrame);
+      this._currentSizeXVariation = this.getEmitterSizeXVariation(curFrame);
+      this._currentSizeYVariation = this.getEmitterSizeYVariation(curFrame);
 
       // ------------------------------
-      for (var c = 1; c <= intCounter; ++c) {
+      for (let c = 1; c <= intCounter; ++c) {
         this._startedSpawning = true;
 
         if (!eSingle) {
-          e = pm.GrabParticle(parentEffect, this._groupParticles, this._zLayer);
+          e = pm.grabParticle(parentEffect, this._groupParticles, this._zLayer);
         } else {
           e = eSingle;
         }
 
         if (e) {
           // -----Link to its emitter and assign the control source (which is this emitter)----
-          e.SetEmitter(this);
-          e.SetParent(this);
-          e.SetParticleManager(pm);
-          e.SetEffectLayer(parentEffect.GetEffectLayer());
+          e.setEmitter(this);
+          e.setParent(this);
+          e.setParticleManager(pm);
+          e.setEffectLayer(parentEffect.getEffectLayer());
           // ----------------------------------------------------
-          e.SetDoB(pm.GetCurrentTime());
+          e.setDoB(pm.getCurrentTime());
 
           if (
-            parentEffect.GetTraverseEdge() &&
-            parentEffect.GetClass() == TypeLine
+            parentEffect.getTraverseEdge() &&
+            parentEffect.getClass() == TypeLine
           ) {
             this._particlesRelative = true;
           }
-          e.SetRelative(this._particlesRelative);
+          e.setRelative(this._particlesRelative);
 
-          switch (parentEffect.GetClass()) {
+          switch (parentEffect.getClass()) {
             case TypePoint:
-              if (e.IsRelative()) {
-                e.SetX(0 - parentEffect.GetHandleX());
-                e.SetY(0 - parentEffect.GetHandleY());
+              if (e.isRelative()) {
+                e.setX(0 - parentEffect.getHandleX());
+                e.setY(0 - parentEffect.getHandleY());
               } else {
-                var tween = c / intCounter;
+                let tween = c / intCounter;
                 if (
-                  parentEffect.GetHandleCenter() ||
-                  parentEffect.GetHandleX() + parentEffect.GetHandleY() === 0
+                  parentEffect.getHandleCenter() ||
+                  parentEffect.getHandleX() + parentEffect.getHandleY() === 0
                 ) {
                   // @dan already set? tween = c / intCounter;
-                  e.SetX(Lerp(this._oldWX, this._wx, tween));
-                  e.SetY(Lerp(this._oldWY, this._wy, tween));
-                  e.SetWX(e.GetX() - parentEffect.GetHandleX() * this._z);
-                  e.SetWY(e.GetY() - parentEffect.GetHandleY() * this._z);
+                  e.setX(lerp(this._oldWX, this._wx, tween));
+                  e.setY(lerp(this._oldWY, this._wy, tween));
+                  e.setWX(e.getX() - parentEffect.getHandleX() * this._z);
+                  e.setWY(e.getY() - parentEffect.getHandleY() * this._z);
                 } else {
-                  e.SetX(0 - parentEffect.GetHandleX());
-                  e.SetY(0 - parentEffect.GetHandleY());
-                  var rotvec = this._parent
-                    .GetMatrix()
-                    .TransformVector(e.GetX(), e.GetY());
-                  e.SetX(Lerp(this._oldWX, this._wx, tween) + rotvec.x);
-                  e.SetY(Lerp(this._oldWY, this._wy, tween) + rotvec.y);
+                  e.setX(0 - parentEffect.getHandleX());
+                  e.setY(0 - parentEffect.getHandleY());
+                  let rotvec = this._parent
+                    .getMatrix()
+                    .transformVector(e.getX(), e.getY());
+                  e.setX(lerp(this._oldWX, this._wx, tween) + rotvec.x);
+                  e.setY(lerp(this._oldWY, this._wy, tween) + rotvec.y);
 
-                  e.SetWX(e.GetX() * this._z);
-                  e.SetWY(e.GetY() * this._z);
+                  e.setWX(e.getX() * this._z);
+                  e.setWY(e.getY() * this._z);
                 }
               }
               break;
 
             case TypeArea:
-              if (parentEffect.GetEmitAtPoints()) {
+              if (parentEffect.getEmitAtPoints()) {
                 if (parentEffect._spawnDirection == -1) {
                   this._gx += parentEffect._spawnDirection;
                   if (this._gx < 0) {
-                    this._gx = parentEffect.GetMGX() - 1;
+                    this._gx = parentEffect.getMGX() - 1;
                     this._gy += parentEffect._spawnDirection;
-                    if (this._gy < 0) this._gy = parentEffect.GetMGY() - 1;
+                    if (this._gy < 0) this._gy = parentEffect.getMGY() - 1;
                   }
                 }
 
-                if (parentEffect.GetMGX() > 1) {
-                  e.SetX(
-                    (this._gx / (parentEffect.GetMGX() - 1)) *
-                      parentEffect.GetCurrentWidth() -
-                      parentEffect.GetHandleX()
+                if (parentEffect.getMGX() > 1) {
+                  e.setX(
+                    (this._gx / (parentEffect.getMGX() - 1)) *
+                      parentEffect.getCurrentWidth() -
+                      parentEffect.getHandleX()
                   );
                 } else {
-                  e.SetX(-parentEffect.GetHandleX());
+                  e.setX(-parentEffect.getHandleX());
                 }
 
-                if (parentEffect.GetMGY() > 1) {
-                  e.SetY(
-                    (this._gy / (parentEffect.GetMGY() - 1)) *
-                      parentEffect.GetCurrentHeight() -
-                      parentEffect.GetHandleY()
+                if (parentEffect.getMGY() > 1) {
+                  e.setY(
+                    (this._gy / (parentEffect.getMGY() - 1)) *
+                      parentEffect.getCurrentHeight() -
+                      parentEffect.getHandleY()
                   );
                 } else {
-                  e.SetY(-parentEffect.GetHandleY());
+                  e.setY(-parentEffect.getHandleY());
                 }
 
                 if (parentEffect._spawnDirection == 1) {
                   this._gx += parentEffect._spawnDirection;
-                  if (this._gx >= parentEffect.GetMGX()) {
+                  if (this._gx >= parentEffect.getMGX()) {
                     this._gx = 0;
                     this._gy += parentEffect._spawnDirection;
-                    if (this._gy >= parentEffect.GetMGY()) this._gy = 0;
+                    if (this._gy >= parentEffect.getMGY()) this._gy = 0;
                   }
                 }
               } else {
-                e.SetX(
-                  Random(parentEffect.GetCurrentWidth()) -
-                    parentEffect.GetHandleX()
+                e.setX(
+                  random(parentEffect.getCurrentWidth()) -
+                    parentEffect.getHandleX()
                 );
-                e.SetY(
-                  Random(parentEffect.GetCurrentHeight()) -
-                    parentEffect.GetHandleY()
+                e.setY(
+                  random(parentEffect.getCurrentHeight()) -
+                    parentEffect.getHandleY()
                 );
               }
 
-              if (!e.IsRelative()) {
-                var parent = this._parent;
-                var rotvec = parent
-                  .GetMatrix()
-                  .TransformVector(e.GetX(), e.GetY());
+              if (!e.isRelative()) {
+                let parent = this._parent;
+                let rotvec = parent
+                  .getMatrix()
+                  .transformVector(e.getX(), e.getY());
 
-                e.SetX(parent.GetWX() + rotvec.x * this._z);
-                e.SetY(parent.GetWY() + rotvec.y * this._z);
+                e.setX(parent.getWX() + rotvec.x * this._z);
+                e.setY(parent.getWY() + rotvec.y * this._z);
               }
 
               break;
 
             case TypeEllipse:
               {
-                var tx = parentEffect.GetCurrentWidth() / 2.0;
-                var ty = parentEffect.GetCurrentHeight() / 2.0;
-                var th = 0;
+                let tx = parentEffect.getCurrentWidth() / 2.0;
+                let ty = parentEffect.getCurrentHeight() / 2.0;
+                let th = 0;
 
-                if (parentEffect.GetEmitAtPoints()) {
-                  if (parentEffect.GetMGX() === 0) parentEffect.SetMGX(1);
+                if (parentEffect.getEmitAtPoints()) {
+                  if (parentEffect.getMGX() === 0) parentEffect.SetMGX(1);
 
                   this._gx += parentEffect._spawnDirection;
-                  if (this._gx >= parentEffect.GetMGX()) {
+                  if (this._gx >= parentEffect.getMGX()) {
                     this._gx = 0;
                   } else if (this._gx < 0) {
-                    this._gx = parentEffect.GetMGX() - 1;
+                    this._gx = parentEffect.getMGX() - 1;
                   }
 
                   th =
                     this._gx *
-                      (parentEffect.GetEllipseArc() / parentEffect.GetMGX()) +
-                    parentEffect.GetEllipseOffset();
+                      (parentEffect.getEllipseArc() / parentEffect.getMGX()) +
+                    parentEffect.getEllipseOffset();
                 } else {
                   th =
-                    Random(parentEffect.GetEllipseArc()) +
-                    parentEffect.GetEllipseOffset();
+                    random(parentEffect.getEllipseArc()) +
+                    parentEffect.getEllipseOffset();
                 }
-                e.SetX(
+                e.setX(
                   Math.cos((th / 180.0) * M_PI) * tx -
-                    parentEffect.GetHandleX() +
+                    parentEffect.getHandleX() +
                     tx
                 );
-                e.SetY(
+                e.setY(
                   -Math.sin((th / 180.0) * M_PI) * ty -
-                    parentEffect.GetHandleY() +
+                    parentEffect.getHandleY() +
                     ty
                 );
 
-                if (!e.IsRelative()) {
-                  var rotvec = this._parent
-                    .GetMatrix()
-                    .TransformVector(e.GetX(), e.GetY());
+                if (!e.isRelative()) {
+                  let rotvec = this._parent
+                    .getMatrix()
+                    .transformVector(e.getX(), e.getY());
 
-                  e.SetX(this._parent.GetWX() + rotvec.x * this._z);
-                  e.SetY(this._parent.GetWY() + rotvec.y * this._z);
+                  e.setX(this._parent.getWX() + rotvec.x * this._z);
+                  e.setY(this._parent.getWY() + rotvec.y * this._z);
                 }
               }
               break;
 
             case TypeLine:
-              if (!parentEffect.GetTraverseEdge()) {
-                if (parentEffect.GetEmitAtPoints()) {
+              if (!parentEffect.getTraverseEdge()) {
+                if (parentEffect.getEmitAtPoints()) {
                   if (parentEffect._spawnDirection == -1) {
                     this._gx += parentEffect._spawnDirection;
-                    if (this._gx < 0) this._gx = parentEffect.GetMGX() - 1;
+                    if (this._gx < 0) this._gx = parentEffect.getMGX() - 1;
                   }
 
-                  if (parentEffect.GetMGX() > 1) {
-                    e.SetX(
-                      (this._gx / (parentEffect.GetMGX() - 1)) *
-                        parentEffect.GetCurrentWidth() -
-                        parentEffect.GetHandleX()
+                  if (parentEffect.getMGX() > 1) {
+                    e.setX(
+                      (this._gx / (parentEffect.getMGX() - 1)) *
+                        parentEffect.getCurrentWidth() -
+                        parentEffect.getHandleX()
                     );
                   } else {
-                    e.SetX(-parentEffect.GetHandleX());
+                    e.setX(-parentEffect.getHandleX());
                   }
-                  e.SetY(-parentEffect.GetHandleY());
+                  e.setY(-parentEffect.getHandleY());
 
                   if (parentEffect._spawnDirection == 1) {
                     this._gx += parentEffect._spawnDirection;
-                    if (this._gx >= parentEffect.GetMGX()) this._gx = 0;
+                    if (this._gx >= parentEffect.getMGX()) this._gx = 0;
                   }
                 } else {
-                  e.SetX(
-                    Random(parentEffect.GetCurrentWidth()) -
-                      parentEffect.GetHandleX()
+                  e.setX(
+                    random(parentEffect.getCurrentWidth()) -
+                      parentEffect.getHandleX()
                   );
-                  e.SetY(-parentEffect.GetHandleY());
+                  e.setY(-parentEffect.getHandleY());
                 }
               } else {
                 if (parentEffect._distanceSetByLife) {
-                  e.SetX(-parentEffect.GetHandleX());
-                  e.SetY(-parentEffect.GetHandleY());
+                  e.setX(-parentEffect.getHandleX());
+                  e.setY(-parentEffect.getHandleY());
                 } else {
-                  if (parentEffect.GetEmitAtPoints()) {
+                  if (parentEffect.getEmitAtPoints()) {
                     if (parentEffect._spawnDirection == -1) {
                       this._gx += parentEffect._spawnDirection;
-                      if (this._gx < 0) this._gx = parentEffect.GetMGX() - 1;
+                      if (this._gx < 0) this._gx = parentEffect.getMGX() - 1;
                     }
 
-                    if (parentEffect.GetMGX() > 1) {
-                      e.SetX(
-                        (this._gx / (parentEffect.GetMGX() - 1)) *
-                          parentEffect.GetCurrentWidth() -
-                          parentEffect.GetHandleX()
+                    if (parentEffect.getMGX() > 1) {
+                      e.setX(
+                        (this._gx / (parentEffect.getMGX() - 1)) *
+                          parentEffect.getCurrentWidth() -
+                          parentEffect.getHandleX()
                       );
                     } else {
-                      e.SetX(-parentEffect.GetHandleX());
+                      e.setX(-parentEffect.getHandleX());
                     }
-                    e.SetY(-parentEffect.GetHandleY());
+                    e.setY(-parentEffect.getHandleY());
 
                     if (parentEffect._spawnDirection == 1) {
                       this._gx += parentEffect._spawnDirection;
-                      if (this._gx >= parentEffect.GetMGX()) this._gx = 0;
+                      if (this._gx >= parentEffect.getMGX()) this._gx = 0;
                     }
                   } else {
-                    e.SetX(
-                      Random(parentEffect.GetCurrentWidth()) -
-                        parentEffect.GetHandleX()
+                    e.setX(
+                      random(parentEffect.getCurrentWidth()) -
+                        parentEffect.getHandleX()
                     );
-                    e.SetY(-parentEffect.GetHandleY());
+                    e.setY(-parentEffect.getHandleY());
                   }
                 }
               }
 
               // rotate
-              if (!e.IsRelative()) {
-                var rotvec = this._parent
-                  .GetMatrix()
-                  .TransformVector(e.GetX(), e.GetY());
+              if (!e.isRelative()) {
+                let rotvec = this._parent
+                  .getMatrix()
+                  .transformVector(e.getX(), e.getY());
 
-                e.SetX(this._parent.GetWX() + rotvec.x * this._z);
-                e.SetY(this._parent.GetWY() + rotvec.y * this._z);
+                e.setX(this._parent.getWX() + rotvec.x * this._z);
+                e.setY(this._parent.getWY() + rotvec.y * this._z);
               }
               break;
           }
 
           // set the zoom level
-          e.SetZ(this._z);
+          e.setZ(this._z);
 
           // set up the image
-          e.SetAvatar(this._image);
-          e.SetHandleX(this._handleX);
-          e.SetHandleY(this._handleY);
-          e.SetAutocenter(this._handleCenter);
+          e.setAvatar(this._image);
+          e.setHandleX(this._handleX);
+          e.setHandleY(this._handleY);
+          e.setAutocenter(this._handleCenter);
 
           // set lifetime properties
-          e.SetLifeTime(
+          e.setLifeTime(
             this._currentLife +
-              RandomBetween(
+              randomBetween(
                 -this._currentLifeVariation,
                 this._currentLifeVariation
               ) *
-                parentEffect.GetCurrentLife()
+                parentEffect.getCurrentLife()
           );
 
           // speed
-          e.SetSpeedVecX(0);
-          e.SetSpeedVecY(0);
+          e.setSpeedVecX(0);
+          e.setSpeedVecY(0);
           if (!this._bypassSpeed) {
-            e.SetSpeed(this._cVelocity.Get(0));
-            e.SetVelVariation(
-              RandomBetween(
+            e.setSpeed(this._cVelocity.get(0));
+            e.setVelVariation(
+              randomBetween(
                 -this._currentSpeedVariation,
                 this._currentSpeedVariation
               )
             );
-            e.SetBaseSpeed(
-              (this._currentSpeed + e.GetVelVariation()) *
-                parentEffect.GetCurrentVelocity()
+            e.setBaseSpeed(
+              (this._currentSpeed + e.getVelVariation()) *
+                parentEffect.getCurrentVelocity()
             );
-            e.SetSpeed(
-              this._cVelocity.Get(0) *
-                e.GetBaseSpeed() *
-                this._cGlobalVelocity.Get(0)
+            e.setSpeed(
+              this._cVelocity.get(0) *
+                e.getBaseSpeed() *
+                this._cGlobalVelocity.get(0)
             );
           } else {
-            e.SetSpeed(0);
+            e.setSpeed(0);
           }
 
           // size
-          e.SetGSizeX(parentEffect.GetCurrentSizeX());
-          e.SetGSizeY(parentEffect.GetCurrentSizeY());
+          e.setGSizeX(parentEffect.getCurrentSizeX());
+          e.setGSizeY(parentEffect.getCurrentSizeY());
 
           // width
-          var scaleTemp = this._cScaleX.Get(0);
-          var sizeTemp = 0;
-          e.SetScaleVariationX(Random(this._currentSizeXVariation));
-          e.SetWidth(e.GetScaleVariationX() + this._currentSizeX);
+          let scaleTemp = this._cScaleX.get(0);
+          let sizeTemp = 0;
+          e.setScaleVariationX(Random(this._currentSizeXVariation));
+          e.setWidth(e.getScaleVariationX() + this._currentSizeX);
           if (scaleTemp !== 0) {
             sizeTemp =
-              (e.GetWidth() / this._image.GetWidth()) *
+              (e.getWidth() / this._image.getWidth()) *
               scaleTemp *
-              e.GetGSizeX();
+              e.getGSizeX();
           }
-          e.SetScaleX(sizeTemp);
+          e.setScaleX(sizeTemp);
 
           if (this._uniform) {
             // height
-            e.SetScaleY(sizeTemp);
+            e.setScaleY(sizeTemp);
 
             if (!this._bypassStretch) {
-              e.SetScaleY(
-                (this.GetEmitterScaleX(0) *
-                  e.GetGSizeX() *
-                  (e.GetWidth() +
-                    Math.abs(e.GetSpeed()) *
-                      this.GetEmitterStretch(0, 0) *
-                      parentEffect.GetCurrentStretch())) /
-                  this._image.GetWidth()
+              e.setScaleY(
+                (this.getEmitterScaleX(0) *
+                  e.getGSizeX() *
+                  (e.getWidth() +
+                    Math.abs(e.getSpeed()) *
+                      this.getEmitterStretch(0, 0) *
+                      parentEffect.getCurrentStretch())) /
+                  this._image.getWidth()
               );
-              if (e.GetScaleY() < e.GetScaleX()) e.SetScaleY(e.GetScaleX());
+              if (e.getScaleY() < e.getScaleX()) e.setScaleY(e.getScaleX());
             }
 
-            e.SetWidthHeightAABB(
+            e.setWidthHeightAabb(
               this._AABB_ParticleMinWidth,
               this._AABB_ParticleMaxWidth,
               this._AABB_ParticleMinWidth,
@@ -1114,32 +1119,32 @@ var Emitter = Class(Entity, {
             );
           } else {
             // height
-            scaleTemp = this.GetEmitterScaleY(0);
+            scaleTemp = this.getEmitterScaleY(0);
             sizeTemp = 0;
-            e.SetScaleVariationY(Random(this._currentSizeYVariation));
-            e.SetHeight(e.GetScaleVariationY() + this._currentSizeY);
+            e.setScaleVariationY(random(this._currentSizeYVariation));
+            e.setHeight(e.getScaleVariationY() + this._currentSizeY);
             if (scaleTemp !== 0) {
               sizeTemp =
-                (e.GetHeight() / this._image.GetHeight()) *
+                (e.getHeight() / this._image.getHeight()) *
                 scaleTemp *
-                e.GetGSizeY();
+                e.getGSizeY();
             }
-            e.SetScaleY(sizeTemp);
+            e.setScaleY(sizeTemp);
 
-            if (!this._bypassStretch && e.GetSpeed() !== 0) {
-              e.SetScaleY(
-                (this.GetEmitterScaleY(0) *
-                  e.GetGSizeY() *
-                  (e.GetHeight() +
-                    Math.abs(e.GetSpeed()) *
-                      this.GetEmitterStretch(0) *
-                      parentEffect.GetCurrentStretch())) /
-                  this._image.GetHeight()
+            if (!this._bypassStretch && e.getSpeed() !== 0) {
+              e.setScaleY(
+                (this.getEmitterScaleY(0) *
+                  e.getGSizeY() *
+                  (e.getHeight() +
+                    Math.abs(e.getSpeed()) *
+                      this.getEmitterStretch(0) *
+                      parentEffect.getCurrentStretch())) /
+                  this._image.getHeight()
               );
-              if (e.GetScaleY() < e.GetScaleX()) e.SetScaleY(e.GetScaleX());
+              if (e.getScaleY() < e.getScaleX()) e.setScaleY(e.getScaleX());
             }
 
-            e.SetWidthHeightAABB(
+            e.setWidthHeightAABB(
               this._AABB_ParticleMinWidth,
               this._AABB_ParticleMaxWidth,
               this._AABB_ParticleMinHeight,
@@ -1149,107 +1154,107 @@ var Emitter = Class(Entity, {
 
           // splatter
           if (!this._bypassSplatter) {
-            var splatterTemp = this.GetEmitterSplatter(curFrame);
-            var splatX = RandomBetween(-splatterTemp, splatterTemp);
-            var splatY = RandomBetween(-splatterTemp, splatterTemp);
+            let splatterTemp = this.getEmitterSplatter(curFrame);
+            let splatX = randomBetween(-splatterTemp, splatterTemp);
+            let splatY = randomBetween(-splatterTemp, splatterTemp);
 
             while (
-              GetDistance2D(0, 0, splatX, splatY) >= splatterTemp &&
+              getDistance2D(0, 0, splatX, splatY) >= splatterTemp &&
               splatterTemp > 0
             ) {
-              splatX = RandomBetween(-splatterTemp, splatterTemp);
-              splatY = RandomBetween(-splatterTemp, splatterTemp);
+              splatX = randomBetween(-splatterTemp, splatterTemp);
+              splatY = randomBetween(-splatterTemp, splatterTemp);
             }
 
-            if (this._z == 1 || e.IsRelative()) {
-              e.Move(splatX, splatY);
+            if (this._z == 1 || e.isRelative()) {
+              e.move(splatX, splatY);
             } else {
-              e.Move(splatX * this._z, splatY * this._z);
+              e.move(splatX * this._z, splatY * this._z);
             }
           }
 
           // rotation and direction of travel settings
-          e.MiniUpdate();
+          e.miniUpdate();
           if (
-            parentEffect.GetTraverseEdge() &&
-            parentEffect.GetClass() == TypeLine
+            parentEffect.getTraverseEdge() &&
+            parentEffect.getClass() == TypeLine
           ) {
-            e.SetDirectionLocked(true);
-            e.SetEntityDirection(90.0);
+            e.setDirectionLocked(true);
+            e.setEntityDirection(90.0);
           } else {
-            if (parentEffect.GetClass() != TypePoint) {
+            if (parentEffect.getClass() != TypePoint) {
               if (!this._bypassSpeed || this._angleType == AngAlign) {
-                e.SetEmissionAngle(
-                  this._currentEmissionAngle + RandomBetween(-er, er)
+                e.setEmissionAngle(
+                  this._currentEmissionAngle + randomBetween(-er, er)
                 );
-                switch (parentEffect.GetEmissionType()) {
+                switch (parentEffect.getEmissionType()) {
                   case EmInwards:
-                    if (e.IsRelative())
-                      e.SetEmissionAngle(
-                        e.GetEmissionAngle() +
-                          GetDirection(e.GetX(), e.GetY(), 0, 0)
+                    if (e.isRelative())
+                      e.setEmissionAngle(
+                        e.getEmissionAngle() +
+                          getDirection(e.getX(), e.getY(), 0, 0)
                       );
                     else
-                      e.SetEmissionAngle(
-                        e.GetEmissionAngle() +
-                          GetDirection(
-                            e.GetWX(),
-                            e.GetWY(),
-                            e.GetParent().GetWX(),
-                            e.GetParent().GetWY()
+                      e.setEmissionAngle(
+                        e.getEmissionAngle() +
+                          getDirection(
+                            e.getWX(),
+                            e.getWY(),
+                            e.getParent().getWX(),
+                            e.getParent().getWY()
                           )
                       );
                     break;
 
                   case EmOutwards:
-                    if (e.IsRelative())
-                      e.SetEmissionAngle(
-                        e.GetEmissionAngle() +
-                          GetDirection(0, 0, e.GetX(), e.GetY())
+                    if (e.isRelative())
+                      e.setEmissionAngle(
+                        e.getEmissionAngle() +
+                          getDirection(0, 0, e.getX(), e.getY())
                       );
                     else
-                      e.SetEmissionAngle(
-                        e.GetEmissionAngle() +
-                          GetDirection(
-                            e.GetParent().GetWX(),
-                            e.GetParent().GetWY(),
-                            e.GetWX(),
-                            e.GetWY()
+                      e.setEmissionAngle(
+                        e.getEmissionAngle() +
+                          getDirection(
+                            e.getParent().getWX(),
+                            e.getParent().getWY(),
+                            e.getWX(),
+                            e.getWY()
                           )
                       );
                     break;
 
                   case EmInAndOut:
                     if (this._dirAlternater) {
-                      if (e.IsRelative())
-                        e.SetEmissionAngle(
-                          e.GetEmissionAngle() +
-                            GetDirection(0, 0, e.GetX(), e.GetY())
+                      if (e.isRelative())
+                        e.setEmissionAngle(
+                          e.getEmissionAngle() +
+                            getDirection(0, 0, e.getX(), e.getY())
                         );
                       else
-                        e.SetEmissionAngle(
-                          e.GetEmissionAngle() +
-                            GetDirection(
-                              e.GetParent().GetWX(),
-                              e.GetParent().GetWY(),
-                              e.GetWX(),
-                              e.GetWY()
+                        e.setEmissionAngle(
+                          e.getEmissionAngle() +
+                            getDirection(
+                              e.getParent().getWX(),
+                              e.getParent().getWY(),
+                              e.getWX(),
+                              e.getWY()
                             )
                         );
                     } else {
-                      if (e.IsRelative())
-                        e.SetEmissionAngle(
-                          e.GetEmissionAngle() +
-                            GetDirection(e.GetX(), e.GetY(), 0, 0)
+                      if (e.isRelative())
+                        e.setEmissionAngle(
+                          e.getEmissionAngle() +
+                            getDirection(e.getX(), e.getY(), 0, 0)
                         );
                       else
-                        e.SetEmissionAngle(
-                          e.GetEmissionAngle() +
-                            GetDirection(
-                              e.GetWX(),
-                              e.GetWY(),
-                              e.GetParent().GetWX(),
-                              e.GetParent().GetWY()
+                        e.setEmissionAngle(
+                          e.getEmissionAngle() +
+                            getDirection(
+                              e.getWX(),
+                              e.getWY(),
+                              e.getParent().getWX(),
+                              e.getParent().getWY()
                             )
                         );
                     }
@@ -1262,32 +1267,32 @@ var Emitter = Class(Entity, {
                 }
               }
             } else {
-              e.SetEmissionAngle(
-                this._currentEmissionAngle + RandomBetween(-er, er)
+              e.setEmissionAngle(
+                this._currentEmissionAngle + randomBetween(-er, er)
               );
             }
 
             if (!this._bypassDirectionvariation) {
-              e.SetDirectionVairation(this._currentDirectionVariation);
-              var dv =
-                e.GetDirectionVariation() *
-                this.GetEmitterDirectionVariationOT(0);
-              e.SetEntityDirection(
-                e.GetEmissionAngle() +
-                  this.GetEmitterDirection(0) +
-                  RandomBetween(-dv, dv)
+              e.setDirectionVairation(this._currentDirectionVariation);
+              let dv =
+                e.getDirectionVariation() *
+                this.getEmitterDirectionVariationOt(0);
+              e.setEntityDirection(
+                e.getEmissionAngle() +
+                  this.getEmitterDirection(0) +
+                  randomBetween(-dv, dv)
               );
             } else {
-              e.SetEntityDirection(
-                e.GetEmissionAngle() + this.GetEmitterDirection(0)
+              e.setEntityDirection(
+                e.getEmissionAngle() + this.getEmitterDirection(0)
               );
             }
           }
 
           // ------ e._lockedAngle = _lockedAngle
           if (!this._bypassSpin) {
-            e.SetSpinVariation(
-              RandomBetween(
+            e.setSpinVariation(
+              randomBetween(
                 -this._currentSpinVariation,
                 this._currentSpinVariation
               ) + this._currentSpin
@@ -1296,16 +1301,16 @@ var Emitter = Class(Entity, {
 
           // weight
           if (!this._bypassWeight) {
-            e.SetWeight(this.GetEmitterWeight(0));
-            e.SetWeightVariation(
-              RandomBetween(
+            e.setWeight(this.getEmitterWeight(0));
+            e.setWeightVariation(
+              randomBetween(
                 -this._currentWeightVariation,
                 this._currentWeightVariation
               )
             );
-            e.SetBaseWeight(
-              (this._currentWeight + e.GetWeightVariation()) *
-                parentEffect.GetCurrentWeight()
+            e.setBaseWeight(
+              (this._currentWeight + e.getWeightVariation()) *
+                parentEffect.getCurrentWeight()
             );
           }
 
@@ -1314,52 +1319,52 @@ var Emitter = Class(Entity, {
             if (
               !this._bypassWeight &&
               !this._bypassSpeed &&
-              !parentEffect.IsBypassWeight()
+              !parentEffect.isBypassWeight()
             ) {
-              e.SetSpeedVecX(Math.sin((e.GetEntityDirection() / 180.0) * M_PI));
-              e.SetSpeedVecY(Math.cos((e.GetEntityDirection() / 180.0) * M_PI));
-              e.SetAngle(GetDirection(0, 0, e._speedVec.x, -e._speedVec.y));
+              e.setSpeedVecX(Math.sin((e.getEntityDirection() / 180.0) * M_PI));
+              e.setSpeedVecY(Math.cos((e.getEntityDirection() / 180.0) * M_PI));
+              e.setAngle(getDirection(0, 0, e._speedVec.x, -e._speedVec.y));
             } else {
-              if (parentEffect.GetTraverseEdge()) {
-                e.SetAngle(parentEffect.GetAngle() + this._angleOffset);
+              if (parentEffect.getTraverseEdge()) {
+                e.SetAngle(parentEffect.getAngle() + this._angleOffset);
               } else {
-                e.SetAngle(
-                  e.GetEntityDirection() + this._angle + this._angleOffset
+                e.setAngle(
+                  e.getEntityDirection() + this._angle + this._angleOffset
                 );
               }
             }
           } else {
             switch (this._angleType) {
               case AngAlign:
-                if (parentEffect.GetTraverseEdge())
-                  e.SetAngle(parentEffect.GetAngle() + this._angleOffset);
-                else e.SetAngle(e.GetEntityDirection() + this._angleOffset);
+                if (parentEffect.getTraverseEdge())
+                  e.setAngle(parentEffect.getAngle() + this._angleOffset);
+                else e.setAngle(e.getEntityDirection() + this._angleOffset);
                 break;
 
               case AngRandom:
-                e.SetAngle(Random(this._angleOffset));
+                e.setAngle(random(this._angleOffset));
                 break;
 
               case AngSpecify:
-                e.SetAngle(this._angleOffset);
+                e.setAngle(this._angleOffset);
                 break;
             }
           }
 
           // color settings
           if (this._randomColor) {
-            var randomAge = Random(this._cR.GetLastFrame());
-            e.SetRed(this.RandomizeR(e, randomAge));
-            e.SetGreen(this.RandomizeG(e, randomAge));
-            e.SetBlue(this.RandomizeB(e, randomAge));
+            let randomAge = random(this._cR.getLastFrame());
+            e.setRed(this.randomizeR(e, randomAge));
+            e.setGreen(this.randomizeG(e, randomAge));
+            e.setBlue(this.randomizeB(e, randomAge));
           } else {
-            e.SetRed(this.GetEmitterR(0));
-            e.SetGreen(this.GetEmitterG(0));
-            e.SetBlue(this.GetEmitterB(0));
+            e.setRed(this.getEmitterR(0));
+            e.setGreen(this.getEmitterG(0));
+            e.setBlue(this.getEmitterB(0));
           }
-          e.SetEntityAlpha(
-            e.GetEmitter().GetEmitterAlpha(e.GetAge(), e.GetLifeTime()) *
-              parentEffect.GetCurrentAlpha()
+          e.setEntityAlpha(
+            e.getEmitter().getEmitterAlpha(e.getAge(), e.getLifeTime()) *
+              parentEffect.getCurrentAlpha()
           );
 
           // blend mode
@@ -1368,55 +1373,55 @@ var Emitter = Class(Entity, {
           // animation and framerate
           e._animating = this._animate;
           e._animateOnce = this._once;
-          e._framerate = this.GetEmitterFramerate(0);
+          e._framerate = this.getEmitterFramerate(0);
           if (this._randomStartFrame)
-            e._currentFrame = Random(e._avatar.GetFramesCount());
+            e._currentFrame = random(e._avatar.getFramesCount());
           else e._currentFrame = this._currentFrame;
 
-          for (var i = 0; i < this._effects.length; i++) {
-            var newEffect = new Effect(this._effects[i], pm);
-            newEffect.SetParent(e);
-            newEffect.SetParentEmitter(this);
-            newEffect.SetEffectLayer(e._effectLayer);
+          for (let i = 0; i < this._effects.length; i++) {
+            let newEffect = new Effect(this._effects[i], pm);
+            newEffect.setParent(e);
+            newEffect.setParentEmitter(this);
+            newEffect.setEffectLayer(e._effectLayer);
           }
 
-          parentEffect.SetParticlesCreated(true);
+          parentEffect.setParticlesCreated(true);
 
           // get the relative angle
           if (!this._relative) {
-            var radians = (e._angle / 180.0) * M_PI;
-            e._matrix.Set(
+            let radians = (e._angle / 180.0) * M_PI;
+            e._matrix.set(
               Math.cos(radians),
               Math.sin(radians),
               -Math.sin(radians),
               Math.cos(radians)
             );
-            e._matrix.TransformSelf(this._parent.GetMatrix());
+            e._matrix.transformSelf(this._parent.getMatrix());
           }
-          e._relativeAngle = this._parent.GetRelativeAngle() + e._angle;
-          e.UpdateEntityRadius();
-          e.UpdateBoundingBox();
+          e._relativeAngle = this._parent.getRelativeAngle() + e._angle;
+          e.updateEntityRadius();
+          e.updateBoundingBox();
 
           // capture old values for tweening
-          e.Capture();
+          e.capture();
 
-          if (pm.onParticleSpawnCB) pm.onParticleSpawnCB(e);
+          if (pm.onParticleSpawnCB) pm.onParticleSpawnCb(e);
         }
       }
       this._counter -= intCounter;
     }
-  },
+  }
 
-  ControlParticle: function(e) {
-    var parentEffect = this._parentEffect;
-    var pm = parentEffect.GetParticleManager();
+  controlParticle(e) {
+    let parentEffect = this._parentEffect;
+    let pm = parentEffect.getParticleManager();
 
     // alpha change
     if (this._alphaRepeat > 1) {
-      e._rptAgeA += EffectsLibrary.GetCurrentUpdateTime() * this._alphaRepeat;
+      e._rptAgeA += EffectsLibrary.getCurrentUpdateTime() * this._alphaRepeat;
       e._alpha =
-        this.GetEmitterAlpha(e._rptAgeA, e._lifeTime) *
-        parentEffect.GetCurrentAlpha();
+        this.getEmitterAlpha(e._rptAgeA, e._lifeTime) *
+        parentEffect.getCurrentAlpha();
 
       if (e._rptAgeA > e._lifeTime && e._aCycles < this._alphaRepeat) {
         e._rptAgeA -= e._lifeTime;
@@ -1424,23 +1429,23 @@ var Emitter = Class(Entity, {
       }
     } else {
       e._alpha =
-        this.GetEmitterAlpha(e._age, e._lifeTime) *
-        parentEffect.GetCurrentAlpha();
+        this.getEmitterAlpha(e._age, e._lifeTime) *
+        parentEffect.getCurrentAlpha();
     }
 
     // angle changes
     if (this._lockedAngle && this._angleType == AngAlign) {
       if (e._directionLocked) {
-        e._angle = parentEffect.GetAngle() + this._angle + this._angleOffset;
+        e._angle = parentEffect.getAngle() + this._angle + this._angleOffset;
       } else {
         if (
-          (!this._bypassWeight && !parentEffect.IsBypassWeight()) ||
+          (!this._bypassWeight && !parentEffect.isBypassWeight()) ||
           e._direction
         ) {
           if (e._oldWX != e._wx && e._oldWY != e._wy) {
             if (e._relative)
-              e._angle = GetDirection(e._oldX, e._oldY, e._x, e._y);
-            else e._angle = GetDirection(e._oldWX, e._oldWY, e._wx, e._wy);
+              e._angle = getDirection(e._oldX, e._oldY, e._x, e._y);
+            else e._angle = getDirection(e._oldWX, e._oldWY, e._wx, e._wy);
 
             if (Math.abs(e._oldAngle - e._angle) > 180) {
               if (e._oldAngle > e._angle) e._oldAngle -= 360;
@@ -1454,29 +1459,29 @@ var Emitter = Class(Entity, {
     } else {
       if (!this._bypassSpin)
         e._angle +=
-          (this.GetEmitterSpin(e._age, e._lifeTime) *
+          (this.getEmitterSpin(e._age, e._lifeTime) *
             e._spinVariation *
-            parentEffect.GetCurrentSpin()) /
-          EffectsLibrary.GetCurrentUpdateTime();
+            parentEffect.getCurrentSpin()) /
+          EffectsLibrary.getCurrentUpdateTime();
     }
 
     // direction changes and motion randomness
     if (e._directionLocked) {
       e._direction = 90;
-      switch (parentEffect.GetClass()) {
+      switch (parentEffect.getClass()) {
         case TypeLine:
           if (parentEffect._distanceSetByLife) {
-            var life = e._age / e._lifeTime;
+            let life = e._age / e._lifeTime;
             e._x =
-              life * parentEffect.GetCurrentWidth() - parentEffect.GetHandleX();
+              life * parentEffect.getCurrentWidth() - parentEffect.getHandleX();
           } else {
             switch (parentEffect._endBehavior) {
               case EndKill:
                 if (
                   e._x >
-                    parentEffect.GetCurrentWidth() -
-                      parentEffect.GetHandleX() ||
-                  e._x < 0 - parentEffect.GetHandleX()
+                    parentEffect.getCurrentWidth() -
+                      parentEffect.getHandleX() ||
+                  e._x < 0 - parentEffect.getHandleX()
                 )
                   e._dead = 2;
                 break;
@@ -1484,17 +1489,17 @@ var Emitter = Class(Entity, {
               case EndLoopAround:
                 if (
                   e._x >
-                  parentEffect.GetCurrentWidth() - parentEffect.GetHandleX()
+                  parentEffect.getCurrentWidth() - parentEffect.getHandleX()
                 ) {
-                  e._x = -parentEffect.GetHandleX();
-                  e.MiniUpdate();
+                  e._x = -parentEffect.getHandleX();
+                  e.miniUpdate();
                   e._oldX = e._x;
                   e._oldWX = e._wx;
                   e._oldWY = e._wy;
-                } else if (e._x < 0 - parentEffect.GetHandleX()) {
+                } else if (e._x < 0 - parentEffect.getHandleX()) {
                   e._x =
-                    parentEffect.GetCurrentWidth() - parentEffect.GetHandleX();
-                  e.MiniUpdate();
+                    parentEffect.getCurrentWidth() - parentEffect.getHandleX();
+                  e.miniUpdate();
                   e._oldX = e._x;
                   e._oldWX = e._wx;
                   e._oldWY = e._wy;
@@ -1505,37 +1510,37 @@ var Emitter = Class(Entity, {
       }
     } else {
       if (!this._bypassDirectionvariation) {
-        var dv =
+        let dv =
           e._directionVariation *
-          this.GetEmitterDirectionVariationOT(e._age, e._lifeTime);
-        e._timeTracker += EffectsLibrary.GetUpdateTime();
+          this.getEmitterDirectionVariationOt(e._age, e._lifeTime);
+        e._timeTracker += EffectsLibrary.getUpdateTime();
         if (e._timeTracker > EffectsLibrary.motionVariationInterval) {
           e._randomDirection +=
-            EffectsLibrary.maxDirectionVariation * RandomBetween(-dv, dv);
+            EffectsLibrary.maxDirectionVariation * randomBetween(-dv, dv);
           e._randomSpeed +=
-            EffectsLibrary.maxVelocityVariation * RandomBetween(-dv, dv);
+            EffectsLibrary.maxVelocityVariation * randomBetween(-dv, dv);
           e._timeTracker = 0;
         }
       }
       e._direction =
         e._emissionAngle +
-        this.GetEmitterDirection(e._age, e._lifeTime) +
+        this.getEmitterDirection(e._age, e._lifeTime) +
         e._randomDirection;
     }
 
     // size changes
     if (!this._bypassScaleX) {
       e._scaleX =
-        (this.GetEmitterScaleX(e._age, e._lifeTime) * e._gSizeX * e._width) /
-        this._image.GetWidth();
+        (this.getEmitterScaleX(e._age, e._lifeTime) * e._gSizeX * e._width) /
+        this._image.getWidth();
     }
     if (this._uniform) {
       if (!this._bypassScaleX) e._scaleY = e._scaleX;
     } else {
       if (!this._bypassScaleY) {
         e._scaleY =
-          (this.GetEmitterScaleY(e._age, e._lifeTime) * e._gSizeY * e._height) /
-          this._image.GetHeight();
+          (this.getEmitterScaleY(e._age, e._lifeTime) * e._gSizeY * e._height) /
+          this._image.getHeight();
       }
     }
 
@@ -1544,18 +1549,18 @@ var Emitter = Class(Entity, {
       if (!this._randomColor) {
         if (this._colorRepeat > 1) {
           e._rptAgeC +=
-            EffectsLibrary.GetCurrentUpdateTime() * this._colorRepeat;
-          e._red = this.GetEmitterR(e._rptAgeC, e._lifeTime);
-          e._green = this.GetEmitterG(e._rptAgeC, e._lifeTime);
-          e._blue = this.GetEmitterB(e._rptAgeC, e._lifeTime);
+            EffectsLibrary.getCurrentUpdateTime() * this._colorRepeat;
+          e._red = this.getEmitterR(e._rptAgeC, e._lifeTime);
+          e._green = this.getEmitterG(e._rptAgeC, e._lifeTime);
+          e._blue = this.getEmitterB(e._rptAgeC, e._lifeTime);
           if (e._rptAgeC > e._lifeTime && e._cCycles < this._colorRepeat) {
             e._rptAgeC -= e._lifeTime;
             ++e._cCycles;
           }
         } else {
-          e._red = this.GetEmitterR(e._age, e._lifeTime);
-          e._green = this.GetEmitterG(e._age, e._lifeTime);
-          e._blue = this.GetEmitterB(e._age, e._lifeTime);
+          e._red = this.getEmitterR(e._age, e._lifeTime);
+          e._green = this.getEmitterG(e._age, e._lifeTime);
+          e._blue = this.getEmitterB(e._age, e._lifeTime);
         }
       }
     }
@@ -1563,15 +1568,15 @@ var Emitter = Class(Entity, {
     // animation
     if (!this._bypassFramerate)
       e._framerate =
-        this.GetEmitterFramerate(e._age, e._lifeTime) *
+        this.getEmitterFramerate(e._age, e._lifeTime) *
         this._animationDirection;
 
     // speed changes
     if (!this._bypassSpeed) {
       e._speed =
-        this.GetEmitterVelocity(e._age, e._lifeTime) *
+        this.getEmitterVelocity(e._age, e._lifeTime) *
         e._baseSpeed *
-        this.GetEmitterGlobalVelocity(parentEffect.GetCurrentEffectFrame());
+        this.getEmitterGlobalVelocity(parentEffect.getCurrentEffectFrame());
       e._speed += e._randomSpeed;
     } else {
       e._speed = e._randomSpeed;
@@ -1579,11 +1584,11 @@ var Emitter = Class(Entity, {
 
     // stretch
     if (!this._bypassStretch) {
-      if (!this._bypassWeight && !parentEffect.IsBypassWeight()) {
+      if (!this._bypassWeight && !parentEffect.isBypassWeight()) {
         if (e._speed !== 0) {
-          e._speedVec.x = e._speedVec.x / EffectsLibrary.GetCurrentUpdateTime();
+          e._speedVec.x = e._speedVec.x / EffectsLibrary.getCurrentUpdateTime();
           e._speedVec.y =
-            e._speedVec.y / EffectsLibrary.GetCurrentUpdateTime() - e._gravity;
+            e._speedVec.y / EffectsLibrary.getCurrentUpdateTime() - e._gravity;
         } else {
           e._speedVec.x = 0;
           e._speedVec.y = -e._gravity;
@@ -1591,41 +1596,41 @@ var Emitter = Class(Entity, {
 
         if (this._uniform)
           e._scaleY =
-            (this.GetEmitterScaleX(e._age, e._lifeTime) *
+            (this.getEmitterScaleX(e._age, e._lifeTime) *
               e._gSizeX *
               (e._width +
                 Math.abs(e._speed) *
-                  this.GetEmitterStretch(e._age, e._lifeTime) *
-                  parentEffect.GetCurrentStretch())) /
-            this._image.GetWidth();
+                  this.getEmitterStretch(e._age, e._lifeTime) *
+                  parentEffect.getCurrentStretch())) /
+            this._image.getWidth();
         else
           e._scaleY =
-            (this.GetEmitterScaleY(e._age, e._lifeTime) *
+            (this.getEmitterScaleY(e._age, e._lifeTime) *
               e._gSizeY *
               (e._height +
                 Math.abs(e._speed) *
-                  this.GetEmitterStretch(e._age, e._lifeTime) *
-                  parentEffect.GetCurrentStretch())) /
-            this._image.GetHeight();
+                  this.getEmitterStretch(e._age, e._lifeTime) *
+                  parentEffect.getCurrentStretch())) /
+            this._image.getHeight();
       } else {
         if (this._uniform)
           e._scaleY =
-            (this.GetEmitterScaleX(e._age, e._lifeTime) *
+            (this.getEmitterScaleX(e._age, e._lifeTime) *
               e._gSizeX *
               (e._width +
                 Math.abs(e._speed) *
-                  this.GetEmitterStretch(e._age, e._lifeTime) *
-                  parentEffect.GetCurrentStretch())) /
-            this._image.GetWidth();
+                  this.getEmitterStretch(e._age, e._lifeTime) *
+                  parentEffect.getCurrentStretch())) /
+            this._image.getWidth();
         else
           e._scaleY =
-            (this.GetEmitterScaleY(e._age, e._lifeTime) *
+            (this.getEmitterScaleY(e._age, e._lifeTime) *
               e._gSizeY *
               (e._height +
                 Math.abs(e._speed) *
-                  this.GetEmitterStretch(e._age, e._lifeTime) *
-                  parentEffect.GetCurrentStretch())) /
-            this._image.GetHeight();
+                  this.getEmitterStretch(e._age, e._lifeTime) *
+                  parentEffect.getCurrentStretch())) /
+            this._image.getHeight();
       }
 
       if (e._scaleY < e._scaleX) e._scaleY = e._scaleX;
@@ -1633,27 +1638,22 @@ var Emitter = Class(Entity, {
 
     // weight changes
     if (!this._bypassWeight)
-      e._weight = this.GetEmitterWeight(e._age, e._lifeTime) * e._baseWeight;
-  },
+      e._weight = this.getEmitterWeight(e._age, e._lifeTime) * e._baseWeight;
+  }
 
-  RandomizeR: function(e, randomAge) {
-    return this._cR.GetOT(randomAge, e.GetLifeTime(), false);
-  },
+  randomizeR(e, randomAge) {
+    return this._cR.getOt(randomAge, e.getLifeTime(), false);
+  }
 
-  RandomizeG: function(e, randomAge) {
-    return this._cG.GetOT(randomAge, e.GetLifeTime(), false);
-  },
+  randomizeG(e, randomAge) {
+    return this._cG.getOt(randomAge, e.getLifeTime(), false);
+  }
 
-  RandomizeB: function(e, randomAge) {
-    return this._cB.GetOT(randomAge, e.GetLifeTime(), false);
-  },
+  randomizeB(e, randomAge) {
+    return this._cB.getOt(randomAge, e.getLifeTime(), false);
+  }
 
-  DrawCurrentFrame: function(
-    x /*= 0*/,
-    y /*= 0*/,
-    w /*= 128.0*/,
-    h /*= 128.0*/
-  ) {
+  drawCurrentFrame(x /*= 0*/, y /*= 0*/, w /*= 128.0*/, h /*= 128.0*/) {
     if (this._image) {
       /*
       SetAlpha(1.0);
@@ -1664,159 +1664,159 @@ var Emitter = Class(Entity, {
       _image.Draw(x, y, _frame);
       */
     }
-  },
+  }
 
-  CompileAll: function() {
+  compileAll() {
     // base
-    this._cLife.Compile();
-    this._cLifeVariation.Compile();
-    this._cAmount.Compile();
-    this._cSizeX.Compile();
-    this._cSizeY.Compile();
-    this._cBaseSpeed.Compile();
-    this._cBaseWeight.Compile();
-    this._cBaseSpin.Compile();
-    this._cEmissionAngle.Compile();
-    this._cEmissionRange.Compile();
-    this._cSplatter.Compile();
-    this._cVelVariation.Compile();
-    this._cWeightVariation.Compile();
-    this._cAmountVariation.Compile();
-    this._cSizeXVariation.Compile();
-    this._cSizeYVariation.Compile();
-    this._cSpinVariation.Compile();
-    this._cDirectionVariation.Compile();
+    this._cLife.compile();
+    this._cLifeVariation.compile();
+    this._cAmount.compile();
+    this._cSizeX.compile();
+    this._cSizeY.compile();
+    this._cBaseSpeed.compile();
+    this._cBaseWeight.compile();
+    this._cBaseSpin.compile();
+    this._cEmissionAngle.compile();
+    this._cEmissionRange.compile();
+    this._cSplatter.compile();
+    this._cVelVariation.compile();
+    this._cWeightVariation.compile();
+    this._cAmountVariation.compile();
+    this._cSizeXVariation.compile();
+    this._cSizeYVariation.compile();
+    this._cSpinVariation.compile();
+    this._cDirectionVariation.compile();
     // over lifetime
-    var longestLife = this.GetLongestLife();
-    this._cAlpha.CompileOT(longestLife);
-    this._cR.CompileOT(longestLife);
-    this._cG.CompileOT(longestLife);
-    this._cB.CompileOT(longestLife);
-    this._cScaleX.CompileOT(longestLife);
-    this._cScaleY.CompileOT(longestLife);
-    this._cSpin.CompileOT(longestLife);
-    this._cVelocity.CompileOT(longestLife);
-    this._cWeight.CompileOT(longestLife);
-    this._cDirection.CompileOT(longestLife);
-    this._cDirectionVariationOT.CompileOT(longestLife);
-    this._cFramerate.CompileOT(longestLife);
-    this._cStretch.CompileOT(longestLife);
+    let longestLife = this.getLongestLife();
+    this._cAlpha.compileOt(longestLife);
+    this._cR.compileOt(longestLife);
+    this._cG.compileOt(longestLife);
+    this._cB.compileOt(longestLife);
+    this._cScaleX.compileOt(longestLife);
+    this._cScaleY.compileOt(longestLife);
+    this._cSpin.compileOt(longestLife);
+    this._cVelocity.compileOt(longestLife);
+    this._cWeight.compileOt(longestLife);
+    this._cDirection.compileOt(longestLife);
+    this._cDirectionVariationOT.compileOt(longestLife);
+    this._cFramerate.compileOt(longestLife);
+    this._cStretch.compileOt(longestLife);
     // global adjusters
-    this._cGlobalVelocity.Compile();
+    this._cGlobalVelocity.compile();
 
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].CompileAll();
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].compileAll();
     }
 
-    this.AnalyseEmitter();
-  },
+    this.analyseEmitter();
+  }
 
-  CompileQuick: function() {
-    var longestLife = this.GetLongestLife();
+  compileQuick() {
+    let longestLife = this.getLongestLife();
 
-    this._cAlpha.Clear(1);
-    this._cAlpha.SetCompiled(0, this.GetEmitterAlpha(0, longestLife));
+    this._cAlpha.clear(1);
+    this._cAlpha.setCompiled(0, this.getEmitterAlpha(0, longestLife));
 
-    this._cR.Clear(1);
-    this._cG.Clear(1);
-    this._cB.Clear(1);
-    this._cR.SetCompiled(0, this.GetEmitterR(0, longestLife));
-    this._cG.SetCompiled(0, this.GetEmitterG(0, longestLife));
-    this._cB.SetCompiled(0, this.GetEmitterB(0, longestLife));
+    this._cR.clear(1);
+    this._cG.clear(1);
+    this._cB.clear(1);
+    this._cR.setCompiled(0, this.GetEmitterR(0, longestLife));
+    this._cG.setCompiled(0, this.GetEmitterG(0, longestLife));
+    this._cB.setCompiled(0, this.GetEmitterB(0, longestLife));
 
-    this._cScaleX.Clear(1);
-    this._cScaleY.Clear(1);
+    this._cScaleX.clear(1);
+    this._cScaleY.clear(1);
     this._cScaleX.SetCompiled(0, this.GetEmitterScaleX(0, longestLife));
     this._cScaleY.SetCompiled(0, this.GetEmitterScaleY(0, longestLife));
 
-    this._cVelocity.Clear(1);
+    this._cVelocity.clear(1);
     this._cVelocity.SetCompiled(0, this.GetEmitterVelocity(0, longestLife));
 
-    this._cWeight.Clear(1);
+    this._cWeight.clear(1);
     this._cWeight.SetCompiled(0, this.GetEmitterWeight(0, longestLife));
 
-    this._cDirection.Clear(1);
+    this._cDirection.clear(1);
     this._cDirection.SetCompiled(0, this.GetEmitterDirection(0, longestLife));
 
-    this._cDirectionVariationOT.Clear(1);
+    this._cDirectionVariationOT.clear(1);
     this._cDirectionVariationOT.SetCompiled(
       0,
       this.GetEmitterDirectionVariationOT(0, longestLife)
     );
 
-    this._cFramerate.Clear(1);
+    this._cFramerate.clear(1);
     this._cFramerate.SetCompiled(0, this.GetEmitterFramerate(0, longestLife));
 
-    this._cStretch.Clear(1);
+    this._cStretch.clear(1);
     this._cStretch.SetCompiled(0, this.GetEmitterStretch(0, longestLife));
 
-    this._cSplatter.Clear(1);
+    this._cSplatter.clear(1);
     this._cSplatter.SetCompiled(0, this.GetEmitterSplatter(0));
-  },
+  }
 
-  AnalyseEmitter: function() {
-    this.ResetBypassers();
+  analyseEmitter() {
+    this.resetBypassers();
 
     if (
-      !this._cLifeVariation.GetLastFrame() &&
-      !this.GetEmitterLifeVariation(0)
+      !this._cLifeVariation.getLastFrame() &&
+      !this.getEmitterLifeVariation(0)
     )
       this._bypassLifeVariation = true;
 
-    if (!this.GetEmitterStretch(0, 1.0)) this._bypassStretch = true;
+    if (!this.getEmitterStretch(0, 1.0)) this._bypassStretch = true;
 
-    if (!this._cFramerate.GetLastFrame() && !this.GetEmitterSplatter(0))
+    if (!this._cFramerate.getLastFrame() && !this.getEmitterSplatter(0))
       this._bypassFramerate = true;
 
-    if (!this._cSplatter.GetLastFrame() && !this._cSplatter.Get(0))
+    if (!this._cSplatter.getLastFrame() && !this._cSplatter.get(0))
       this._bypassSplatter = true;
 
     if (
-      !this._cBaseWeight.GetLastFrame() &&
-      !this._cWeightVariation.GetLastFrame() &&
-      !this.GetEmitterBaseWeight(0) &&
-      !this.GetEmitterWeightVariation(0)
+      !this._cBaseWeight.getLastFrame() &&
+      !this._cWeightVariation.getLastFrame() &&
+      !this.getEmitterBaseWeight(0) &&
+      !this.getEmitterWeightVariation(0)
     )
       this._bypassWeight = true;
 
-    if (!this._cWeight.GetLastFrame() && !this._cWeight.Get(0))
+    if (!this._cWeight.getLastFrame() && !this._cWeight.Get(0))
       this._bypassWeight = true;
 
     if (
-      !this._cBaseSpeed.GetLastFrame() &&
-      !this._cVelVariation.GetLastFrame() &&
-      !this.GetEmitterBaseSpeed(0) &&
-      !this.GetEmitterVelVariation(0)
+      !this._cBaseSpeed.getLastFrame() &&
+      !this._cVelVariation.getLastFrame() &&
+      !this.getEmitterBaseSpeed(0) &&
+      !this.getEmitterVelVariation(0)
     )
       this._bypassSpeed = true;
 
     if (
-      !this._cBaseSpin.GetLastFrame() &&
-      !this._cSpinVariation.GetLastFrame() &&
-      !this.GetEmitterBaseSpin(0) &&
-      !this.GetEmitterSpinVariation(0)
+      !this._cBaseSpin.getLastFrame() &&
+      !this._cSpinVariation.getLastFrame() &&
+      !this.getEmitterBaseSpin(0) &&
+      !this.getEmitterSpinVariation(0)
     )
       this._bypassSpin = true;
 
     if (
-      !this._cDirectionVariation.GetLastFrame() &&
-      !this.GetEmitterDirectionVariation(0)
+      !this._cDirectionVariation.getLastFrame() &&
+      !this.getEmitterDirectionVariation(0)
     )
       this._bypassDirectionvariation = true;
 
-    if (this._cR.GetAttributesCount() <= 1) {
-      this._bRed = this.GetEmitterR(0, 1.0) !== 0;
-      this._bGreen = this.GetEmitterG(0, 1.0) !== 0;
-      this._bBlue = this.GetEmitterB(0, 1.0) !== 0;
+    if (this._cR.getAttributesCount() <= 1) {
+      this._bRed = this.getEmitterR(0, 1.0) !== 0;
+      this._bGreen = this.getEmitterG(0, 1.0) !== 0;
+      this._bBlue = this.getEmitterB(0, 1.0) !== 0;
       this._bypassColor = true;
     }
 
-    if (this._cScaleX.GetAttributesCount() <= 1) this._bypassScaleX = true;
+    if (this._cScaleX.getAttributesCount() <= 1) this._bypassScaleX = true;
 
-    if (this._cScaleY.GetAttributesCount() <= 1) this._bypassScaleY = true;
-  },
+    if (this._cScaleY.getAttributesCount() <= 1) this._bypassScaleY = true;
+  }
 
-  ResetBypassers: function() {
+  resetBypassers() {
     this._bypassWeight = false;
     this._bypassSpeed = false;
     this._bypassSpin = false;
@@ -1831,163 +1831,165 @@ var Emitter = Class(Entity, {
     this._bypassFramerate = false;
     this._bypassStretch = false;
     this._bypassSplatter = false;
-  },
+  }
 
-  GetLongestLife: function() {
-    var longestLife =
-      (this._cLifeVariation.GetMaxValue() + this._cLife.GetMaxValue()) *
-      this._parentEffect.GetLifeMaxValue();
+  getLongestLife() {
+    let longestLife =
+      (this._cLifeVariation.getMaxValue() + this._cLife.getMaxValue()) *
+      this._parentEffect.getLifeMaxValue();
 
     return longestLife;
     // No idea what units we're supposed to be using here
     // return this._parentEffect.GetLifeMaxValue();
-  },
+  }
 
-  GetEmitterLife: function(frame) {
-    return this._cLife.Get(frame);
-  },
+  getEmitterLife(frame) {
+    return this._cLife.get(frame);
+  }
 
-  GetEmitterLifeVariation: function(frame) {
-    return this._cLifeVariation.Get(frame);
-  },
+  getEmitterLifeVariation(frame) {
+    return this._cLifeVariation.get(frame);
+  }
 
-  GetEmitterAmount: function(frame) {
-    return this._cAmount.Get(frame);
-  },
+  getEmitterAmount(frame) {
+    return this._cAmount.get(frame);
+  }
 
-  GetEmitterSizeX: function(frame) {
-    return this._cSizeX.Get(frame);
-  },
+  getEmitterSizeX(frame) {
+    return this._cSizeX.get(frame);
+  }
 
-  GetEmitterSizeY: function(frame) {
-    return this._cSizeY.Get(frame);
-  },
+  getEmitterSizeY(frame) {
+    return this._cSizeY.get(frame);
+  }
 
-  GetEmitterBaseSpeed: function(frame) {
-    return this._cBaseSpeed.Get(frame);
-  },
+  getEmitterBaseSpeed(frame) {
+    return this._cBaseSpeed.get(frame);
+  }
 
-  GetEmitterBaseWeight: function(frame) {
-    return this._cBaseWeight.Get(frame);
-  },
+  getEmitterBaseWeight(frame) {
+    return this._cBaseWeight.get(frame);
+  }
 
-  GetEmitterBaseSpin: function(frame) {
-    return this._cBaseSpin.Get(frame);
-  },
+  getEmitterBaseSpin(frame) {
+    return this._cBaseSpin.get(frame);
+  }
 
-  GetEmitterEmissionAngle: function(frame) {
-    return this._cEmissionAngle.Get(frame);
-  },
+  getEmitterEmissionAngle(frame) {
+    return this._cEmissionAngle.get(frame);
+  }
 
-  GetEmitterEmissionRange: function(frame) {
-    return this._cEmissionRange.Get(frame);
-  },
+  getEmitterEmissionRange(frame) {
+    return this._cEmissionRange.get(frame);
+  }
 
-  GetEmitterSplatter: function(frame) {
-    return this._cSplatter.Get(frame);
-  },
+  getEmitterSplatter(frame) {
+    return this._cSplatter.get(frame);
+  }
 
-  GetEmitterVelVariation: function(frame) {
-    return this._cVelVariation.Get(frame);
-  },
+  getEmitterVelVariation(frame) {
+    return this._cVelVariation.get(frame);
+  }
 
-  GetEmitterWeightVariation: function(frame) {
-    return this._cWeightVariation.Get(frame);
-  },
+  getEmitterWeightVariation(frame) {
+    return this._cWeightVariation.get(frame);
+  }
 
-  GetEmitterAmountVariation: function(frame) {
-    return this._cAmountVariation.Get(frame);
-  },
+  getEmitterAmountVariation(frame) {
+    return this._cAmountVariation.get(frame);
+  }
 
-  GetEmitterSizeXVariation: function(frame) {
-    return this._cSizeXVariation.Get(frame);
-  },
+  getEmitterSizeXVariation(frame) {
+    return this._cSizeXVariation.get(frame);
+  }
 
-  GetEmitterSizeYVariation: function(frame) {
-    return this._cSizeYVariation.Get(frame);
-  },
+  getEmitterSizeYVariation(frame) {
+    return this._cSizeYVariation.get(frame);
+  }
 
-  GetEmitterSpinVariation: function(frame) {
-    return this._cSpinVariation.Get(frame);
-  },
+  getEmitterSpinVariation(frame) {
+    return this._cSpinVariation.get(frame);
+  }
 
-  GetEmitterDirectionVariation: function(frame) {
-    return this._cDirectionVariation.Get(frame);
-  },
+  getEmitterDirectionVariation(frame) {
+    return this._cDirectionVariation.get(frame);
+  }
 
-  GetEmitterAlpha: function(age, lifetime) {
-    return this._cAlpha.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterAlpha(age, lifetime) {
+    return this._cAlpha.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterR: function(age, lifetime) {
-    return this._cR.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterR(age, lifetime) {
+    return this._cR.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterG: function(age, lifetime) {
-    return this._cG.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterG(age, lifetime) {
+    return this._cG.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterB: function(age, lifetime) {
-    return this._cB.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterB(age, lifetime) {
+    return this._cB.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterScaleX: function(age, lifetime) {
-    return this._cScaleX.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterScaleX(age, lifetime) {
+    return this._cScaleX.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterScaleY: function(age, lifetime) {
-    return this._cScaleY.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterScaleY(age, lifetime) {
+    return this._cScaleY.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterSpin: function(age, lifetime) {
-    return this._cSpin.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterSpin(age, lifetime) {
+    return this._cSpin.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterVelocity: function(age, lifetime) {
-    return this._cVelocity.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterVelocity(age, lifetime) {
+    return this._cVelocity.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterWeight: function(age, lifetime) {
-    return this._cWeight.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterWeight(age, lifetime) {
+    return this._cWeight.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterDirection: function(age, lifetime) {
-    return this._cDirection.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterDirection(age, lifetime) {
+    return this._cDirection.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterDirectionVariationOT: function(age, lifetime) {
-    return this._cDirectionVariationOT.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterDirectionVariationOt(age, lifetime) {
+    return this._cDirectionVariationOT.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterFramerate: function(age, lifetime) {
-    return this._cFramerate.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterFramerate(age, lifetime) {
+    return this._cFramerate.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterStretch: function(age, lifetime) {
-    return this._cStretch.GetOT(age, GetDefaultArg(lifetime, 0));
-  },
+  getEmitterStretch(age, lifetime) {
+    return this._cStretch.getOt(age, getDefaultArg(lifetime, 0));
+  }
 
-  GetEmitterGlobalVelocity: function(frame) {
-    return this._cGlobalVelocity.Get(frame);
-  },
+  getEmitterGlobalVelocity(frame) {
+    return this._cGlobalVelocity.get(frame);
+  }
 
-  GetEffects: function() {
+  getEffects() {
     return this._effects;
-  },
+  }
 
-  IsDying: function() {
+  isDying() {
     return this._dying;
-  },
+  }
 
-  SetPath: function(path) {
+  setPath(path) {
     this._path = path;
-  },
+  }
 
-  GetImages: function(images) {
+  getImages(images) {
     if (this._image) images[this._image._index] = this._image;
 
-    for (var i = 0; i < this._effects.length; i++) {
-      this._effects[i].GetImages(images);
+    for (let i = 0; i < this._effects.length; i++) {
+      this._effects[i].getImages(images);
     }
   }
-});
+}
+
+export default Emitter;

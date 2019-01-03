@@ -8,7 +8,7 @@ export function removeFromList(array, elem) {
 export const M_PI = 3.14159265358979323846;
 
 export function stripFilePath(filename) {
-  var index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
+  let index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
   return filename.substring(index + 1);
 }
 
@@ -84,13 +84,13 @@ function getNodeAttrValue(elem, attrName) {
 }
 
 function forEachInXMLNodeList(nodelist, fn) {
-  for (var i = 0; i < nodelist.length; i++) {
+  for (let i = 0; i < nodelist.length; i++) {
     fn(nodelist[i]);
   }
 }
 
 function forEachXMLChild(xmlNode, tag, fn) {
-  var nodelist = xmlNode.getElementsByTagName(tag);
+  let nodelist = xmlNode.getElementsByTagName(tag);
   for (var i = 0; i < nodelist.length; i++) {
     if (nodelist[i].parentElement == xmlNode) fn(nodelist[i]);
   }
@@ -111,7 +111,7 @@ export function lerp(a, b, fract) {
 export const g_randomSeed = 17;
 
 export function randomUnit() {
-  var x = Math.sin(g_randomSeed++) * 10000;
+  let x = Math.sin(this.g_randomSeed++) * 10000;
   return x - Math.floor(x);
 }
 
@@ -127,7 +127,7 @@ export function getDistance2D(fromx, fromy, tox, toy) /* ,false=false */ {
   w = tox - fromx;
   h = toy - fromy;
 
-  // if (GetDefaultArg(fast, false)) return w * w + h * h;
+  if (GetDefaultArg(fast, false)) return w * w + h * h;
   else return Math.sqrt(w * w + h * h);
 }
 
@@ -145,12 +145,15 @@ export function getDirection(fromx, fromy, tox, toy) {
 }
 
 export function loadXMLDoc(filename) {
-  if (window.XMLHttpRequest) {
-    xhttp = new XMLHttpRequest();
-  } // code for IE5 and IE6
-  else {
-    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
+
+  let xhttp = new XMLHttpRequest();
+
+  // if (window.XMLHttpRequest) {
+  //   xhttp = new XMLHttpRequest();
+  // } // code for IE5 and IE6
+  // else {
+  //   xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  // }
   xhttp.open("GET", filename, false);
   xhttp.send();
   return xhttp.responseXML;
