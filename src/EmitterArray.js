@@ -1,4 +1,5 @@
 import EffectsLibrary from "./EffectsLibrary";
+import AttributeNode from "./AttributeNode";
 
 class EmitterArray {
   constructor(min, max) {
