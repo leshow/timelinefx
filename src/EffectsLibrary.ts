@@ -1,8 +1,9 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
+import Emitter from "./Emitter";
 
 class EffectsLibrary {
-  static instance;
+  static instance: EffectsLibrary;
 
   static c_particleLimit = 5000;
 
@@ -75,10 +76,15 @@ class EffectsLibrary {
   static motionVariationInterval = 30;
 
   //
-  _lookupFrequency;
-  _updateTime;
-  _lookupFrequencyOverTime;
-  _updateFrequency;
+  _lookupFrequency: boolean | undefined;
+  _updateTime: boolean | undefined;
+  _lookupFrequencyOverTime: number | undefined;
+  _updateFrequency: number | undefined;
+  _shapeList: Array<unknown> = [];
+  _name: string = "";
+  _effects: Array<Effect> = [];
+  _emitters: Array<Emitter> = [];
+  m_currentFolder: string | null = null;
 
   constructor() {
     if (!EffectsLibrary.instance) {
@@ -94,7 +100,7 @@ class EffectsLibrary {
     this.clearAll();
   }
 
-  load(xml) {
+  load(xml: any) {
     //  console.log(xml);
     // Only allow loading one library
     this.clearAll();
@@ -114,7 +120,7 @@ class EffectsLibrary {
     this.loadEffectElements(xml.getElementsByTagName("EFFECTS")[0].children);
   }
 
-  loadEffectElements(effects) {
+  loadEffectElements(effects: Array<any>) {
     for (let i = 0; i < effects.length; i++) {
       if (effects[i].tagName === "FOLDER") {
         this.loadEffectElements(effects[i].children);
@@ -124,8 +130,6 @@ class EffectsLibrary {
 
         this.addEffect(e);
       }
-      //console.log(effects[i].tagName);
-      //console.log(effects[i].attributes.getNamedItem("NAME").nodeValue);
     }
   }
 

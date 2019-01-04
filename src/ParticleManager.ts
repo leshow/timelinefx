@@ -1,18 +1,76 @@
 import { fmod, toHex, lerp, removeFromList } from "./Utils";
 // import { DrawSprite } from "./index";
 import EffectsLibrary from "./EffectsLibrary";
+import Effect from "./Effect";
+import Emitter from "./Emitter";
 import Particle from "./Particle";
+
+type SpriteFn = (
+  p: Particle,
+  sprite: any,
+  px: number,
+  py: number,
+  tv: number,
+  x: number,
+  y: number,
+  rotation: number,
+  scaleX: number,
+  scaleY: number,
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+  blendMode: number
+) => void;
 
 class ParticleManager {
   static c_particleLimit = 5000;
-  _drawSprite;
+  _drawSprite: SpriteFn;
+  onParticleSpawnCB: ((p: Particle) => void) | null;
+  onParticleKilledCB: ((p: Particle) => void) | null;
+
+  _originX: number;
+  _originY: number;
+  _originZ: number;
+  _oldOriginX: number;
+  _oldOriginY: number;
+  _oldOriginZ: number;
+  _angle: number;
+  _oldAngle: number;
+  _vpW: number;
+  _vpH: number;
+  _vpX: number;
+  _vpY: number;
+  _centerX: number;
+  _centerY: number;
+  _angleTweened: number;
+  _globalAmountScale: number;
+  _camtx: number;
+  _camty: number;
+  _camtz: number;
+  _spawningAllowed: boolean;
+  _testCount: number;
+  _paused: boolean;
+  _currentTime: number;
+  _currentTick: number;
+  _idleTimeLimit: number;
+  _renderCount: number;
+  _currentTween: number;
+  _effectLayers: number;
+  _inUseCount = 0;
+  _inUse: Array<Particle>;
+  _effects: Array<Array<Effect>>;
+
+  _unused: Array<Particle>;
 
   constructor(
-    drawSprite,
+    drawSprite: SpriteFn,
     particles = ParticleManager.c_particleLimit,
     layers = 1
   ) {
     this._drawSprite = drawSprite;
+    this.onParticleSpawnCB = null;
+    this.onParticleKilledCB = null;
     this._effectLayers = layers;
 
     this._originX = 0;
@@ -69,7 +127,7 @@ class ParticleManager {
 
     this._unused = [];
     for (let c = 0; c < particles; ++c) {
-      let p = new Particle();
+      const p = new Particle();
       p.setOKtoRender(false);
       this._unused.push(p);
     }
@@ -81,7 +139,7 @@ class ParticleManager {
       this._currentTick++;
 
       for (let i = 0; i < this._effectLayers; i++) {
-        let list = this._effects[i];
+        const list = this._effects[i];
         for (let j = 0; j < list.length; j++) {
           if (!list[j].update()) {
             list.splice(j, 1);
@@ -96,9 +154,9 @@ class ParticleManager {
     }
   }
 
-  grabParticle(effect, pool, layer = 0) {
+  grabParticle(effect: Effect, pool: boolean, layer: number = 0) {
     if (this._unused.length > 0) {
-      let p = this._unused.pop();
+      const p = this._unused.pop();
 
       p.setLayer(layer);
       p.setGroupParticles(pool);
@@ -114,18 +172,18 @@ class ParticleManager {
     return null;
   }
 
-  releaseParticle(p) {
+  releaseParticle(p: Particle) {
     if (this.onParticleKilledCB) this.onParticleKilledCB(p);
 
     this._inUseCount--;
     this._unused.push(p);
     if (!p.isGroupParticles()) {
-      let pList = this._inUse[p.getEffectLayer()][p.getLayer()];
+      const pList = this._inUse[p.getEffectLayer()][p.getLayer()];
       removeFromList(pList, p);
     }
   }
 
-  drawParticles(tween = 1.0, layer = -1) {
+  drawParticles(tween: number = 1.0, layer: number = -1) {
     // tween origin
     this._currentTween = tween;
     this._camtx = -lerp(this._oldOriginX, this._originX, tween);
@@ -133,7 +191,7 @@ class ParticleManager {
     this._camtz = lerp(this._oldOriginZ, this._originZ, tween);
 
     if (this._angle !== 0) {
-      this._angleTweened = lerp(_oldAngle, _angle, tween);
+      this._angleTweened = lerp(this._oldAngle, this._angle, tween);
       let a = (this._angleTweened / 180.0) * M_PI;
       //  this._matrix.Set(cos(a), sin(a), -sin(a), cos(a));  // CHECK
     }
@@ -169,45 +227,45 @@ class ParticleManager {
     }
   }
 
-  setOrigin(x, y, z = 1.0) {
+  setOrigin(x: number, y: number, z: number = 1.0) {
     this.setOriginX(x);
     this.setOriginY(y);
     this.setOriginZ(z);
   }
 
-  setOriginX(x) {
+  setOriginX(x: number) {
     this._oldOriginX = this._originX;
     this._originX = x;
   }
 
-  setOriginY(y) {
+  setOriginY(y: number) {
     this._oldOriginY = this._originY;
     this._originY = y;
   }
 
-  setOriginZ(z) {
+  setOriginZ(z: number) {
     this._oldOriginZ = this._originZ;
     this._originZ = z;
   }
 
-  setAngle(angle) {
+  setAngle(angle: number) {
     this._oldAngle = this._angle;
     this._angle = angle;
   }
 
-  setScreenSize(w, h) {
+  setScreenSize(w: number, h: number) {
     this._vpW = w;
     this._vpH = h;
     this._centerX = this._vpW / 2;
     this._centerY = this._vpH / 2;
   }
 
-  setScreenPosition(x, y) {
+  setScreenPosition(x: number, y: number) {
     this._vpX = x;
     this._vpY = y;
   }
 
-  setIdleTimeLimit(limit) {
+  setIdleTimeLimit(limit: number) {
     this._idleTimeLimit = limit;
   }
 
@@ -224,7 +282,7 @@ class ParticleManager {
   getGlobalAmountScale() {
     return this._globalAmountScale;
   }
-  setGlobalAmountScale(scale) {
+  setGlobalAmountScale(scale: number) {
     this._globalAmountScale = scale;
   }
 
@@ -235,7 +293,7 @@ class ParticleManager {
     return this._unused.length;
   }
 
-  addPreLoadedEffect(e, frames, layer = 0) {
+  addPreLoadedEffect(e: Emitter, frames: number, layer = 0) {
     if (layer >= this._effectLayers) layer = 0;
 
     let tempTime = this._currentTime;

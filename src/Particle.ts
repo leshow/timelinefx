@@ -2,8 +2,8 @@ import Entity from "./Entity";
 
 class Particle extends Entity {
   // Class(Entity, ...)
-  constructor() {
-    super(); // Call parent's constructor
+  constructor(...args: any[]) {
+    super(args); // Call parent's constructor
 
     this._emitter = null;
 

@@ -3,13 +3,13 @@ import {
   XMLHelper,
   getXMLAttrSafe,
   forEachXMLChild,
-  forEachInXMLNodeList,
   getNodeAttrValue
 } from "./Utils";
 import Entity from "./Entity";
 import Emitter from "./Emitter";
 import EmitterArray from "./EmitterArray";
 import EffectsLibrary from "./EffectsLibrary";
+import ParticleManager from "./ParticleManager";
 
 export const TypePoint = 0;
 export const TypeArea = 1;
@@ -104,7 +104,7 @@ const g_defaultEffect = {
 };
 
 class Effect extends Entity {
-  constructor(other, particleManager) {
+  constructor(other: any, particleManager: ParticleManager) {
     super(other);
 
     if (other === undefined) {

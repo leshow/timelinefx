@@ -9,7 +9,7 @@ export const Blend = {
   // check loading values are one of these
 };
 
-const g_defaultEntity = {
+const g_defaultEntity: { [key: string]: boolean | string | null | number } = {
   _x: 0,
   _y: 0,
   _name: "",
@@ -117,7 +117,119 @@ const g_defaultEntity = {
 };
 
 class Entity {
-  constructor(other) {
+  _x: number = 0;
+  _y: number = 0;
+
+  _name: string = "";
+
+  _oldX: number = 0;
+  _oldY: number = 0;
+  _wx: number = 0;
+  _wy: number = 0;
+  _oldWX: number = 0;
+  _oldWY: number = 0;
+  _z: number = 1.0;
+  _oldZ: number = 1.0;
+  _relative: boolean = true;
+
+  _r: number = 0;
+  _g: number = 0;
+  _b: number = 0;
+  _red: number = 255;
+  _green: number = 255;
+  _blue: number = 255;
+  _oldRed: number = 255;
+  _oldGreen: number = 255;
+  _oldBlue: number = 255;
+
+  _width: number = 0;
+  _height: number = 0;
+  _weight: number = 0;
+  _gravity: number = 0;
+  _baseWeight: number = 0;
+  _oldWeight: number = 0;
+  _scaleX: number = 1.0;
+  _scaleY: number = 1.0;
+  _sizeX: number = 1.0;
+  _sizeY: number = 1.0;
+  _oldScaleX: number = 1.0;
+  _oldScaleY: number = 1.0;
+
+  _speed: number = 0;
+  _baseSpeed: number = 0;
+  _oldSpeed: number = 0;
+  _updateSpeed: boolean = true;
+
+  _direction: number = 0;
+  _directionLocked: boolean = false;
+  _angle: number = 0;
+  _oldAngle: number = 0;
+  _relativeAngle: number = 0;
+  _oldRelativeAngle: number = 0;
+
+  _avatar: null;
+  _frameOffset: number = 0;
+  _framerate: number = 1.0;
+  _currentFrame: number = 0;
+  _oldCurrentFrame: number = 0;
+  _animating: boolean = false;
+  _animateOnce: boolean = false;
+  _animAction: number = 0;
+  _handleX: number = 0;
+  _handleY: number = 0;
+  _autoCenter: boolean = true;
+  _okToRender: boolean = true;
+
+  _dob: number = 0;
+  _age: number = 0;
+  _rptAgeA: number = 0;
+  _rptAgeC: number = 0;
+  _aCycles: number = 0;
+  _cCycles: number = 0;
+  _oldAge: number = 0;
+  _dead: number = 0;
+  _destroyed: boolean = false;
+  _lifeTime: number = 0;
+  _timediff: number = 0;
+
+  _AABB_Calculate: boolean = true;
+  _collisionXMin: number = 0;
+  _collisionYMin: number = 0;
+  _collisionXMax: number = 0;
+  _collisionYMax: number = 0;
+  _AABB_XMin: number = 0;
+  _AABB_YMin: number = 0;
+  _AABB_XMax: number = 0;
+  _AABB_YMax: number = 0;
+  _AABB_MaxWidth: number = 0;
+  _AABB_MaxHeight: number = 0;
+  _AABB_MinWidth: number = 0;
+  _AABB_MinHeight: number = 0;
+  _radiusCalculate: boolean = true;
+  _imageRadius: number = 0;
+  _entityRadius: number = 0;
+  _imageDiameter: number = 0;
+
+  _parent: null;
+  _rootParent: null;
+
+  _childrenOwner: boolean = true;
+
+  _blendMode: number = Blend.BMAlphaBlend;
+
+  _alpha: number = 1.0;
+  _oldAlpha: number = 0;
+
+  _runChildren: boolean = false;
+  _pixelsPerSecond: number = 0;
+
+  _matrix: Matrix2;
+  _speedVec: Vector2;
+
+  _children: Array<Entity>;
+  [key: string]: any;
+
+  constructor(other?: Entity) {
     if (other) {
       for (let key in g_defaultEntity) this[key] = other[key];
     } else {
@@ -136,11 +248,11 @@ class Entity {
   getName() {
     return this._name;
   }
-  setName(name) {
+  setName(name: string) {
     this._name = name;
   }
 
-  setX(x) {
+  setX(x: number) {
     this._x = x;
   }
 

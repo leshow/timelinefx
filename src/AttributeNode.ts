@@ -1,6 +1,14 @@
 import { getNodeAttrValue } from "./Utils";
 
 class AttributeNode {
+  frame: number;
+  value: number;
+  isCurve: boolean;
+  c0x: number;
+  c0y: number;
+  c1x: number;
+  c1y: number;
+
   constructor() {
     this.frame = 0;
     this.value = 0;
@@ -11,11 +19,11 @@ class AttributeNode {
     this.c1y = 0;
   }
 
-  compare(other) {
+  compare(other: AttributeNode) {
     return this.frame > other.frame;
   }
 
-  setCurvePoints(x0, y0, x1, y1) {
+  setCurvePoints(x0: number, y0: number, x1: number, y1: number) {
     this.c0x = x0;
     this.c0y = y0;
     this.c1x = x1;
@@ -27,7 +35,7 @@ class AttributeNode {
     this.isCurve = !this.isCurve;
   }
 
-  loadFromXML(xml) {
+  loadFromXML(xml: any) {
     if (xml) {
       this.setCurvePoints(
         getNodeAttrValue(xml, "LEFT_CURVE_POINT_X"),

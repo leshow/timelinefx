@@ -1,8 +1,15 @@
 import Vector2 from "./Vector2";
 
 class Matrix2 {
-  constructor() {
-    this.set(1, 0, 0, 1);
+  aa: number;
+  ab: number;
+  bb: number;
+  ba: number;
+  constructor(aa: number = 1, ab: number = 0, ba: number = 0, bb: number = 1) {
+    this.aa = aa;
+    this.ab = ab;
+    this.ba = ba;
+    this.bb = bb;
   }
 
   create(aa_ = 1, ab_ = 0, ba_ = 0, bb_ = 1) {
@@ -18,20 +25,20 @@ class Matrix2 {
     this.bb = bb_;
   }
 
-  scale(s) {
+  scale(s: number) {
     this.aa *= s;
     this.ab *= s;
     this.ba *= s;
     this.bb *= s;
   }
 
-  transpose(s) {
+  transpose() {
     let abt = this.ab;
     this.ab = this.ba;
     this.ba = abt;
   }
 
-  transformSelf(m) {
+  transformSelf(m: Matrix2) {
     let r_aa = this.aa * m.aa + this.ab * m.ba;
     let r_ab = this.aa * m.ab + this.ab * m.bb;
     let r_ba = this.ba * m.aa + this.bb * m.ba;
@@ -40,7 +47,7 @@ class Matrix2 {
     this.set(r_aa, r_ab, r_ba, r_bb);
   }
 
-  transformVector(x, y) {
+  transformVector(x: number, y: number) {
     let tv = new Vector2();
     tv.x = x * this.aa + y * this.ba;
     tv.y = x * this.ab + y * this.bb;

@@ -1,4 +1,13 @@
 class AnimImage {
+  _width: number;
+  _height: number;
+  _maxRadius: number;
+  _index: number;
+  _imageSourceName: string;
+  _horizCells: number;
+  _frames: number;
+  _name: string;
+
   constructor() {
     // width/height are *frame* width/height
     this._width = 0;
@@ -8,10 +17,11 @@ class AnimImage {
     this._frames = 1;
     this._imageSourceName = "";
     this._horizCells = 1;
+    this._name = "";
   }
 
-  loadFromXML(xml) {
-    let attr = xml.attributes;
+  loadFromXML(xml: any) {
+    const attr = xml.attributes;
     this._imageSourceName = attr.getNamedItem("URL").nodeValue;
     this._width = attr.getNamedItem("WIDTH").nodeValue;
     this._height = attr.getNamedItem("HEIGHT").nodeValue;
@@ -24,7 +34,7 @@ class AnimImage {
     this._horizCells = Math.sqrt(this._frames);
   }
 
-  setMaxRadius(radius) {
+  setMaxRadius(radius: number) {
     this._maxRadius = radius;
   }
 
@@ -32,7 +42,7 @@ class AnimImage {
     return this._maxRadius;
   }
 
-  setWidth(width) {
+  setWidth(width: number) {
     this._width = width;
   }
 
@@ -40,7 +50,7 @@ class AnimImage {
     return this._width;
   }
 
-  setHeight(height) {
+  setHeight(height: number) {
     this._height = height;
   }
 
@@ -52,7 +62,7 @@ class AnimImage {
     return this._frames;
   }
 
-  setIndex(index) {
+  setIndex(index: number) {
     this._index = index;
   }
 
@@ -60,15 +70,15 @@ class AnimImage {
     return this._index;
   }
 
-  getFrameX(frameIndex) {
+  getFrameX(frameIndex: number) {
     return this._width * (frameIndex % this._horizCells);
   }
 
-  getFrameY(frameIndex) {
+  getFrameY(frameIndex: number) {
     return this._height * Math.floor(frameIndex / this._horizCells);
   }
 
-  setFilename(filename) {
+  setFilename(filename: string) {
     this._imageSourceName = filename;
   }
 
@@ -76,7 +86,7 @@ class AnimImage {
     return this._imageSourceName;
   }
 
-  setName(name) {
+  setName(name: string) {
     this._name = name;
   }
 
