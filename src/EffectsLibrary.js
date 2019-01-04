@@ -1,5 +1,7 @@
+import AnimImage from "./AnimImage";
+import Effect from "./Effect";
+
 class EffectsLibrary {
-  // $singleton: true, // or is it
   static instance;
 
   static c_particleLimit = 5000;
@@ -71,6 +73,12 @@ class EffectsLibrary {
   static maxDirectionVariation = 22.5;
   static maxVelocityVariation = 30.0;
   static motionVariationInterval = 30;
+
+  //
+  _lookupFrequency;
+  _updateTime;
+  _lookupFrequencyOverTime;
+  _updateFrequency;
 
   constructor() {
     if (!EffectsLibrary.instance) {
@@ -199,6 +207,6 @@ class EffectsLibrary {
 }
 
 const instance = new EffectsLibrary();
-Object.freeze(instance);
+// Object.freeze(instance);
 
 export default instance;

@@ -1,3 +1,5 @@
+import { getNodeAttrValue } from "./Utils";
+
 class AttributeNode {
   constructor() {
     this.frame = 0;
@@ -27,11 +29,11 @@ class AttributeNode {
 
   loadFromXML(xml) {
     if (xml) {
-      this.SetCurvePoints(
-        GetNodeAttrValue(xml, "LEFT_CURVE_POINT_X"),
-        GetNodeAttrValue(xml, "LEFT_CURVE_POINT_Y"),
-        GetNodeAttrValue(xml, "RIGHT_CURVE_POINT_X"),
-        GetNodeAttrValue(xml, "RIGHT_CURVE_POINT_Y")
+      this.setCurvePoints(
+        getNodeAttrValue(xml, "LEFT_CURVE_POINT_X"),
+        getNodeAttrValue(xml, "LEFT_CURVE_POINT_Y"),
+        getNodeAttrValue(xml, "RIGHT_CURVE_POINT_X"),
+        getNodeAttrValue(xml, "RIGHT_CURVE_POINT_Y")
       );
     }
   }

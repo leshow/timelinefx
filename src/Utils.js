@@ -45,13 +45,13 @@ export class XMLHelper {
     return attr ? attr.nodeValue : null;
   }
   getAttrAsInt(attrName) {
-    return parseInt(this.GetAttr(attrName));
+    return parseInt(this.getAttr(attrName));
   }
   getAttrAsFloat(attrName) {
-    return parseFloat(this.GetAttr(attrName));
+    return parseFloat(this.getAttr(attrName));
   }
   getAttrAsBool(attrName) {
-    return this.GetAttrAsInt(attrName) > 0;
+    return this.getAttrAsInt(attrName) > 0;
   }
 
   getChildAttr(childName, attrName) {
@@ -80,24 +80,24 @@ function asBool(x) {
   return x > 0;
 }
 
-function getNodeAttrValue(elem, attrName) {
+export function getNodeAttrValue(elem, attrName) {
   return elem.attributes.getNamedItem(attrName).nodeValue;
 }
 
-function forEachInXMLNodeList(nodelist, fn) {
+export function forEachInXMLNodeList(nodelist, fn) {
   for (let i = 0; i < nodelist.length; i++) {
     fn(nodelist[i]);
   }
 }
 
-function forEachXMLChild(xmlNode, tag, fn) {
+export function forEachXMLChild(xmlNode, tag, fn) {
   let nodelist = xmlNode.getElementsByTagName(tag);
   for (var i = 0; i < nodelist.length; i++) {
     if (nodelist[i].parentElement == xmlNode) fn(nodelist[i]);
   }
 }
 
-function getXMLAttrSafe(xmlNode, attrName, defaultResult = "") {
+export function getXMLAttrSafe(xmlNode, attrName, defaultResult = "") {
   let attr = xmlNode.attributes
     ? xmlNode.attributes.getNamedItem(attrName)
     : null;

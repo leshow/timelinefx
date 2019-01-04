@@ -1,5 +1,6 @@
 import { removeFromList, getDistance2D } from "./Utils";
 import Matrix2 from "./Matrix2";
+import Vector2 from "./Vector2";
 
 const Blend = {
   BMAlphaBlend: 3,

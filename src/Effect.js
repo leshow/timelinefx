@@ -1,6 +1,15 @@
-import { removeFromList } from "./Utils";
+import {
+  removeFromList,
+  XMLHelper,
+  getXMLAttrSafe,
+  forEachXMLChild,
+  forEachInXMLNodeList,
+  getNodeAttrValue
+} from "./Utils";
 import Entity from "./Entity";
+import Emitter from "./Emitter";
 import EmitterArray from "./EmitterArray";
+import EffectsLibrary from "./EffectsLibrary";
 
 const TypePoint = 0;
 const TypeArea = 1;
@@ -759,13 +768,13 @@ class Effect extends Entity {
     this._path = this._name;
     let p = xml.parentNode;
     while (p) {
-      parentName = getXmlAttrSafe(p, "NAME");
+      let parentName = getXMLAttrSafe(p, "NAME");
       if (parentName !== "") this._path = parentName + "/" + this._path;
 
       p = p.parentNode;
     }
 
-    animProps = xml.getElementsByTagName("ANIMATION_PROPERTIES")[0];
+    let animProps = xml.getElementsByTagName("ANIMATION_PROPERTIES")[0];
     if (animProps) {
       let a = new XMLHelper(animProps);
       this._frames = a.getAttrAsInt("FRAMES");
@@ -803,7 +812,7 @@ class Effect extends Entity {
 
     let _this = this;
 
-    forEachXmlChild(xml, "PARTICLE", function(n) {
+    forEachXMLChild(xml, "PARTICLE", function(n) {
       let emit = new Emitter();
       emit.loadFromXML(n, _this);
       _this.addChild(emit);
@@ -812,7 +821,7 @@ class Effect extends Entity {
 
   readAttribute(xml, emitArray, tag) {
     let result = false;
-    forEachXmlChild(xml, tag, function(n) {
+    forEachXMLChild(xml, tag, function(n) {
       let attr = emitArray.add(
         parseFloat(getNodeAttrValue(n, "FRAME")),
         parseFloat(getNodeAttrValue(n, "VALUE"))

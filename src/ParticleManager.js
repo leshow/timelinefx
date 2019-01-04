@@ -1,6 +1,7 @@
 import { fmod, lerp } from "./Utils";
-import { drawSprite } from "../exp/pixi_main";
+import { DrawSprite } from "./index";
 import EffectsLibrary from "./EffectsLibrary";
+import Particle from "./Particle";
 
 class ParticleManager {
   static c_particleLimit = 5000;

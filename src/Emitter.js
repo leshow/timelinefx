@@ -1,4 +1,5 @@
-import { getDistance2D } from "./Utils";
+import { getDistance2D, forEachXMLChild, getNodeAttrValue } from "./Utils";
+import Effect from "./Effect";
 import Entity from "./Entity";
 import Matrix2 from "./Matrix2";
 import EmitterArray from "./EmitterArray";
@@ -78,6 +79,9 @@ const g_defaultEmitter = {
   _currentSizeYVariation: 0,
   _currentFramerate: 0
 };
+
+import EffectsLibrary from "./EffectsLibrary";
+import { XMLHelper } from "./Utils";
 
 class Emitter extends Entity {
   constructor(other, pm) {
@@ -292,7 +296,7 @@ class Emitter extends Entity {
     this.setPath(path);
 
     let imgNode = xml.getElementsByTagName("SHAPE_INDEX")[0];
-    this.setImage(asInt(imgNode.innerHTML));
+    this.setImage(parseInt(imgNode.innerHTML));
 
     if (x.hasChildAttr("ANGLE_TYPE"))
       this.setAngleType(x.getChildAttrAsInt("ANGLE_TYPE", "VALUE"));
@@ -373,7 +377,7 @@ class Emitter extends Entity {
   }
 
   readAttribute(xml, emitArray, tag) {
-    forEachXmlChild(xml, tag, function(n) {
+    forEachXMLChild(xml, tag, function(n) {
       let attr = emitArray.add(
         parseFloat(getNodeAttrValue(n, "FRAME")),
         parseFloat(getNodeAttrValue(n, "VALUE"))
