@@ -1,13 +1,21 @@
-document.addEventListener("DOMContentLoaded", Init, false);
+import ParticleManager from "./ParticleManager";
+import Effect from "./Effect";
+import { Blend } from "./Entity";
+import Particle from "./Particle";
+import EffectsLibrary from "./EffectsLibrary";
+import { loadXMLDoc, toRadians, toHex, stripFilePath } from "./Utils";
 
-var g_particleManager = new ParticleManager(1000, 1);
+document.addEventListener("DOMContentLoaded", start);
+
+var g_particleManager = new ParticleManager(DrawSprite, 1000, 1);
 g_particleManager.onParticleSpawnCB = OnParticleSpawned;
 g_particleManager.onParticleKilledCB = OnParticleKilled;
+var g_renderCnt;
 var g_xml = null;
 var g_stage = null;
 var g_renderer = null;
 var g_loadingTextures = [];
-var g_path = "./data/demo/";
+var g_path = "./";
 var g_currentEffectPrototype = null;
 var g_currentEffectInstance = null;
 
@@ -69,8 +77,8 @@ function RegisterEffect(e, name) {
 
 var g_particleCountText;
 
-function Init() {
-  console.log("HELLO IM RUNNINGJ");
+function start() {
+  console.log("LOADED HERE");
   var w = window.innerWidth - 250;
   var h = window.innerHeight - 4;
   g_renderer = PIXI.autoDetectRenderer(w, h);
@@ -188,7 +196,7 @@ function DrawSprite(
   p.m_pixiSprite.alpha = a;
   p.m_pixiSprite.tint = toHex(r, g, b);
 
-  p.m_pixiSprite.rotation = Math.radians(rotation);
+  p.m_pixiSprite.rotation = toRadians(rotation);
   p.m_pixiSprite.scale.x = scaleX;
   p.m_pixiSprite.scale.y = scaleY;
 
@@ -227,10 +235,19 @@ function Animate() {
   requestAnimationFrame(Animate);
 
   g_particleCountText.setText(
-    "Active Particles:" + g_particleManager.GetParticlesInUse()
+    "Active Particles:" + g_particleManager.getParticlesInUse()
   );
 
   if (g_particleManager.getParticlesInUse() === 0) {
     StartEffect();
   }
 }
+
+window.PlayEffect = PlayEffect;
+window.StartEffect = StartEffect;
+window.Animate = Animate;
+window.DrawSprite = DrawSprite;
+window.OnTextureLoaded = OnTextureLoaded;
+window.OnParticleKilled = OnParticleKilled;
+window.OnParticleSpawned = OnParticleSpawned;
+window.RegisterEffect = RegisterEffect;

@@ -21,7 +21,8 @@ import Effect, {
   EndLetFree,
   EndLoopAround
 } from "./Effect";
-
+import EffectsLibrary from "./EffectsLibrary";
+import { XMLHelper } from "./Utils";
 import Entity from "./Entity";
 import Matrix2 from "./Matrix2";
 import EmitterArray from "./EmitterArray";
@@ -101,9 +102,6 @@ const g_defaultEmitter = {
   _currentSizeYVariation: 0,
   _currentFramerate: 0
 };
-
-import EffectsLibrary from "./EffectsLibrary";
-import { XMLHelper } from "./Utils";
 
 class Emitter extends Entity {
   constructor(other, pm) {

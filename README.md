@@ -11,17 +11,17 @@ Allows particle system effects created in the standalone TimelineFX tool to be l
 
 ```
 // Create particle manager and fx library
-var particleManager = new ParticleManager( /* particle limit = */ 1000, /* layers = */ 1 );
-EffectsLibrary.Init();
-EffectsLibrary.Load( xml );
+var particleManager = new ParticleManager( drawSprite, particle limit = 1000, layers = 1 );
+EffectsLibrary.init();
+EffectsLibrary.load( xml );
 
 // Grab an effect prototype
-var effectPrototype = EffectsLibrary.GetEffect( "explosion" );
-effectPrototype.CompileAll();
+var effectPrototype = EffectsLibrary.getEffect( "explosion" );
+effectPrototype.compileAll();
 
 // Create/spawn an effect instance
 var currentEffectInstance = new Effect( effectPrototype, particleManager );
-particleManager.AddEffect( currentEffectInstance );``
+particleManager.addEffect( currentEffectInstance );``
 ```
 
 A complete demo can be found here: http://factor43.com/projects/tfx/demo
@@ -29,3 +29,5 @@ A complete demo can be found here: http://factor43.com/projects/tfx/demo
 ## Fork
 
 This fork brings the timelinefxjs lib to ES6+ syntax & style. Eventually we will include typescript definitions.
+
+There is only one major API change between this fork and gooddoggy's timelinefx, and that is that `ParticleManager` takes 3 arguments now, the first one being the `drawSprite` function.
