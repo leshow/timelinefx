@@ -1,3 +1,5 @@
+import Vector2 from "./Vector2";
+
 class Matrix2 {
   constructor() {
     this.set(1, 0, 0, 1);
@@ -35,7 +37,7 @@ class Matrix2 {
     let r_ba = this.ba * m.aa + this.bb * m.ba;
     let r_bb = this.ba * m.ab + this.bb * m.bb;
 
-    this.setMatrix(r_aa, r_ab, r_ba, r_bb);
+    this.set(r_aa, r_ab, r_ba, r_bb);
   }
 
   transformVector(x, y) {

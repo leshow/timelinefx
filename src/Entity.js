@@ -1,8 +1,9 @@
-import { removeFromList, getDistance2D } from "./Utils";
+import { removeFromList, M_PI, getDistance2D } from "./Utils";
 import Matrix2 from "./Matrix2";
 import Vector2 from "./Vector2";
+import EffectsLibrary from "./EffectsLibrary";
 
-const Blend = {
+export const Blend = {
   BMAlphaBlend: 3,
   BMLightBlend: 4
   // check loading values are one of these

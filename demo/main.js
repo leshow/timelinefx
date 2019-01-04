@@ -70,6 +70,7 @@ function RegisterEffect(e, name) {
 var g_particleCountText;
 
 function Init() {
+  console.log("HELLO IM RUNNINGJ");
   var w = window.innerWidth - 250;
   var h = window.innerHeight - 4;
   g_renderer = PIXI.autoDetectRenderer(w, h);

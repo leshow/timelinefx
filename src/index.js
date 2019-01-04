@@ -1,14 +1,16 @@
 import ParticleManager from "./ParticleManager";
 import Effect from "./Effect";
+import { Blend } from "./Entity";
 import Particle from "./Particle";
 import EffectsLibrary from "./EffectsLibrary";
-import { loadXMLDoc, stripFilePath } from "./Utils";
+import { loadXMLDoc, toRadians, toHex, stripFilePath } from "./Utils";
 
 document.addEventListener("DOMContentLoaded", start);
 
-var g_particleManager = new ParticleManager(1000, 1);
+var g_particleManager = new ParticleManager(DrawSprite, 1000, 1);
 g_particleManager.onParticleSpawnCB = OnParticleSpawned;
 g_particleManager.onParticleKilledCB = OnParticleKilled;
+var g_renderCnt;
 var g_xml = null;
 var g_stage = null;
 var g_renderer = null;
@@ -194,7 +196,7 @@ function DrawSprite(
   p.m_pixiSprite.alpha = a;
   p.m_pixiSprite.tint = toHex(r, g, b);
 
-  p.m_pixiSprite.rotation = Math.radians(rotation);
+  p.m_pixiSprite.rotation = toRadians(rotation);
   p.m_pixiSprite.scale.x = scaleX;
   p.m_pixiSprite.scale.y = scaleY;
 
@@ -233,10 +235,19 @@ function Animate() {
   requestAnimationFrame(Animate);
 
   g_particleCountText.setText(
-    "Active Particles:" + g_particleManager.GetParticlesInUse()
+    "Active Particles:" + g_particleManager.getParticlesInUse()
   );
 
   if (g_particleManager.getParticlesInUse() === 0) {
     StartEffect();
   }
 }
+
+window.PlayEffect = PlayEffect;
+window.StartEffect = StartEffect;
+window.Animate = Animate;
+window.DrawSprite = DrawSprite;
+window.OnTextureLoaded = OnTextureLoaded;
+window.OnParticleKilled = OnParticleKilled;
+window.OnParticleSpawned = OnParticleSpawned;
+window.RegisterEffect = RegisterEffect;

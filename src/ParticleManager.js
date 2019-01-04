@@ -1,12 +1,18 @@
-import { fmod, lerp } from "./Utils";
-import { DrawSprite } from "./index";
+import { fmod, toHex, lerp, removeFromList } from "./Utils";
+// import { DrawSprite } from "./index";
 import EffectsLibrary from "./EffectsLibrary";
 import Particle from "./Particle";
 
 class ParticleManager {
   static c_particleLimit = 5000;
+  _drawSprite;
 
-  constructor(particles = ParticleManager.c_particleLimit, layers = 1) {
+  constructor(
+    drawSprite,
+    particles = ParticleManager.c_particleLimit,
+    layers = 1
+  ) {
+    this._drawSprite = drawSprite;
     this._effectLayers = layers;
 
     this._originX = 0;
@@ -248,7 +254,7 @@ class ParticleManager {
 
   addEffect(e, layer = 0) {
     if (layer >= this._effectLayers) layer = 0;
-    e.selEffectLayer(layer);
+    e.setEffectLayer(layer);
     this._effects[layer].push(e);
   }
 
@@ -337,7 +343,7 @@ class ParticleManager {
 
   drawParticle(p) {
     // p: Particle
-    if (p.GetAge() !== 0 || p.getEmitter().isSingleParticle()) {
+    if (p.getAge() !== 0 || p.getEmitter().isSingleParticle()) {
       let px = lerp(p.getOldWX(), p.getWX(), this._currentTween);
       let py = lerp(p.getOldWY(), p.getWY(), this._currentTween);
 
@@ -422,7 +428,7 @@ class ParticleManager {
 
           let blend = p.getEmitter().getBlendMode();
 
-          DrawSprite(
+          this._drawSprite(
             p,
             sprite,
             px,

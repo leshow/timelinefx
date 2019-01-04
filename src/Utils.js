@@ -6,7 +6,7 @@ export function removeFromList(array, elem) {
 }
 
 export const M_PI = 3.14159265358979323846;
-export const g_randomSeed = 17;
+export var g_randomSeed = 17;
 
 export function stripFilePath(filename) {
   let index = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
@@ -21,7 +21,7 @@ export function degrees(rad) {
   return rad * (180 / Math.PI);
 }
 
-export function radians(deg) {
+export function toRadians(deg) {
   return deg * (Math.PI / 180);
 }
 
@@ -72,14 +72,6 @@ export class XMLHelper {
   }
 }
 
-function asInt(x) {
-  return parseInt(x);
-}
-
-function asBool(x) {
-  return x > 0;
-}
-
 export function getNodeAttrValue(elem, attrName) {
   return elem.attributes.getNamedItem(attrName).nodeValue;
 }
@@ -123,8 +115,8 @@ export function randomBetween(low, high) {
 }
 
 export function getDistance2D(fromx, fromy, tox, toy, fast = false) {
-  w = tox - fromx;
-  h = toy - fromy;
+  let w = tox - fromx;
+  let h = toy - fromy;
 
   if (fast) {
     return w * w + h * h;

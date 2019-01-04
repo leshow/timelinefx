@@ -11,19 +11,19 @@ import Emitter from "./Emitter";
 import EmitterArray from "./EmitterArray";
 import EffectsLibrary from "./EffectsLibrary";
 
-const TypePoint = 0;
-const TypeArea = 1;
-const TypeLine = 2;
-const TypeEllipse = 3;
+export const TypePoint = 0;
+export const TypeArea = 1;
+export const TypeLine = 2;
+export const TypeEllipse = 3;
 
-const EmInwards = 0;
-const EmOutwards = 1;
-const EmSpecified = 2;
-const EmInAndOut = 3;
+export const EmInwards = 0;
+export const EmOutwards = 1;
+export const EmSpecified = 2;
+export const EmInAndOut = 3;
 
-const EndKill = 0;
-const EndLoopAround = 1;
-const EndLetFree = 2;
+export const EndKill = 0;
+export const EndLoopAround = 1;
+export const EndLetFree = 2;
 
 const g_defaultEffect = {
   _class: TypePoint,

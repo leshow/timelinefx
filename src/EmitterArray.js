@@ -237,7 +237,7 @@ class EmitterArray {
     return lasty;
   }
 
-  getOT(age, lifetime) {
+  getOt(age, lifetime) {
     let frame = 0;
     if (lifetime > 0) {
       frame =

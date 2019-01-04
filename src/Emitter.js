@@ -1,5 +1,27 @@
-import { getDistance2D, forEachXMLChild, getNodeAttrValue } from "./Utils";
-import Effect from "./Effect";
+import {
+  getDistance2D,
+  forEachXMLChild,
+  getNodeAttrValue,
+  random,
+  M_PI,
+  lerp,
+  randomBetween,
+  getDirection
+} from "./Utils";
+import Effect, {
+  TypePoint,
+  TypeArea,
+  TypeEllipse,
+  TypeLine,
+  EmInAndOut,
+  EmInwards,
+  EmOutwards,
+  EmSpecified,
+  EndKill,
+  EndLetFree,
+  EndLoopAround
+} from "./Effect";
+
 import Entity from "./Entity";
 import Matrix2 from "./Matrix2";
 import EmitterArray from "./EmitterArray";
@@ -649,7 +671,6 @@ class Emitter extends Entity {
     this._effects = [];
 
     super.destroy(false); // Emitter.$superp.Destroy.call(this, false);
-    // Explain!
   }
 
   changeDoB(dob) {
@@ -692,9 +713,9 @@ class Emitter extends Entity {
 
     this._dying = this._parentEffect.isDying();
 
-    Emitter.$superp.UpdateBoundingBox.call(this);
+    super.updateBoundingBox();
 
-    if (this._radiusCalculate) Emitter.$superp.UpdateEntityRadius.call(this);
+    if (this._radiusCalculate) super.updateEntityRadius();
 
     this.updateChildren();
 
@@ -715,7 +736,7 @@ class Emitter extends Entity {
     return true;
   }
 
-  updateSpawns(eSingle /*= null*/) {
+  updateSpawns(eSingle = null) {
     let intCounter;
     let qty;
     let er;
@@ -1088,7 +1109,7 @@ class Emitter extends Entity {
           // width
           let scaleTemp = this._cScaleX.get(0);
           let sizeTemp = 0;
-          e.setScaleVariationX(Random(this._currentSizeXVariation));
+          e.setScaleVariationX(random(this._currentSizeXVariation));
           e.setWidth(e.getScaleVariationX() + this._currentSizeX);
           if (scaleTemp !== 0) {
             sizeTemp =
@@ -1115,7 +1136,7 @@ class Emitter extends Entity {
               if (e.getScaleY() < e.getScaleX()) e.setScaleY(e.getScaleX());
             }
 
-            e.setWidthHeightAabb(
+            e.setWidthHeightAABB(
               this._AABB_ParticleMinWidth,
               this._AABB_ParticleMaxWidth,
               this._AABB_ParticleMinWidth,
@@ -1409,7 +1430,7 @@ class Emitter extends Entity {
           // capture old values for tweening
           e.capture();
 
-          if (pm.onParticleSpawnCB) pm.onParticleSpawnCb(e);
+          if (pm.onParticleSpawnCB) pm.onParticleSpawnCB(e);
         }
       }
       this._counter -= intCounter;
@@ -1692,19 +1713,19 @@ class Emitter extends Entity {
     this._cDirectionVariation.compile();
     // over lifetime
     let longestLife = this.getLongestLife();
-    this._cAlpha.compileOt(longestLife);
-    this._cR.compileOt(longestLife);
-    this._cG.compileOt(longestLife);
-    this._cB.compileOt(longestLife);
-    this._cScaleX.compileOt(longestLife);
-    this._cScaleY.compileOt(longestLife);
-    this._cSpin.compileOt(longestLife);
-    this._cVelocity.compileOt(longestLife);
-    this._cWeight.compileOt(longestLife);
-    this._cDirection.compileOt(longestLife);
-    this._cDirectionVariationOT.compileOt(longestLife);
-    this._cFramerate.compileOt(longestLife);
-    this._cStretch.compileOt(longestLife);
+    this._cAlpha.compileOT(longestLife);
+    this._cR.compileOT(longestLife);
+    this._cG.compileOT(longestLife);
+    this._cB.compileOT(longestLife);
+    this._cScaleX.compileOT(longestLife);
+    this._cScaleY.compileOT(longestLife);
+    this._cSpin.compileOT(longestLife);
+    this._cVelocity.compileOT(longestLife);
+    this._cWeight.compileOT(longestLife);
+    this._cDirection.compileOT(longestLife);
+    this._cDirectionVariationOT.compileOT(longestLife);
+    this._cFramerate.compileOT(longestLife);
+    this._cStretch.compileOT(longestLife);
     // global adjusters
     this._cGlobalVelocity.compile();
 
@@ -1783,7 +1804,7 @@ class Emitter extends Entity {
     )
       this._bypassWeight = true;
 
-    if (!this._cWeight.getLastFrame() && !this._cWeight.Get(0))
+    if (!this._cWeight.getLastFrame() && !this._cWeight.get(0))
       this._bypassWeight = true;
 
     if (
@@ -1919,56 +1940,56 @@ class Emitter extends Entity {
     return this._cDirectionVariation.get(frame);
   }
 
-  getEmitterAlpha(age, lifetime) {
-    return this._cAlpha.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterAlpha(age, lifetime = 0) {
+    return this._cAlpha.getOt(age, lifetime);
   }
 
-  getEmitterR(age, lifetime) {
-    return this._cR.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterR(age, lifetime = 0) {
+    return this._cR.getOt(age, lifetime);
   }
 
-  getEmitterG(age, lifetime) {
-    return this._cG.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterG(age, lifetime = 0) {
+    return this._cG.getOt(age, lifetime);
   }
 
-  getEmitterB(age, lifetime) {
-    return this._cB.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterB(age, lifetime = 0) {
+    return this._cB.getOt(age, lifetime);
   }
 
-  getEmitterScaleX(age, lifetime) {
-    return this._cScaleX.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterScaleX(age, lifetime = 0) {
+    return this._cScaleX.getOt(age, lifetime);
   }
 
-  getEmitterScaleY(age, lifetime) {
-    return this._cScaleY.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterScaleY(age, lifetime = 0) {
+    return this._cScaleY.getOt(age, lifetime);
   }
 
-  getEmitterSpin(age, lifetime) {
-    return this._cSpin.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterSpin(age, lifetime = 0) {
+    return this._cSpin.getOt(age, lifetime);
   }
 
-  getEmitterVelocity(age, lifetime) {
-    return this._cVelocity.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterVelocity(age, lifetime = 0) {
+    return this._cVelocity.getOt(age, lifetime);
   }
 
-  getEmitterWeight(age, lifetime) {
-    return this._cWeight.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterWeight(age, lifetime = 0) {
+    return this._cWeight.getOt(age, lifetime);
   }
 
-  getEmitterDirection(age, lifetime) {
-    return this._cDirection.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterDirection(age, lifetime = 0) {
+    return this._cDirection.getOt(age, lifetime);
   }
 
-  getEmitterDirectionVariationOt(age, lifetime) {
-    return this._cDirectionVariationOT.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterDirectionVariationOt(age, lifetime = 0) {
+    return this._cDirectionVariationOT.getOt(age, lifetime);
   }
 
-  getEmitterFramerate(age, lifetime) {
-    return this._cFramerate.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterFramerate(age, lifetime = 0) {
+    return this._cFramerate.getOt(age, lifetime);
   }
 
-  getEmitterStretch(age, lifetime) {
-    return this._cStretch.getOt(age, getDefaultArg(lifetime, 0));
+  getEmitterStretch(age, lifetime = 0) {
+    return this._cStretch.getOt(age, lifetime);
   }
 
   getEmitterGlobalVelocity(frame) {
