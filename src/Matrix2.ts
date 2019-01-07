@@ -48,10 +48,7 @@ class Matrix2 {
   }
 
   transformVector(x: number, y: number) {
-    let tv = new Vector2();
-    tv.x = x * this.aa + y * this.ba;
-    tv.y = x * this.ab + y * this.bb;
-    return tv;
+    return new Vector2(x * this.aa + y * this.ba, x * this.ab + y * this.bb);
   }
 }
 

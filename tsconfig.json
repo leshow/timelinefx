@@ -10,7 +10,7 @@
     "outDir": "dist",
     "pretty": true,
     "baseUrl": ".",
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "paths": {
       "*": ["node_modules/*"]
     }

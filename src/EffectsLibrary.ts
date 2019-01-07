@@ -1,6 +1,6 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
-import Emitter from "./Emitter";
+import Entity from "./Entity";
 
 class EffectsLibrary {
   static instance: EffectsLibrary;
@@ -76,14 +76,15 @@ class EffectsLibrary {
   static motionVariationInterval = 30;
 
   //
-  _lookupFrequency: boolean | undefined;
-  _updateTime: boolean | undefined;
-  _lookupFrequencyOverTime: number | undefined;
-  _updateFrequency: number | undefined;
+  _lookupFrequency: number = 30.0;
+  _updateTime: number = 30.0;
+  _lookupFrequencyOverTime: number = 1.0;
+  _updateFrequency: number = 30.0;
+  _currentUpdateTime: number = 30.0;
   _shapeList: Array<unknown> = [];
   _name: string = "";
-  _effects: Array<Effect> = [];
-  _emitters: Array<Emitter> = [];
+  _effects: Array<Entity | Effect> = [];
+  _emitters: Array<Entity> = [];
   m_currentFolder: string | null = null;
 
   constructor() {
@@ -120,7 +121,7 @@ class EffectsLibrary {
     this.loadEffectElements(xml.getElementsByTagName("EFFECTS")[0].children);
   }
 
-  loadEffectElements(effects: Array<any>) {
+  loadEffectElements(effects: Array<Effect>) {
     for (let i = 0; i < effects.length; i++) {
       if (effects[i].tagName === "FOLDER") {
         this.loadEffectElements(effects[i].children);
@@ -144,19 +145,19 @@ class EffectsLibrary {
     return this._shapeList;
   }
 
-  getImage(index) {
+  getImage(index: number) {
     return this._shapeList[index];
   }
 
-  getEffect(name) {
+  getEffect(name: number) {
     return this._effects[name];
   }
 
-  getEmitter(name) {
+  getEmitter(name: number) {
     return this._emitters[name];
   }
 
-  addEffect(e) {
+  addEffect(e: Entity | Effect) {
     let name = e.getPath();
 
     this._effects[name] = e;
@@ -168,7 +169,7 @@ class EffectsLibrary {
     }
   }
 
-  addEmitter(e) {
+  addEmitter(e: Entity) {
     let name = e.getPath();
 
     this._emitters[name] = e;
@@ -179,17 +180,17 @@ class EffectsLibrary {
     }
   }
 
-  setUpdateFrequency(freq) {
+  setUpdateFrequency(freq: number) {
     this._updateFrequency = freq; //  fps
     this._updateTime = 1000.0 / this._updateFrequency;
     this._currentUpdateTime = this._updateFrequency;
   }
 
-  setLookupFrequency(freq) {
+  setLookupFrequency(freq: number) {
     this._lookupFrequency = freq;
   }
 
-  setLookupFrequencyOverTime(freq) {
+  setLookupFrequencyOverTime(freq: number) {
     this._lookupFrequencyOverTime = freq;
   }
 

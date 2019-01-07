@@ -1,9 +1,10 @@
-import { fmod, toHex, lerp, removeFromList } from "./Utils";
+import { M_PI, fmod, toHex, lerp, removeFromList } from "./Utils";
 // import { DrawSprite } from "./index";
 import EffectsLibrary from "./EffectsLibrary";
 import Effect from "./Effect";
 import Emitter from "./Emitter";
 import Particle from "./Particle";
+import Matrix2 from "./Matrix2";
 
 type SpriteFn = (
   p: Particle,
@@ -60,6 +61,7 @@ class ParticleManager {
   _inUseCount = 0;
   _inUse: Array<Particle>;
   _effects: Array<Array<Effect>>;
+  _matrix: Matrix2 | undefined;
 
   _unused: Array<Particle>;
 
@@ -293,7 +295,7 @@ class ParticleManager {
     return this._unused.length;
   }
 
-  addPreLoadedEffect(e: Emitter, frames: number, layer = 0) {
+  addPreLoadedEffect(e: Effect, frames: number, layer = 0) {
     if (layer >= this._effectLayers) layer = 0;
 
     let tempTime = this._currentTime;
@@ -310,13 +312,13 @@ class ParticleManager {
     this._effects[layer].push(e);
   }
 
-  addEffect(e, layer = 0) {
+  addEffect(e: Effect, layer = 0) {
     if (layer >= this._effectLayers) layer = 0;
     e.setEffectLayer(layer);
     this._effects[layer].push(e);
   }
 
-  removeEffect(e) {
+  removeEffect(e: Effect) {
     removeFromList(this._effects[e.getEffectLayer()], e);
   }
 
@@ -355,7 +357,7 @@ class ParticleManager {
     }
   }
 
-  clearLayer(layer) {
+  clearLayer(layer: number) {
     let list = this._effects[layer];
 
     for (let i = 0; i < list.length; i++) list[i].destroy();
@@ -384,7 +386,7 @@ class ParticleManager {
     }
   }
 
-  drawEffect(e) {
+  drawEffect(e: Effect) {
     for (let i = 0; i < 10; ++i) {
       // particle
       let plist = e.getParticles(i);
@@ -399,7 +401,7 @@ class ParticleManager {
     }
   }
 
-  drawParticle(p) {
+  drawParticle(p: Particle) {
     // p: Particle
     if (p.getAge() !== 0 || p.getEmitter().isSingleParticle()) {
       let px = lerp(p.getOldWX(), p.getWX(), this._currentTween);

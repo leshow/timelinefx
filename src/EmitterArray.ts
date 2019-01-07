@@ -2,7 +2,14 @@ import EffectsLibrary from "./EffectsLibrary";
 import AttributeNode from "./AttributeNode";
 
 class EmitterArray {
-  constructor(min, max) {
+  _life: number;
+  _compiled: boolean;
+  _min: number;
+  _max: number;
+  _changes: Array<number>;
+  _attributes: Array<AttributeNode>;
+
+  constructor(min: number, max: number) {
     this._life = 0;
     this._compiled = false;
     this._min = min;
@@ -15,7 +22,7 @@ class EmitterArray {
     return this._changes.length - 1;
   }
 
-  getCompiled(frame) {
+  getCompiled(frame: number) {
     frame = Math.round(frame);
     let lastFrame = this.getLastFrame();
     if (frame <= lastFrame) {
@@ -25,7 +32,7 @@ class EmitterArray {
     return this._changes[lastFrame];
   }
 
-  setCompiled(frame, value) {
+  setCompiled(frame: number, value: number) {
     this._changes[frame] = value;
   }
 
@@ -33,7 +40,7 @@ class EmitterArray {
     return this._life;
   }
 
-  setLife(life) {
+  setLife(life: number) {
     this._life = life;
   }
 
@@ -64,7 +71,7 @@ class EmitterArray {
     this._compiled = true;
   }
 
-  compileOT(longestLife = this.getLastAtrribute().frame) {
+  compileOT(longestLife: number = this.getLastAtrribute().frame) {
     if (this._attributes.length > 0) {
       //   longestLife = GetDefaultArg(longestLife, this.GetLastAtrribute().frame);
 
@@ -88,7 +95,7 @@ class EmitterArray {
     this._compiled = true;
   }
 
-  add(frame, value) {
+  add(frame: number, value: number) {
     this._compiled = false;
 
     let e = new AttributeNode();
@@ -98,12 +105,18 @@ class EmitterArray {
     return e;
   }
 
-  get(frame, bezier = true) {
+  get(frame: number, bezier: boolean = true) {
     if (this._compiled) return this.getCompiled(frame);
     else return this.interpolate(frame, bezier);
   }
 
-  getBezierValue(lastec, a, t, yMin, yMax) {
+  getBezierValue(
+    lastec: AttributeNode,
+    a: AttributeNode,
+    t: number,
+    yMin: number,
+    yMax: number
+  ) {
     if (a.isCurve) {
       let p0x = lastec.frame;
       let p0y = lastec.value;
@@ -152,7 +165,18 @@ class EmitterArray {
     }
   }
 
-  getQuadBezier(p0x, p0y, p1x, p1y, p2x, p2y, t, yMin, yMax, clamp = true) {
+  getQuadBezier(
+    p0x: number,
+    p0y: number,
+    p1x: number,
+    p1y: number,
+    p2x: number,
+    p2y: number,
+    t: number,
+    yMin: number,
+    yMax: number,
+    clamp: boolean = true
+  ) {
     let x = (1 - t) * (1 - t) * p0x + 2 * t * (1 - t) * p1x + t * t * p2x;
     let y = (1 - t) * (1 - t) * p0y + 2 * t * (1 - t) * p1y + t * t * p2y;
 
@@ -167,18 +191,18 @@ class EmitterArray {
   }
 
   getCubicBezier(
-    p0x,
-    p0y,
-    p1x,
-    p1y,
-    p2x,
-    p2y,
-    p3x,
-    p3y,
-    t,
-    yMin,
-    yMax,
-    clamp = true
+    p0x: number,
+    p0y: number,
+    p1x: number,
+    p1y: number,
+    p2x: number,
+    p2y: number,
+    p3x: number,
+    p3y: number,
+    t: number,
+    yMin: number,
+    yMax: number,
+    clamp: boolean = true
   ) {
     let x =
       (1 - t) * (1 - t) * (1 - t) * p0x +
@@ -202,11 +226,11 @@ class EmitterArray {
     return { x, y };
   }
 
-  interpolate(frame) {
-    return this.interpolateOT(frame, 1.0);
+  interpolate(frame: number, bezier?: boolean) {
+    return this.interpolateOT(frame, 1.0, bezier);
   }
 
-  interpolateOT(age, lifetime, bezier = true) {
+  interpolateOT(age: number, lifetime: number, bezier: boolean = true) {
     let lasty = 0;
     let lastf = 0;
     let lastec = null;
@@ -216,7 +240,8 @@ class EmitterArray {
       let frame = it.frame * lifetime;
       if (age < frame) {
         let p = (age - lastf) / (frame - lastf);
-        if (bezier) {
+        if (bezier && lastec) {
+          // TODO && lastec
           let bezierValue = this.getBezierValue(
             lastec,
             it,
@@ -237,7 +262,7 @@ class EmitterArray {
     return lasty;
   }
 
-  getOt(age, lifetime) {
+  getOt(age: number, lifetime: number) {
     let frame = 0;
     if (lifetime > 0) {
       frame =

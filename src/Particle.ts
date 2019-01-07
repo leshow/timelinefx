@@ -1,8 +1,28 @@
 import Entity from "./Entity";
+import ParticleManager from "./ParticleManager";
+import Emitter from "./Emitter";
 
 class Particle extends Entity {
-  // Class(Entity, ...)
-  constructor(...args: any[]) {
+  _emitter: Emitter | null;
+  _particleManager: ParticleManager | null;
+  _weightVariation: number;
+  _scaleVariationX: number;
+  _scaleVariationY: number;
+  _gSizeX: number;
+  _gSizeY: number;
+  _velVariation: number;
+  _spinVariation: number;
+  _directionVariation: number;
+  _timeTracker: number;
+  _randomDirection: number;
+  _emissionAngle: number;
+  _randomSpeed: number;
+  _releaseSingleParticle: boolean;
+  _layer: number;
+  _groupParticles: boolean;
+  _effectLayer: number;
+
+  constructor(args?: Entity) {
     super(args); // Call parent's constructor
 
     this._emitter = null;
@@ -59,25 +79,34 @@ class Particle extends Entity {
   update() {
     this.capture();
 
-    if (this._emitter.isDying() || this._emitter.isOneShot() || this._dead)
+    if (
+      (this._emitter && this._emitter.isDying()) ||
+      (this._emitter && this._emitter.isOneShot()) ||
+      this._dead
+    )
       this._releaseSingleParticle = true;
 
-    if (this._emitter.isSingleParticle() && !this._releaseSingleParticle) {
+    if (
+      this._emitter &&
+      this._particleManager &&
+      this._emitter.isSingleParticle() &&
+      !this._releaseSingleParticle
+    ) {
       this._age = this._particleManager.getCurrentTime() - this._dob;
       if (this._age > this._lifeTime) {
         this._age = 0;
         this._dob = this._particleManager.getCurrentTime();
       }
-    } else {
+    } else if (this._particleManager) {
       this._age = this._particleManager.getCurrentTime() - this._dob;
     }
 
     super.update(); // Particle.$superp.Update.call(this);
 
-    if (this._age > this._lifeTime || this._dead == 2) {
+    if (this._emitter && (this._age > this._lifeTime || this._dead == 2)) {
       // if dead=2 then that means its reached the end of the line (in kill mode) for line traversal effects
       this._dead = 1;
-      if (this._children.length === 0) {
+      if (this._particleManager && this._children.length === 0) {
         this._particleManager.releaseParticle(this); // TODO
         if (this._emitter.isGroupParticles())
           this._emitter.getParentEffect().removeInUse(this._layer, this); // TODO
@@ -92,29 +121,29 @@ class Particle extends Entity {
       return true;
     }
 
-    this._emitter.controlParticle(this);
+    if (this._emitter) this._emitter.controlParticle(this);
     return true;
   }
 
-  destroy(releaseChildren) {
-    this._particleManager.releaseParticle(this); // TODO
-    super.destroy(); // Particle.$superp.Destroy();
+  destroy(releaseChildren?: boolean) {
+    if (this._particleManager) this._particleManager.releaseParticle(this); // TODO
+    super.destroy();
     this.reset();
   }
-  setX(x) {
+  setX(x: number) {
     this._oldX = this._age > 0 ? this._x : x;
     this._x = x;
   }
-  setY(y) {
+  setY(y: number) {
     this._oldY = this._age > 0 ? this._y : y;
     this._y = y;
   }
-  setZ(z) {
+  setZ(z: number) {
     this._oldZ = this._age > 0 ? this._z : z;
     this._z = z;
   }
 
-  setGroupParticles(value) {
+  setGroupParticles(value: boolean) {
     this._groupParticles = value;
   }
 
@@ -122,7 +151,7 @@ class Particle extends Entity {
     return this._groupParticles;
   }
 
-  setLayer(layer) {
+  setLayer(layer: number) {
     this._layer = layer;
   }
 
@@ -130,7 +159,7 @@ class Particle extends Entity {
     return this._layer;
   }
 
-  setEmitter(e) {
+  setEmitter(e: Emitter) {
     this._emitter = e;
   }
 
@@ -142,15 +171,15 @@ class Particle extends Entity {
     return this._effectLayer;
   }
 
-  setParticleManager(pm) {
+  setParticleManager(pm: ParticleManager) {
     this._particleManager = pm;
   }
 
-  setEffectLayer(layer) {
+  setEffectLayer(layer: number) {
     this._effectLayer = layer;
   }
 
-  setVelVariation(velVariation) {
+  setVelVariation(velVariation: number) {
     this._velVariation = velVariation;
   }
 
@@ -158,11 +187,11 @@ class Particle extends Entity {
     return this._velVariation;
   }
 
-  setGSizeX(gSizeX) {
+  setGSizeX(gSizeX: number) {
     this._gSizeX = gSizeX;
   }
 
-  setGSizeY(gSizeY) {
+  setGSizeY(gSizeY: number) {
     this._gSizeY = gSizeY;
   }
 
@@ -174,7 +203,7 @@ class Particle extends Entity {
     return this._gSizeY;
   }
 
-  setScaleVariationX(scaleVarX) {
+  setScaleVariationX(scaleVarX: number) {
     this._scaleVariationX = scaleVarX;
   }
 
@@ -182,7 +211,7 @@ class Particle extends Entity {
     return this._scaleVariationX;
   }
 
-  setScaleVariationY(scaleVarY) {
+  setScaleVariationY(scaleVarY: number) {
     this._scaleVariationY = scaleVarY;
   }
 
@@ -190,7 +219,7 @@ class Particle extends Entity {
     return this._scaleVariationY;
   }
 
-  setEmissionAngle(emissionAngle) {
+  setEmissionAngle(emissionAngle: number) {
     this._emissionAngle = emissionAngle;
   }
 
@@ -198,7 +227,7 @@ class Particle extends Entity {
     return this._emissionAngle;
   }
 
-  setDirectionVairation(dirVar) {
+  setDirectionVariation(dirVar: number) {
     this._directionVariation = dirVar;
   }
 
@@ -206,7 +235,7 @@ class Particle extends Entity {
     return this._directionVariation;
   }
 
-  setSpinVariation(spinVar) {
+  setSpinVariation(spinVar: number) {
     this._spinVariation = spinVar;
   }
 
@@ -214,7 +243,7 @@ class Particle extends Entity {
     return this._spinVariation;
   }
 
-  setWeightVariation(weightVar) {
+  setWeightVariation(weightVar: number) {
     this._weightVariation = weightVar;
   }
 

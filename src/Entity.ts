@@ -2,6 +2,8 @@ import { removeFromList, M_PI, getDistance2D } from "./Utils";
 import Matrix2 from "./Matrix2";
 import Vector2 from "./Vector2";
 import EffectsLibrary from "./EffectsLibrary";
+import { AnimImage } from "src";
+import { AnimImage } from "src";
 
 export const Blend = {
   BMAlphaBlend: 3,
@@ -167,7 +169,7 @@ class Entity {
   _relativeAngle: number = 0;
   _oldRelativeAngle: number = 0;
 
-  _avatar: null;
+  _avatar: AnimImage | null;
   _frameOffset: number = 0;
   _framerate: number = 1.0;
   _currentFrame: number = 0;
@@ -187,7 +189,7 @@ class Entity {
   _aCycles: number = 0;
   _cCycles: number = 0;
   _oldAge: number = 0;
-  _dead: number = 0;
+  _dead: number | boolean = 0; // TODO
   _destroyed: boolean = false;
   _lifeTime: number = 0;
   _timediff: number = 0;
@@ -210,8 +212,8 @@ class Entity {
   _entityRadius: number = 0;
   _imageDiameter: number = 0;
 
-  _parent: null;
-  _rootParent: null;
+  _parent: any; // TODO
+  _rootParent: any; // TODO
 
   _childrenOwner: boolean = true;
 
@@ -227,7 +229,7 @@ class Entity {
   _speedVec: Vector2;
 
   _children: Array<Entity>;
-  [key: string]: any;
+  // [key: string]: any;
 
   constructor(other?: Entity) {
     if (other) {
@@ -237,7 +239,7 @@ class Entity {
     }
 
     this._matrix = new Matrix2();
-    this._speedVec = new Vector2();
+    this._speedVec = new Vector2(0, 0); // TODO added 0,0
 
     this._children = [];
   }
@@ -256,11 +258,11 @@ class Entity {
     this._x = x;
   }
 
-  setY(y) {
+  setY(y: number) {
     this._y = y;
   }
 
-  setZ(z) {
+  setZ(z: number) {
     this._z = z;
   }
 
@@ -295,11 +297,11 @@ class Entity {
     }
   }
 
-  setOKtoRender(ok) {
+  setOKtoRender(ok: boolean) {
     this._okToRender = ok;
   }
 
-  destroy() {
+  destroy(destroyChildren?: boolean) {
     this._parent = null;
     this._avatar = null;
     this._rootParent = null;
@@ -307,7 +309,7 @@ class Entity {
     this._destroyed = true;
   }
 
-  removeChild(e) {
+  removeChild(e: Entity) {
     removeFromList(this._children, e);
     e._parent = null;
   }
@@ -585,33 +587,33 @@ class Entity {
     }
   }
 
-  assignRootParent(e) {
+  assignRootParent(e: Entity) {
     if (this._parent) this._parent.assignRootParent(e);
     else e._rootParent = this;
   }
 
-  setHandleX(x) {
+  setHandleX(x: number) {
     this._handleX = x;
   }
 
-  setHandleY(y) {
+  setHandleY(y: number) {
     this._handleY = y;
   }
 
-  setParent(e) {
+  setParent(e: Entity) {
     e.addChild(this);
   }
 
-  setRelative(value) {
+  setRelative(value: boolean) {
     this._relative = value;
   }
 
-  setEntityScale(sx, sy) {
+  setEntityScale(sx: number, sy: number) {
     this._scaleX = sx;
     this._scaleY = sy;
   }
 
-  setSpeed(speed) {
+  setSpeed(speed: number) {
     this._speed = speed;
   }
 
@@ -619,7 +621,7 @@ class Entity {
     return this._speed;
   }
 
-  setBlendMode(mode) {
+  setBlendMode(mode: number) {
     this._blendMode = mode;
   }
 
@@ -627,11 +629,11 @@ class Entity {
     return this._currentFrame;
   }
 
-  setCurrentFrame(frame) {
+  setCurrentFrame(frame: number) {
     this._currentFrame = frame;
   }
 
-  addChild(e) {
+  addChild(e: Entity) {
     this._children.push(e);
     e._parent = this;
     e._radiusCalculate = this._radiusCalculate;
@@ -654,7 +656,7 @@ class Entity {
     return this._relativeAngle;
   }
 
-  setDoB(dob) {
+  setDoB(dob: number) {
     this._dob = dob;
   }
 
@@ -662,7 +664,7 @@ class Entity {
     return this._oldCurrentFrame;
   }
 
-  setAvatar(avatar) {
+  setAvatar(avatar: AnimImage) {
     this._avatar = avatar;
     this._AABB_MaxWidth = this._avatar.getWidth() * 0.5;
     this._AABB_MaxHeight = this._avatar.getHeight() * 0.5;
@@ -670,7 +672,7 @@ class Entity {
     this._AABB_MinHeight = this._avatar.getHeight() * -0.5;
   }
 
-  setAutocenter(value) {
+  setAutocenter(value: boolean) {
     this._autoCenter = value;
   }
 
@@ -678,19 +680,19 @@ class Entity {
     return this._lifeTime;
   }
 
-  setLifeTime(lifeTime) {
+  setLifeTime(lifeTime: number) {
     this._lifeTime = lifeTime;
   }
 
-  setSpeedVecX(x) {
+  setSpeedVecX(x: number) {
     this._speedVec.x = x;
   }
 
-  setSpeedVecY(y) {
+  setSpeedVecY(y: number) {
     this._speedVec.y = y;
   }
 
-  setBaseSpeed(speed) {
+  setBaseSpeed(speed: number) {
     this._baseSpeed = speed;
   }
 
@@ -698,19 +700,19 @@ class Entity {
     return this._baseSpeed;
   }
 
-  setWidth(width) {
+  setWidth(width: number) {
     this._width = width;
   }
 
-  getWidth() {
+  getWidth(frame?: number) {
     return this._width;
   }
 
-  setScaleX(scaleX) {
+  setScaleX(scaleX: number) {
     this._scaleX = scaleX;
   }
 
-  setScaleY(scaleY) {
+  setScaleY(scaleY: number) {
     this._scaleY = scaleY;
   }
 
@@ -722,14 +724,19 @@ class Entity {
     return this._scaleY;
   }
 
-  setWidthHeightAABB(minWidth, minHeight, maxWidth, maxHeight) {
+  setWidthHeightAABB(
+    minWidth: number,
+    minHeight: number,
+    maxWidth: number,
+    maxHeight: number
+  ) {
     this._AABB_MaxWidth = maxWidth;
     this._AABB_MaxHeight = maxHeight;
     this._AABB_MinWidth = minWidth;
     this._AABB_MinHeight = minHeight;
   }
 
-  setDirectionLocked(value) {
+  setDirectionLocked(value: boolean) {
     this._directionLocked = value;
   }
 
@@ -741,7 +748,7 @@ class Entity {
     return this._direction;
   }
 
-  setEntityDirection(direction) {
+  setEntityDirection(direction: number) {
     if (isNaN(direction)) {
       console.log("SetEntityDirection NaN");
     }
@@ -749,15 +756,15 @@ class Entity {
     this._direction = direction;
   }
 
-  setWeight(weight) {
+  setWeight(weight: number) {
     this._weight = weight;
   }
 
-  getWeight() {
+  getWeight(frame?: number) {
     return this._weight;
   }
 
-  setBaseWeight(weight) {
+  setBaseWeight(weight: number) {
     this._baseWeight = weight;
   }
 
@@ -769,7 +776,7 @@ class Entity {
     return this._red;
   }
 
-  setRed(r) {
+  setRed(r: number) {
     this._red = r;
   }
 
@@ -777,7 +784,7 @@ class Entity {
     return this._green;
   }
 
-  setGreen(g) {
+  setGreen(g: number) {
     this._green = g;
   }
 
@@ -785,7 +792,7 @@ class Entity {
     return this._blue;
   }
 
-  setBlue(b) {
+  setBlue(b: number) {
     this._blue = b;
   }
 
@@ -793,11 +800,11 @@ class Entity {
     return this._age;
   }
 
-  setAge(age) {
+  setAge(age: number) {
     this._age = age;
   }
 
-  setEntityAlpha(alpha) {
+  setEntityAlpha(alpha: number) {
     this._alpha = alpha;
   }
 
@@ -853,7 +860,7 @@ class Entity {
     return this._oldZ;
   }
 
-  setEntityColor(r, g, b) {
+  setEntityColor(r: number, g: number, b: number) {
     this._red = r;
     this._green = g;
     this._blue = b;
@@ -871,7 +878,7 @@ class Entity {
     return this._framerate;
   }
 
-  setFramerate(framerate) {
+  setFramerate(framerate: number) {
     this._framerate = framerate;
   }
 
@@ -879,7 +886,7 @@ class Entity {
     return this._animating;
   }
 
-  setAnimating(value) {
+  setAnimating(value: boolean) {
     this._animating = value;
   }
 
@@ -887,15 +894,15 @@ class Entity {
     return this._relative;
   }
 
-  setWX(wx) {
+  setWX(wx: number) {
     this._wx = wx;
   }
 
-  setWY(wy) {
+  setWY(wy: number) {
     this._wy = wy;
   }
 
-  setAngle(degrees) {
+  setAngle(degrees: number) {
     if (isNaN(degrees)) {
       console.log("SetAngle NaN");
     }
@@ -903,11 +910,11 @@ class Entity {
     this._angle = degrees;
   }
 
-  setHeight(height) {
+  setHeight(height: number) {
     this._height = height;
   }
 
-  getHeight() {
+  getHeight(frame?: number) {
     return this._height;
   }
 
@@ -915,7 +922,7 @@ class Entity {
     return this._parent;
   }
 
-  move(xamount, yamount) {
+  move(xamount: number, yamount: number) {
     this._x += xamount;
     this._y += yamount;
   }

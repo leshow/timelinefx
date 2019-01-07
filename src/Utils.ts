@@ -95,7 +95,7 @@ export function forEachInXMLNodeList<T>(
 export function forEachXMLChild(
   xmlNode: any,
   tag: string,
-  fn: (item: string) => void
+  fn: (item: any) => void
 ): void {
   const nodelist = xmlNode.getElementsByTagName(tag);
   for (let i = 0; i < nodelist.length; i++) {

@@ -10,6 +10,8 @@ import Emitter from "./Emitter";
 import EmitterArray from "./EmitterArray";
 import EffectsLibrary from "./EffectsLibrary";
 import ParticleManager from "./ParticleManager";
+import Particle from "./Particle";
+import { AnimImage } from "src";
 
 export const TypePoint = 0;
 export const TypeArea = 1;
@@ -104,7 +106,53 @@ const g_defaultEffect = {
 };
 
 class Effect extends Entity {
-  constructor(other: any, particleManager: ParticleManager) {
+  _cAmount: EmitterArray;
+  _cLife: EmitterArray;
+  _cSizeX: EmitterArray;
+  _cSizeY: EmitterArray;
+  _cVelocity: EmitterArray;
+  _cWeight: EmitterArray;
+  _cSpin: EmitterArray;
+  _cStretch: EmitterArray;
+  _cGlobalZ: EmitterArray;
+  _cAlpha: EmitterArray;
+  _cEmissionAngle: EmitterArray;
+  _cEmissionRange: EmitterArray;
+  _cWidth: EmitterArray;
+  _cHeight: EmitterArray;
+  _cEffectAngle: EmitterArray;
+  _effectLayer: number;
+  _spawnAge: number;
+  _effectLength: number;
+  _currentEffectFrame: number;
+  _overrideSize: number;
+  _class: number;
+  _currentWidth: number;
+  _currentHeight: number;
+  _handleCenter: boolean;
+  _emitAtPoints: boolean;
+  _mgx: number;
+  _mgy: number;
+  _emissionType: number;
+  _effectLength: number;
+  _ellipseArc: number;
+  _lockAspect: boolean;
+  _handleCenter: boolean;
+  _traverseEdge: boolean;
+  _name: string;
+  _endBehaviour: number;
+  _distanceSetByLife: boolean;
+  _reverseSpawn: boolean;
+  _path: string;
+  _parentEmitter: Emitter;
+  _isCompiled: boolean;
+
+  _particleManager: ParticleManager;
+  _arrayOwner: boolean;
+  _inUse: Array<Array<Effect>>;
+  _children: Array<Emitter>;
+
+  constructor(other?: any, particleManager?: ParticleManager) {
     super(other);
 
     if (other === undefined) {
@@ -218,15 +266,15 @@ class Effect extends Entity {
     }
   }
 
-  getEffectLayer() {
+  getEffectLayer(): number {
     return this._effectLayer;
   }
 
-  setEffectLayer(layer) {
+  setEffectLayer(layer: number) {
     this._effectLayer = layer;
   }
 
-  showOne(e) {
+  showOne(e: Emitter) {
     for (let i = 0; i < this._children.length; i++) {
       this._children[i].setVisible(false);
     }
@@ -237,7 +285,7 @@ class Effect extends Entity {
     return this._children.length;
   }
 
-  setParticleManager(particleManager) {
+  setParticleManager(particleManager: ParticleManager) {
     this._particleManager = particleManager;
   }
 
@@ -391,7 +439,7 @@ class Effect extends Entity {
 
     if (this._parentEmitter) this._dying = this._parentEmitter.isDying();
 
-    super.update(); //Effect.$superp.Update.call(this);
+    super.update(); // Effect.$superp.Update.call(this);
 
     if (this._idleTime > this._particleManager.getIdleTimeLimit())
       this._dead = 1;
@@ -420,7 +468,7 @@ class Effect extends Entity {
     return this._particleManager;
   }
 
-  getParticles(layer) {
+  getParticles(layer: number) {
     return this._inUse[layer];
   }
 
@@ -437,7 +485,7 @@ class Effect extends Entity {
     this.destroy();
   }
 
-  destroy(releaseChildren) {
+  destroy(releaseChildren?: boolean) {
     this._parentEmitter = null;
     this._directoryEffects = [];
     this._directoryEmitters = [];
@@ -451,22 +499,22 @@ class Effect extends Entity {
       this._inUse[i] = [];
     }
 
-    super.destroy(releaseChildren); //Effect.$superp.Destroy.call(this, releaseChildren);
+    super.destroy(releaseChildren); // Effect.$superp.Destroy.call(this, releaseChildren);
   }
 
-  setEndBehavior(behavior) {
+  setEndBehavior(behavior: number) {
     this._endBehavior = behavior;
   }
 
-  setDistanceSetByLife(value) {
+  setDistanceSetByLife(value: number) {
     this._distanceSetByLife = value;
   }
 
-  setHandleCenter(center) {
+  setHandleCenter(center: number) {
     this._handleCenter = center;
   }
 
-  setReverseSpawn(reverse) {
+  setReverseSpawn(reverse: number) {
     this._reverseSpawn = reverse;
   }
 
@@ -475,95 +523,95 @@ class Effect extends Entity {
     else this._spawnDirection = 1;
   }
 
-  setAreaSize(width, height) {
+  setAreaSize(width: number, height: number) {
     this._overrideSize = true;
     this._currentWidth = width;
     this._currentHeight = height;
   }
 
-  setLineLength(length) {
+  setLineLength(length: number) {
     this._overrideSize = true;
     this._currentWidth = length;
   }
 
-  setEmissionAngle(angle) {
+  setEmissionAngle(angle: number) {
     this._overrideEmissionAngle = true;
     this._currentEmissionAngle = angle;
   }
 
-  setEffectAngle(angle) {
+  setEffectAngle(angle: number) {
     this._overrideAngle = true;
     this._angle = angle;
   }
 
-  setLife(life) {
+  setLife(life: number) {
     this._overrideLife = true;
     this._currentLife = life;
   }
 
-  setAmount(amount) {
+  setAmount(amount: number) {
     this._overrideAmount = true;
     this._currentAmount = amount;
   }
 
-  setVelocity(velocity) {
+  setVelocity(velocity: number) {
     this._overrideVelocity = true;
     this._currentVelocity = velocity;
   }
 
-  setSpin(spin) {
+  setSpin(spin: number) {
     this._overrideSpin = true;
     this._currentSpin = spin;
   }
 
-  setWeight(weight) {
+  setWeight(weight: number) {
     this._overrideWeight = true;
     this._currentWeight = weight;
   }
 
-  setEffectParticleSize(sizeX, sizeY) {
+  setEffectParticleSize(sizeX: number, sizeY: number) {
     this._overrideSizeX = true;
     this._overrideSizeY = true;
     this._currentSizeX = sizeX;
     this._currentSizeY = sizeY;
   }
 
-  setSizeX(sizeX) {
+  setSizeX(sizeX: number) {
     this._overrideSizeX = true;
     this._currentSizeX = sizeX;
   }
 
-  setSizeY(sizeY) {
+  setSizeY(sizeY: number) {
     this._overrideSizeY = true;
     this._currentSizeY = sizeY;
   }
 
-  setEffectAlpha(alpha) {
+  setEffectAlpha(alpha: number) {
     this._overrideAlpha = true;
     this._currentAlpha = alpha;
   }
 
-  setEffectEmissionRange(emissionRange) {
+  setEffectEmissionRange(emissionRange: number) {
     this._overrideEmissionRange = true;
     this._currentEmissionRange = emissionRange;
   }
 
-  setEllipseArc(degrees) {
+  setEllipseArc(degrees: number) {
     this._ellipseArc = degrees;
     this._ellipseOffset = 90 - degrees / 2;
   }
 
-  setZ(z) {
+  setZ(z: number) {
     this._overrideGlobalZ = true;
     this._z = z;
   }
 
-  setStretch(stretch) {
+  setStretch(stretch: number) {
     this._overrideStretch = true;
     this._currentStretch = stretch;
   }
 
-  setGroupParticles(v) {
+  setGroupParticles(v: boolean) {
     for (let i = 0; i < this._children.length; i++) {
       let e = this._children[i];
 
@@ -576,13 +624,13 @@ class Effect extends Entity {
     }
   }
 
-  addInUse(layer, p) {
+  addInUse(layer: number, p: Particle) {
     // the particle is managed by this Effect
     this.setGroupParticles(true);
     this._inUse[layer].push(p);
   }
 
-  removeInUse(layer, p) {
+  removeInUse(layer: number, p: Particle) {
     removeFromList(this._inUse[layer], p);
   }
 
@@ -614,7 +662,7 @@ class Effect extends Entity {
 
   compileQuick() {
     for (let i = 0; i < this._children.length; i++) {
-      e = this._children[i];
+      let e = this._children[i];
       e.compileQuick();
       e.resetBypassers();
     }
@@ -681,67 +729,67 @@ class Effect extends Entity {
     this._cGlobalZ.setCompiled(0, 1.0);
   }
 
-  getLife(frame) {
+  getLife(frame: number) {
     return this._cLife.get(frame);
   }
 
-  getAmount(frame) {
+  getAmount(frame: number) {
     return this._cAmount.get(frame);
   }
 
-  getSizeX(frame) {
+  getSizeX(frame: number) {
     return this._cSizeX.get(frame);
   }
 
-  getSizeY(frame) {
+  getSizeY(frame: number) {
     return this._cSizeY.get(frame);
   }
 
-  getVelocity(frame) {
+  getVelocity(frame: number) {
     return this._cVelocity.get(frame);
   }
 
-  getWeight(frame) {
+  getWeight(frame: number) {
     return this._cWeight.get(frame);
   }
 
-  getSpin(frame) {
+  getSpin(frame: number) {
     return this._cSpin.get(frame);
   }
 
-  getAlpha(frame) {
+  getAlpha(frame: number) {
     return this._cAlpha.get(frame);
   }
 
-  getEmissionAngle(frame) {
+  getEmissionAngle(frame: number) {
     return this._cEmissionAngle.get(frame);
   }
 
-  getEmissionRange(frame) {
+  getEmissionRange(frame: number) {
     return this._cEmissionRange.get(frame);
   }
 
-  getWidth(frame) {
+  getWidth(frame: number) {
     return this._cWidth.get(frame);
   }
 
-  getHeight(frame) {
+  getHeight(frame: number) {
     return this._cHeight.get(frame);
   }
 
-  getEffectAngle(frame) {
+  getEffectAngle(frame: number) {
     return this._cEffectAngle.get(frame);
   }
 
-  getStretch(frame) {
+  getStretch(frame: number) {
     return this._cStretch.get(frame);
   }
 
-  getGlobalZ(frame) {
+  getGlobalZ(frame: number) {
     return this._cGlobalZ.get(frame);
   }
 
-  loadFromXML(xml) {
+  loadFromXML(xml: any) {
     let x = new XMLHelper(xml);
     this._class = x.getAttrAsInt("TYPE");
     this._emitAtPoints = x.getAttrAsBool("EMITATPOINTS");
@@ -812,16 +860,16 @@ class Effect extends Entity {
 
     let _this = this;
 
-    forEachXMLChild(xml, "PARTICLE", function(n) {
+    forEachXMLChild(xml, "PARTICLE", (n: string) => {
       let emit = new Emitter();
       emit.loadFromXML(n, _this);
       _this.addChild(emit);
     });
   }
 
-  readAttribute(xml, emitArray, tag) {
+  readAttribute(xml: any, emitArray: EmitterArray, tag: string) {
     let result = false;
-    forEachXMLChild(xml, tag, function(n) {
+    forEachXMLChild(xml, tag, (n: string) => {
       let attr = emitArray.add(
         parseFloat(getNodeAttrValue(n, "FRAME")),
         parseFloat(getNodeAttrValue(n, "VALUE"))
@@ -864,7 +912,7 @@ class Effect extends Entity {
     return this._class;
   }
 
-  setCurrentEffectFrame(frame) {
+  setCurrentEffectFrame(frame: number) {
     this._currentEffectFrame = frame;
   }
 
@@ -904,7 +952,7 @@ class Effect extends Entity {
     return this._currentAlpha;
   }
 
-  setParticlesCreated(value) {
+  setParticlesCreated(value: number) {
     this._particlesCreated = value;
   }
 
@@ -916,11 +964,11 @@ class Effect extends Entity {
     return this._cLife.getLastFrame();
   }
 
-  setEffectLength(length) {
+  setEffectLength(length: number) {
     this._effectLength = length;
   }
 
-  setParentEmitter(emitter) {
+  setParentEmitter(emitter: number) {
     this._parentEmitter = emitter;
   }
 
@@ -964,7 +1012,7 @@ class Effect extends Entity {
     return this._mgy;
   }
 
-  getImages(images) {
+  getImages(images: Array<AnimImage>) {
     for (let i = 0; i < this._children.length; i++) {
       this._children[i].getImages(images);
     }

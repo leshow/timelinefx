@@ -26,6 +26,8 @@ import { XMLHelper } from "./Utils";
 import Entity from "./Entity";
 import Matrix2 from "./Matrix2";
 import EmitterArray from "./EmitterArray";
+import ParticleManager from "./ParticleManager";
+import AnimImage from "./AnimImage";
 
 const AngAlign = 0;
 const AngRandom = 1;
@@ -104,7 +106,44 @@ const g_defaultEmitter = {
 };
 
 class Emitter extends Entity {
-  constructor(other, pm) {
+  // [key: string]: any;
+  _cAmount: EmitterArray;
+  _cLife: EmitterArray;
+  _cSizeX: EmitterArray;
+  _cSizeY: EmitterArray;
+  _cVelocity: EmitterArray;
+  _cWeight: EmitterArray;
+  _cSpin: EmitterArray;
+  _cStretch: EmitterArray;
+  _cBaseSpeed: EmitterArray;
+  _cBaseSpin: EmitterArray;
+  _cAlpha: EmitterArray;
+  _cEmissionAngle: EmitterArray;
+  _cEmissionRange: EmitterArray;
+  _cR: EmitterArray;
+  _cG: EmitterArray;
+  _cB: EmitterArray;
+  _cDirection: EmitterArray;
+  _cDirectionVariationOT: EmitterArray;
+  _cFramerate: EmitterArray;
+  _cGlobalVelocity: EmitterArray;
+  _cScaleX: EmitterArray;
+  _cScaleY: EmitterArray;
+  _cBaseWeight: EmitterArray;
+  _cSplatter: EmitterArray;
+  _cDirectionVariation: EmitterArray;
+  _cVelVariation: EmitterArray;
+  _cLifeVariation: EmitterArray;
+  _cWeightVariation: EmitterArray;
+  _cAmountVariation: EmitterArray;
+  _cSizeXVariation: EmitterArray;
+  _cSizeYVariation: EmitterArray;
+  _cSpinVariation: EmitterArray;
+  _arrayOwner: boolean;
+  _effects: Array<Effect>;
+  _parentEffect: Effect;
+
+  constructor(other: any, pm?: ParticleManager) {
     super(other);
 
     this._effects = [];
@@ -280,7 +319,7 @@ class Emitter extends Entity {
     }
   }
 
-  loadFromXML(xml, parent) {
+  loadFromXML(xml: any, parent: any) {
     let x = new XMLHelper(xml);
 
     this.setHandleX(x.getAttrAsInt("HANDLE_X"));
@@ -392,12 +431,12 @@ class Emitter extends Entity {
 
       e.setParentEmitter(this);
 
-      this.addEffect(e);
+      this.addEffect(e as Entity);
     }
   }
 
-  readAttribute(xml, emitArray, tag) {
-    forEachXMLChild(xml, tag, function(n) {
+  readAttribute(xml: any, emitArray: EmitterArray, tag: string) {
+    forEachXMLChild(xml, tag, n => {
       let attr = emitArray.add(
         parseFloat(getNodeAttrValue(n, "FRAME")),
         parseFloat(getNodeAttrValue(n, "VALUE"))
@@ -449,11 +488,11 @@ class Emitter extends Entity {
     }
   }
 
-  addEffect(effect) {
+  addEffect(effect: Emitter) {
     this._effects.push(effect);
   }
 
-  setParentEffect(parent) {
+  setParentEffect(parent: Effect) {
     this._parentEffect = parent;
   }
 
@@ -658,7 +697,7 @@ class Emitter extends Entity {
     }
   }
 
-  destroy(releaseChildren) {
+  destroy(releaseChildren?: boolean) {
     this._parentEffect = null;
     this._image = null;
 
@@ -1296,7 +1335,7 @@ class Emitter extends Entity {
             }
 
             if (!this._bypassDirectionvariation) {
-              e.setDirectionVairation(this._currentDirectionVariation);
+              e.setDirectionVariation(this._currentDirectionVariation);
               let dv =
                 e.getDirectionVariation() *
                 this.getEmitterDirectionVariationOt(0);
@@ -2006,7 +2045,7 @@ class Emitter extends Entity {
     this._path = path;
   }
 
-  getImages(images) {
+  getImages(images: Array<AnimImage>) {
     if (this._image) images[this._image._index] = this._image;
 
     for (let i = 0; i < this._effects.length; i++) {
