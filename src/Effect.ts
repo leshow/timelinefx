@@ -121,33 +121,84 @@ class Effect extends Entity {
   _cWidth: EmitterArray;
   _cHeight: EmitterArray;
   _cEffectAngle: EmitterArray;
-  _effectLayer: number;
-  _spawnAge: number;
-  _effectLength: number;
-  _currentEffectFrame: number;
-  _overrideSize: number;
-  _class: number;
-  _currentWidth: number;
-  _currentHeight: number;
-  _handleCenter: boolean;
-  _emitAtPoints: boolean;
-  _mgx: number;
-  _mgy: number;
-  _emissionType: number;
-  _effectLength: number;
-  _ellipseArc: number;
-  _lockAspect: boolean;
-  _handleCenter: boolean;
-  _traverseEdge: boolean;
-  _name: string;
-  _endBehaviour: number;
-  _distanceSetByLife: boolean;
-  _reverseSpawn: boolean;
-  _path: string;
-  _parentEmitter: Emitter;
-  _isCompiled: boolean;
 
-  _particleManager: ParticleManager;
+  _class: number = TypePoint;
+  _currentEffectFrame: number = 0;
+  _handleCenter: number = false;
+  _source: number | null = null;
+  _lockAspect: boolean = true;
+  _particlesCreated: boolean = false;
+  _suspendTime: number = 0;
+  _gx: number = 0;
+  _gy: number = 0;
+  _mgx: number = 0;
+  _mgy: number = 0;
+  _emitAtPoints: boolean = false;
+  _emissionType: number = EmInwards;
+  _effectLength: number = 0;
+  _parentEmitter: Emitter | null = null;
+  _spawnAge: number = 0;
+  _index: number = 0;
+  _particleCount: number = 0;
+  _idleTime: number = 0;
+  _traverseEdge: boolean = false;
+  _endBehavior: number = EndKill;
+  _distanceSetByLife: boolean = false;
+  _reverseSpawn: boolean = false;
+  _spawnDirection: number = 1;
+  _dying: boolean = false;
+  _allowSpawning: boolean = true;
+  _ellipseArc: number = 360.0;
+  _ellipseOffset: number = 0;
+  _effectLayer: number = 0;
+  _doesNotTimeout: boolean = false;
+
+  _particleManager: ParticleManager | null = null;
+
+  _frames: number=32
+  _animWidth: number=128
+  _animHeight: number=128
+  _looped: boolean=false
+  _animX: number=0
+  _animY: number=0
+  _seed: number=0
+  _zoom:number= 1.0
+  _frameOffset: number = 0
+
+  _bypassWeight:boolean = false;
+  _isCompiled: boolean = false;
+  _currentLife: number;
+  _currentAmount: number;
+  _currentSizeX: number;,
+  _currentSizeY: number;
+  _currentVelocity: number;
+  _currentSpin: number = 0;
+  _currentWeight: number = 0;
+  _currentWidth: number = 0;
+  _currentHeight: number = 0;
+  _currentAlpha: number = 0;
+  _currentEmissionAngle: number = 0;
+  _currentEmissionRange: number = 0;
+  _currentStretch: number = 0;
+  _currentGlobalZ: number = 0;
+
+
+  _overrideSize: boolean = false;
+  _overrideEmissionAngle: boolean = false;
+  _overrideEmissionRange: boolean = false;
+  _overrideAngle: boolean = false;
+  _overrideLife: boolean = false;
+  _overrideAmount: boolean= false;
+  _overrideVelocity: boolean= false;
+  _overrideSpin: boolean= false;
+  _overrideSizeX: boolean= false;
+  _overrideSizeY: boolean= false;
+  _overrideWeight: boolean= false;
+  _overrideAlpha: boolean= false;
+  _overrideStretch: boolean = false;
+  _overrideGlobalZ: boolean = false;
+
+  _particleManager: ParticleManager | undefined;
   _arrayOwner: boolean;
   _inUse: Array<Array<Effect>>;
   _children: Array<Emitter>;
