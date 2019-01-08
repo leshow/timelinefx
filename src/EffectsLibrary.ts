@@ -1,79 +1,80 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
 import Entity from "./Entity";
+import Emitter from "./Emitter";
 
 class EffectsLibrary {
-  static instance: EffectsLibrary;
+  public static instance: EffectsLibrary;
 
-  static c_particleLimit = 5000;
+  public static c_particleLimit = 5000;
 
-  static globalPercentMin = 0;
-  static globalPercentMax = 20.0;
-  static globalPercentSteps = 100.0;
+  public static globalPercentMin = 0;
+  public static globalPercentMax = 20.0;
+  public static globalPercentSteps = 100.0;
 
-  static globalPercentVMin = 0;
-  static globalPercentVMax = 10.0;
-  static globalPercentVSteps = 200.0;
+  public static globalPercentVMin = 0;
+  public static globalPercentVMax = 10.0;
+  public static globalPercentVSteps = 200.0;
 
-  static angleMin = 0;
-  static angleMax = 1080.0;
-  static angleSteps = 54.0;
+  public static angleMin = 0;
+  public static angleMax = 1080.0;
+  public static angleSteps = 54.0;
 
-  static emissionRangeMin = 0;
-  static emissionRangeMax = 180.0;
-  static emissionRangeSteps = 30.0;
+  public static emissionRangeMin = 0;
+  public static emissionRangeMax = 180.0;
+  public static emissionRangeSteps = 30.0;
 
-  static dimensionsMin = 0;
-  static dimensionsMax = 200.0;
-  static dimensionsSteps = 40.0;
+  public static dimensionsMin = 0;
+  public static dimensionsMax = 200.0;
+  public static dimensionsSteps = 40.0;
 
-  static lifeMin = 0;
-  static lifeMax = 100000.0;
-  static lifeSteps = 200.0;
+  public static lifeMin = 0;
+  public static lifeMax = 100000.0;
+  public static lifeSteps = 200.0;
 
-  static amountMin = 0;
-  static amountMax = 2000;
-  static amountSteps = 100;
+  public static amountMin = 0;
+  public static amountMax = 2000;
+  public static amountSteps = 100;
 
-  static velocityMin = 0;
-  static velocityMax = 10000.0;
-  static velocitySteps = 100.0;
+  public static velocityMin = 0;
+  public static velocityMax = 10000.0;
+  public static velocitySteps = 100.0;
 
-  static velocityOverTimeMin = -20.0;
-  static velocityOverTimeMax = 20.0;
-  static velocityOverTimeSteps = 200;
+  public static velocityOverTimeMin = -20.0;
+  public static velocityOverTimeMax = 20.0;
+  public static velocityOverTimeSteps = 200;
 
-  static weightMin = -2500.0;
-  static weightMax = 2500.0;
-  static weightSteps = 200.0;
+  public static weightMin = -2500.0;
+  public static weightMax = 2500.0;
+  public static weightSteps = 200.0;
 
-  static weightVariationMin = 0;
-  static weightVariationMax = 2500.0;
-  static weightVariationSteps = 250.0;
+  public static weightVariationMin = 0;
+  public static weightVariationMax = 2500.0;
+  public static weightVariationSteps = 250.0;
 
-  static spinMin = -2000.0;
-  static spinMax = 2000.0;
-  static spinSteps = 100.0;
+  public static spinMin = -2000.0;
+  public static spinMax = 2000.0;
+  public static spinSteps = 100.0;
 
-  static spinVariationMin = 0;
-  static spinVariationMax = 2000.0;
-  static spinVariationSteps = 100.0;
+  public static spinVariationMin = 0;
+  public static spinVariationMax = 2000.0;
+  public static spinVariationSteps = 100.0;
 
-  static spinOverTimeMin = -20.0;
-  static spinOverTimeMax = 20.0;
-  static spinOverTimeSteps = 200.0;
+  public static spinOverTimeMin = -20.0;
+  public static spinOverTimeMax = 20.0;
+  public static spinOverTimeSteps = 200.0;
 
-  static directionOverTimeMin = 0;
-  static directionOverTimeMax = 4320.0;
-  static directionOverTimeSteps = 216.0;
+  public static directionOverTimeMin = 0;
+  public static directionOverTimeMax = 4320.0;
+  public static directionOverTimeSteps = 216.0;
 
-  static framerateMin = 0;
-  static framerateMax = 200.0;
-  static framerateSteps = 100.0;
+  public static framerateMin = 0;
+  public static framerateMax = 200.0;
+  public static framerateSteps = 100.0;
 
-  static maxDirectionVariation = 22.5;
-  static maxVelocityVariation = 30.0;
-  static motionVariationInterval = 30;
+  public static maxDirectionVariation = 22.5;
+  public static maxVelocityVariation = 30.0;
+  public static motionVariationInterval = 30;
 
   //
   _lookupFrequency: number = 30.0;
@@ -81,9 +82,9 @@ class EffectsLibrary {
   _lookupFrequencyOverTime: number = 1.0;
   _updateFrequency: number = 30.0;
   _currentUpdateTime: number = 30.0;
-  _shapeList: Array<unknown> = [];
+  _shapeList: Array<AnimImage> = [];
   _name: string = "";
-  _effects: Array<Entity | Effect> = [];
+  _effects: { [key: string]: Effect } | Array<Effect> = [];
   _emitters: Array<Entity> = [];
   m_currentFolder: string | null = null;
 
@@ -121,7 +122,7 @@ class EffectsLibrary {
     this.loadEffectElements(xml.getElementsByTagName("EFFECTS")[0].children);
   }
 
-  loadEffectElements(effects: Array<Effect>) {
+  loadEffectElements(effects: Array<any>) {
     for (let i = 0; i < effects.length; i++) {
       if (effects[i].tagName === "FOLDER") {
         this.loadEffectElements(effects[i].children);
@@ -145,19 +146,19 @@ class EffectsLibrary {
     return this._shapeList;
   }
 
-  getImage(index: number) {
+  getImage(index: number): AnimImage {
     return this._shapeList[index];
   }
 
-  getEffect(name: number) {
+  getEffect(name: string) {
     return this._effects[name];
   }
 
-  getEmitter(name: number) {
+  getEmitter(name: string) {
     return this._emitters[name];
   }
 
-  addEffect(e: Entity | Effect) {
+  addEffect(e: Effect) {
     let name = e.getPath();
 
     this._effects[name] = e;
@@ -169,7 +170,7 @@ class EffectsLibrary {
     }
   }
 
-  addEmitter(e: Entity) {
+  addEmitter(e: Emitter) {
     let name = e.getPath();
 
     this._emitters[name] = e;

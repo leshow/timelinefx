@@ -11,7 +11,7 @@ import EmitterArray from "./EmitterArray";
 import EffectsLibrary from "./EffectsLibrary";
 import ParticleManager from "./ParticleManager";
 import Particle from "./Particle";
-import { AnimImage } from "src";
+import AnimImage from "./AnimImage";
 
 export const TypePoint = 0;
 export const TypeArea = 1;
@@ -124,7 +124,7 @@ class Effect extends Entity {
 
   _class: number = TypePoint;
   _currentEffectFrame: number = 0;
-  _handleCenter: number = false;
+  _handleCenter: boolean = false;
   _source: number | null = null;
   _lockAspect: boolean = true;
   _particlesCreated: boolean = false;
@@ -155,23 +155,23 @@ class Effect extends Entity {
 
   _particleManager: ParticleManager | null = null;
 
-  _frames: number=32
-  _animWidth: number=128
-  _animHeight: number=128
-  _looped: boolean=false
-  _animX: number=0
-  _animY: number=0
-  _seed: number=0
-  _zoom:number= 1.0
-  _frameOffset: number = 0
+  _frames: number = 32;
+  _animWidth: number = 128;
+  _animHeight: number = 128;
+  _looped: boolean = false;
+  _animX: number = 0;
+  _animY: number = 0;
+  _seed: number = 0;
+  _zoom: number = 1.0;
+  _frameOffset: number = 0;
 
-  _bypassWeight:boolean = false;
+  _bypassWeight: boolean = false;
   _isCompiled: boolean = false;
-  _currentLife: number;
-  _currentAmount: number;
-  _currentSizeX: number;,
-  _currentSizeY: number;
-  _currentVelocity: number;
+  _currentLife: number = 0;
+  _currentAmount: number = 0;
+  _currentSizeX: number = 0;
+  _currentSizeY: number = 0;
+  _currentVelocity: number = 0;
   _currentSpin: number = 0;
   _currentWeight: number = 0;
   _currentWidth: number = 0;
@@ -182,26 +182,28 @@ class Effect extends Entity {
   _currentStretch: number = 0;
   _currentGlobalZ: number = 0;
 
-
   _overrideSize: boolean = false;
   _overrideEmissionAngle: boolean = false;
   _overrideEmissionRange: boolean = false;
   _overrideAngle: boolean = false;
   _overrideLife: boolean = false;
-  _overrideAmount: boolean= false;
-  _overrideVelocity: boolean= false;
-  _overrideSpin: boolean= false;
-  _overrideSizeX: boolean= false;
-  _overrideSizeY: boolean= false;
-  _overrideWeight: boolean= false;
-  _overrideAlpha: boolean= false;
+  _overrideAmount: boolean = false;
+  _overrideVelocity: boolean = false;
+  _overrideSpin: boolean = false;
+  _overrideSizeX: boolean = false;
+  _overrideSizeY: boolean = false;
+  _overrideWeight: boolean = false;
+  _overrideAlpha: boolean = false;
   _overrideStretch: boolean = false;
   _overrideGlobalZ: boolean = false;
 
   _particleManager: ParticleManager | undefined;
   _arrayOwner: boolean;
-  _inUse: Array<Array<Effect>>;
+  _inUse: Array<Array<Entity>>;
   _children: Array<Emitter>;
+  _path: string;
+  _directoryEffects: Array<Effect>;
+  _directoryEmitters: Array<Emitter>;
 
   constructor(other?: any, particleManager?: ParticleManager) {
     super(other);
@@ -544,8 +546,8 @@ class Effect extends Entity {
       while (this._inUse[i].length !== 0) {
         let p = this._inUse[i].pop();
         p.reset();
-        this._particleManager.releaseParticle(p);
-        this.removeInUse(i, p);
+        this._particleManager.releaseParticle(p as Particle);
+        this.removeInUse(i, p as Particle);
       }
       this._inUse[i] = [];
     }
@@ -557,15 +559,15 @@ class Effect extends Entity {
     this._endBehavior = behavior;
   }
 
-  setDistanceSetByLife(value: number) {
+  setDistanceSetByLife(value: boolean) {
     this._distanceSetByLife = value;
   }
 
-  setHandleCenter(center: number) {
+  setHandleCenter(center: boolean) {
     this._handleCenter = center;
   }
 
-  setReverseSpawn(reverse: number) {
+  setReverseSpawn(reverse: boolean) {
     this._reverseSpawn = reverse;
   }
 
@@ -675,7 +677,7 @@ class Effect extends Entity {
     }
   }
 
-  addInUse(layer: number, p: Particle) {
+  addInUse(layer: number, p: Entity) {
     // the particle is managed by this Effect
     this.setGroupParticles(true);
     this._inUse[layer].push(p);
@@ -911,7 +913,7 @@ class Effect extends Entity {
 
     let _this = this;
 
-    forEachXMLChild(xml, "PARTICLE", (n: string) => {
+    forEachXMLChild(xml, "PARTICLE", n => {
       let emit = new Emitter();
       emit.loadFromXML(n, _this);
       _this.addChild(emit);
@@ -920,7 +922,7 @@ class Effect extends Entity {
 
   readAttribute(xml: any, emitArray: EmitterArray, tag: string) {
     let result = false;
-    forEachXMLChild(xml, tag, (n: string) => {
+    forEachXMLChild(xml, tag, n => {
       let attr = emitArray.add(
         parseFloat(getNodeAttrValue(n, "FRAME")),
         parseFloat(getNodeAttrValue(n, "VALUE"))
@@ -931,7 +933,7 @@ class Effect extends Entity {
     return result;
   }
 
-  addStretch(f, v) {
+  addStretch(f: number, v: number) {
     return this._cStretch.add(f, v);
   }
 
@@ -1003,7 +1005,7 @@ class Effect extends Entity {
     return this._currentAlpha;
   }
 
-  setParticlesCreated(value: number) {
+  setParticlesCreated(value: boolean) {
     this._particlesCreated = value;
   }
 
@@ -1019,7 +1021,7 @@ class Effect extends Entity {
     this._effectLength = length;
   }
 
-  setParentEmitter(emitter: number) {
+  setParentEmitter(emitter: Emitter) {
     this._parentEmitter = emitter;
   }
 

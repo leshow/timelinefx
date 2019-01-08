@@ -28,6 +28,7 @@ import Matrix2 from "./Matrix2";
 import EmitterArray from "./EmitterArray";
 import ParticleManager from "./ParticleManager";
 import AnimImage from "./AnimImage";
+import Particle from "./Particle";
 
 const AngAlign = 0;
 const AngRandom = 1;
@@ -140,10 +141,80 @@ class Emitter extends Entity {
   _cSizeYVariation: EmitterArray;
   _cSpinVariation: EmitterArray;
   _arrayOwner: boolean;
-  _effects: Array<Effect>;
-  _parentEffect: Effect;
+  _effects: Array<Emitter>;
+  _parentEffect: Effect | null = null;
 
-  constructor(other: any, pm?: ParticleManager) {
+  _currentLife: number = 0;
+  _uniform: boolean = true;
+  _image: AnimImage | null = null;
+  _handleCenter: boolean = false;
+  _angleOffset: number = 0;
+  _lockedAngle: boolean = false;
+  _gx: number = 0;
+  _gy: number = 0;
+  _counter: number = 0;
+  _oldCounter: number = 0;
+  _angleType: number = AngAlign;
+  _angleRelative: boolean = false;
+  _useEffectEmission: boolean = false;
+  _deleted: boolean = false;
+  _visible: boolean = true;
+  _singleParticle: boolean = false;
+  _startedSpawning: boolean = false;
+  _spawned: number = 0;
+  _randomColor: boolean = false;
+  _zLayer: number = 0;
+  _animate: boolean = false;
+  _randomStartFrame: boolean = false;
+  _animationDirection: number = 1;
+  _colorRepeat: number = 0;
+  _alphaRepeat: number = 0;
+  _dirAlternater: boolean = false;
+  _oneShot: boolean = false;
+  _particlesRelative: boolean = false;
+  _tweenSpawns: boolean = false;
+  _once: boolean = false;
+  _dying: boolean = false;
+  _groupParticles: boolean = false;
+
+  _bypassWeight: boolean = false;
+  _bypassSpeed: boolean = false;
+  _bypassSpin: boolean = false;
+  _bypassDirectionvariation: boolean = false;
+  _bypassColor: boolean = false;
+  _bRed: boolean = false;
+  _bGreen: boolean = false;
+  _bBlue: boolean = false;
+  _bypassScaleX: boolean = false;
+  _bypassScaleY: boolean = false;
+  _bypassLifeVariation: boolean = false;
+  _bypassFramerate: boolean = false;
+  _bypassStretch: boolean = false;
+  _bypassSplatter: boolean = false;
+
+  _AABB_ParticleMaxWidth: number = 0;
+  _AABB_ParticleMaxHeight: number = 0;
+  _AABB_ParticleMinWidth: number = 0;
+  _AABB_ParticleMinHeight: number = 0;
+
+  _currentLifeVariation: number = 0;
+  _currentWeight: number = 0;
+  _currentWeightVariation: number = 0;
+  _currentSpeed: number = 0;
+  _currentSpeedVariation: number = 0;
+  _currentSpin: number = 0;
+  _currentSpinVariation: number = 0;
+  _currentDirectionVariation: number = 0;
+  _currentEmissionAngle: number = 0;
+  _currentEmissionRange: number = 0;
+  _currentSizeX: number = 0;
+  _currentSizeY: number = 0;
+  _currentSizeXVariation: number = 0;
+  _currentSizeYVariation: number = 0;
+  _currentFramerate: number = 0;
+  // _children: Array<Emitter> = [];
+
+  constructor(other?: any, pm?: ParticleManager) {
     super(other);
 
     this._effects = [];
@@ -201,120 +272,120 @@ class Emitter extends Entity {
       this._arrayOwner = true;
 
       this._cAmount = new EmitterArray(
-        EffectsLibrary.amountMin,
-        EffectsLibrary.amountMax
+        (EffectsLibrary as any).amountMin,
+        (EffectsLibrary as any).amountMax
       );
       this._cLife = new EmitterArray(
-        EffectsLibrary.lifeMin,
-        EffectsLibrary.lifeMax
+        (EffectsLibrary as any).lifeMin,
+        (EffectsLibrary as any).lifeMax
       );
       this._cSizeX = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cSizeY = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cBaseSpeed = new EmitterArray(
-        EffectsLibrary.velocityMin,
-        EffectsLibrary.velocityMax
+        (EffectsLibrary as any).velocityMin,
+        (EffectsLibrary as any).velocityMax
       );
       this._cBaseWeight = new EmitterArray(
-        EffectsLibrary.weightMin,
-        EffectsLibrary.weightMax
+        (EffectsLibrary as any).weightMin,
+        (EffectsLibrary as any).weightMax
       );
       this._cBaseSpin = new EmitterArray(
-        EffectsLibrary.spinMin,
-        EffectsLibrary.spinMax
+        (EffectsLibrary as any).spinMin,
+        (EffectsLibrary as any).spinMax
       );
       this._cEmissionAngle = new EmitterArray(
-        EffectsLibrary.angleMin,
-        EffectsLibrary.angleMax
+        (EffectsLibrary as any).angleMin,
+        (EffectsLibrary as any).angleMax
       );
       this._cEmissionRange = new EmitterArray(
-        EffectsLibrary.emissionRangeMin,
-        EffectsLibrary.emissionRangeMax
+        (EffectsLibrary as any).emissionRangeMin,
+        (EffectsLibrary as any).emissionRangeMax
       );
       this._cSplatter = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cVelVariation = new EmitterArray(
-        EffectsLibrary.velocityMin,
-        EffectsLibrary.velocityMax
+        (EffectsLibrary as any).velocityMin,
+        (EffectsLibrary as any).velocityMax
       );
       this._cWeightVariation = new EmitterArray(
-        EffectsLibrary.weightVariationMin,
-        EffectsLibrary.weightVariationMax
+        (EffectsLibrary as any).weightVariationMin,
+        (EffectsLibrary as any).weightVariationMax
       );
       this._cLifeVariation = new EmitterArray(
-        EffectsLibrary.lifeMin,
-        EffectsLibrary.lifeMax
+        (EffectsLibrary as any).lifeMin,
+        (EffectsLibrary as any).lifeMax
       );
       this._cAmountVariation = new EmitterArray(
-        EffectsLibrary.amountMin,
-        EffectsLibrary.amountMax
+        (EffectsLibrary as any).amountMin,
+        (EffectsLibrary as any).amountMax
       );
       this._cSizeXVariation = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cSizeYVariation = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cSpinVariation = new EmitterArray(
-        EffectsLibrary.spinVariationMin,
-        EffectsLibrary.spinVariationMax
+        (EffectsLibrary as any).spinVariationMin,
+        (EffectsLibrary as any).spinVariationMax
       );
       this._cDirectionVariation = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cAlpha = new EmitterArray(0, 1.0);
       this._cR = new EmitterArray(0, 0);
       this._cG = new EmitterArray(0, 0);
       this._cB = new EmitterArray(0, 0);
       this._cScaleX = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cScaleY = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cSpin = new EmitterArray(
-        EffectsLibrary.spinOverTimeMin,
-        EffectsLibrary.spinOverTimeMax
+        (EffectsLibrary as any).spinOverTimeMin,
+        (EffectsLibrary as any).spinOverTimeMax
       );
       this._cVelocity = new EmitterArray(
-        EffectsLibrary.velocityOverTimeMin,
-        EffectsLibrary.velocityOverTimeMax
+        (EffectsLibrary as any).velocityOverTimeMin,
+        (EffectsLibrary as any).velocityOverTimeMax
       );
       this._cWeight = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cDirection = new EmitterArray(
-        EffectsLibrary.directionOverTimeMin,
-        EffectsLibrary.directionOverTimeMax
+        (EffectsLibrary as any).directionOverTimeMin,
+        (EffectsLibrary as any).directionOverTimeMax
       );
       this._cDirectionVariationOT = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cFramerate = new EmitterArray(
-        EffectsLibrary.framerateMin,
-        EffectsLibrary.framerateMax
+        (EffectsLibrary as any).framerateMin,
+        (EffectsLibrary as any).framerateMax
       );
       this._cStretch = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cGlobalVelocity = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
     }
   }
@@ -357,25 +428,25 @@ class Emitter extends Entity {
     let imgNode = xml.getElementsByTagName("SHAPE_INDEX")[0];
     this.setImage(parseInt(imgNode.innerHTML));
 
-    if (x.hasChildAttr("ANGLE_TYPE"))
+    if (x.hasChildAttr("ANGLE_TYPE", "VALUE"))
       this.setAngleType(x.getChildAttrAsInt("ANGLE_TYPE", "VALUE"));
-    if (x.hasChildAttr("ANGLE_OFFSET"))
+    if (x.hasChildAttr("ANGLE_OFFSET", "VALUE"))
       this.setAngleOffset(x.getChildAttrAsInt("ANGLE_OFFSET", "VALUE"));
-    if (x.hasChildAttr("LOCKED_ANGLE"))
+    if (x.hasChildAttr("LOCKED_ANGLE", "VALUE"))
       this.setLockAngle(x.getChildAttrAsBool("LOCKED_ANGLE", "VALUE"));
-    if (x.hasChildAttr("ANGLE_RELATIVE"))
+    if (x.hasChildAttr("ANGLE_RELATIVE", "VALUE"))
       this.setAngleRelative(x.getChildAttrAsBool("ANGLE_RELATIVE", "VALUE"));
-    if (x.hasChildAttr("USE_EFFECT_EMISSION"))
+    if (x.hasChildAttr("USE_EFFECT_EMISSION", "VALUE"))
       this.setUseEffectEmission(
         x.getChildAttrAsBool("USE_EFFECT_EMISSION", "VALUE")
       );
-    if (x.hasChildAttr("COLOR_REPEAT"))
+    if (x.hasChildAttr("COLOR_REPEAT", "VALUE"))
       this.setColorRepeat(x.getChildAttrAsInt("COLOR_REPEAT", "VALUE"));
-    if (x.hasChildAttr("ALPHA_REPEAT"))
+    if (x.hasChildAttr("ALPHA_REPEAT", "VALUE"))
       this.setAlphaRepeat(x.getChildAttrAsInt("ALPHA_REPEAT", "VALUE"));
-    if (x.hasChildAttr("ONE_SHOT"))
+    if (x.hasChildAttr("ONE_SHOT", "VALUE"))
       this.setOneShot(x.getChildAttrAsBool("ONE_SHOT", "VALUE"));
-    if (x.hasChildAttr("HANDLE_CENTERED"))
+    if (x.hasChildAttr("HANDLE_CENTERED", "VALUE"))
       this.setHandleCenter(x.getChildAttrAsBool("HANDLE_CENTERED", "VALUE"));
 
     this.readAttribute(xml, this._cLife, "LIFE");
@@ -446,32 +517,33 @@ class Emitter extends Entity {
   }
 
   sortAll() {
-    this._cR.sort();
-    this._cG.sort();
-    this._cB.sort();
-    this._cBaseSpin.sort();
-    this._cSpin.sort();
-    this._cSpinVariation.sort();
-    this._cVelocity.sort();
-    this._cBaseSpeed.sort();
-    this._cVelVariation.sort();
+    // TODO
+    (this._cR as any).sort();
+    (this._cG as any).sort();
+    (this._cB as any).sort();
+    (this._cBaseSpin as any).sort();
+    (this._cSpin as any).sort();
+    (this._cSpinVariation as any).sort();
+    (this._cVelocity as any).sort();
+    (this._cBaseSpeed as any).sort();
+    (this._cVelVariation as any).sort();
 
-    this._cAlpha.sort();
-    this._cSizeX.sort();
-    this._cSizeY.sort();
-    this._cScaleX.sort();
-    this._cScaleY.sort();
-    this._cSizeXVariation.sort();
-    this._cSizeYVariation.sort();
-    this._cLifeVariation.sort();
-    this._cLife.sort();
-    this._cAmount.sort();
-    this._cAmountVariation.sort();
-    this._cEmissionAngle.sort();
-    this._cEmissionRange.sort();
-    this._cFramerate.sort();
-    this._cStretch.sort();
-    this._cGlobalVelocity.sort();
+    (this._cAlpha as any).sort();
+    (this._cSizeX as any).sort();
+    (this._cSizeY as any).sort();
+    (this._cScaleX as any).sort();
+    (this._cScaleY as any).sort();
+    (this._cSizeXVariation as any).sort();
+    (this._cSizeYVariation as any).sort();
+    (this._cLifeVariation as any).sort();
+    (this._cLife as any).sort();
+    (this._cAmount as any).sort();
+    (this._cAmountVariation as any).sort();
+    (this._cEmissionAngle as any).sort();
+    (this._cEmissionRange as any).sort();
+    (this._cFramerate as any).sort();
+    (this._cStretch as any).sort();
+    (this._cGlobalVelocity as any).sort();
   }
 
   showAll() {
@@ -496,7 +568,7 @@ class Emitter extends Entity {
     this._parentEffect = parent;
   }
 
-  setImage(imageIndex) {
+  setImage(imageIndex: number) {
     let image = EffectsLibrary.getImage(imageIndex);
     this._image = image;
     this._AABB_ParticleMaxWidth = image.getWidth() * 0.5;
@@ -557,35 +629,35 @@ class Emitter extends Entity {
     this._alphaRepeat = repeat;
   }
 
-  setOneShot(value) {
+  setOneShot(value: boolean) {
     this._oneShot = value;
   }
 
-  setHandleCenter(value) {
+  setHandleCenter(value: boolean) {
     this._handleCenter = value;
   }
 
-  setParticlesRelative(value) {
+  setParticlesRelative(value: boolean) {
     this._particlesRelative = value;
   }
 
-  setTweenSpawns(value) {
+  setTweenSpawns(value: boolean) {
     this._tweenSpawns = value;
   }
 
-  setLockAngle(value) {
+  setLockAngle(value: boolean) {
     this._lockedAngle = value;
   }
 
-  setAngleRelative(value) {
+  setAngleRelative(value: boolean) {
     this._angleRelative = value;
   }
 
-  setOnce(value) {
+  setOnce(value: boolean) {
     this._once = value;
   }
 
-  setGroupParticles(value) {
+  setGroupParticles(value: boolean) {
     this._groupParticles = value;
   }
 
@@ -685,7 +757,7 @@ class Emitter extends Entity {
     return this._path;
   }
 
-  setRadiusCalculate(value) {
+  setRadiusCalculate(value: boolean) {
     this._radiusCalculate = value;
 
     for (let i = 0; i < this._children.length; i++) {
@@ -710,7 +782,7 @@ class Emitter extends Entity {
     super.destroy(false); // Emitter.$superp.Destroy.call(this, false);
   }
 
-  changeDoB(dob) {
+  changeDoB(dob: number) {
     this._dob = dob;
 
     for (let i = 0; i < this._effects.length; i++) {
@@ -1474,7 +1546,7 @@ class Emitter extends Entity {
     }
   }
 
-  controlParticle(e) {
+  controlParticle(e: Particle) {
     let parentEffect = this._parentEffect;
     let pm = parentEffect.getParticleManager();
 
@@ -1576,11 +1648,13 @@ class Emitter extends Entity {
           e._directionVariation *
           this.getEmitterDirectionVariationOt(e._age, e._lifeTime);
         e._timeTracker += EffectsLibrary.getUpdateTime();
-        if (e._timeTracker > EffectsLibrary.motionVariationInterval) {
+        if (e._timeTracker > (EffectsLibrary as any).motionVariationInterval) {
           e._randomDirection +=
-            EffectsLibrary.maxDirectionVariation * randomBetween(-dv, dv);
+            (EffectsLibrary as any).maxDirectionVariation *
+            randomBetween(-dv, dv);
           e._randomSpeed +=
-            EffectsLibrary.maxVelocityVariation * randomBetween(-dv, dv);
+            (EffectsLibrary as any).maxVelocityVariation *
+            randomBetween(-dv, dv);
           e._timeTracker = 0;
         }
       }
@@ -1703,19 +1777,24 @@ class Emitter extends Entity {
       e._weight = this.getEmitterWeight(e._age, e._lifeTime) * e._baseWeight;
   }
 
-  randomizeR(e, randomAge) {
-    return this._cR.getOt(randomAge, e.getLifeTime(), false);
+  randomizeR(e: Entity, randomAge: number) {
+    return this._cR.getOt(randomAge, e.getLifeTime()); // TODO , false
   }
 
-  randomizeG(e, randomAge) {
-    return this._cG.getOt(randomAge, e.getLifeTime(), false);
+  randomizeG(e: Entity, randomAge: number) {
+    return this._cG.getOt(randomAge, e.getLifeTime()); // TODO, false
   }
 
-  randomizeB(e, randomAge) {
-    return this._cB.getOt(randomAge, e.getLifeTime(), false);
+  randomizeB(e: Entity, randomAge: number) {
+    return this._cB.getOt(randomAge, e.getLifeTime()); // TODO, false
   }
 
-  drawCurrentFrame(x /*= 0*/, y /*= 0*/, w /*= 128.0*/, h /*= 128.0*/) {
+  drawCurrentFrame(
+    x: number = 0,
+    y: number = 0,
+    w: number = 128.0,
+    h: number = 128.0
+  ) {
     if (this._image) {
       /*
       SetAlpha(1.0);
@@ -1782,38 +1861,38 @@ class Emitter extends Entity {
     this._cR.clear(1);
     this._cG.clear(1);
     this._cB.clear(1);
-    this._cR.setCompiled(0, this.GetEmitterR(0, longestLife));
-    this._cG.setCompiled(0, this.GetEmitterG(0, longestLife));
-    this._cB.setCompiled(0, this.GetEmitterB(0, longestLife));
+    this._cR.setCompiled(0, this.getEmitterR(0, longestLife));
+    this._cG.setCompiled(0, this.getEmitterG(0, longestLife));
+    this._cB.setCompiled(0, this.getEmitterB(0, longestLife));
 
     this._cScaleX.clear(1);
     this._cScaleY.clear(1);
-    this._cScaleX.SetCompiled(0, this.GetEmitterScaleX(0, longestLife));
-    this._cScaleY.SetCompiled(0, this.GetEmitterScaleY(0, longestLife));
+    this._cScaleX.setCompiled(0, this.getEmitterScaleX(0, longestLife));
+    this._cScaleY.setCompiled(0, this.getEmitterScaleY(0, longestLife));
 
     this._cVelocity.clear(1);
-    this._cVelocity.SetCompiled(0, this.GetEmitterVelocity(0, longestLife));
+    this._cVelocity.setCompiled(0, this.getEmitterVelocity(0, longestLife));
 
     this._cWeight.clear(1);
-    this._cWeight.SetCompiled(0, this.GetEmitterWeight(0, longestLife));
+    this._cWeight.setCompiled(0, this.getEmitterWeight(0, longestLife));
 
     this._cDirection.clear(1);
-    this._cDirection.SetCompiled(0, this.GetEmitterDirection(0, longestLife));
+    this._cDirection.setCompiled(0, this.getEmitterDirection(0, longestLife));
 
     this._cDirectionVariationOT.clear(1);
-    this._cDirectionVariationOT.SetCompiled(
+    this._cDirectionVariationOT.setCompiled(
       0,
-      this.GetEmitterDirectionVariationOT(0, longestLife)
+      this.getEmitterDirectionVariationOT(0, longestLife)
     );
 
     this._cFramerate.clear(1);
-    this._cFramerate.SetCompiled(0, this.GetEmitterFramerate(0, longestLife));
+    this._cFramerate.setCompiled(0, this.getEmitterFramerate(0, longestLife));
 
     this._cStretch.clear(1);
-    this._cStretch.SetCompiled(0, this.GetEmitterStretch(0, longestLife));
+    this._cStretch.setCompiled(0, this.getEmitterStretch(0, longestLife));
 
     this._cSplatter.clear(1);
-    this._cSplatter.SetCompiled(0, this.GetEmitterSplatter(0));
+    this._cSplatter.setCompiled(0, this.getEmitterSplatter(0));
   }
 
   analyseEmitter() {
