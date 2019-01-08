@@ -1743,38 +1743,38 @@ class Emitter extends Entity {
     this._cR.clear(1);
     this._cG.clear(1);
     this._cB.clear(1);
-    this._cR.setCompiled(0, this.GetEmitterR(0, longestLife));
-    this._cG.setCompiled(0, this.GetEmitterG(0, longestLife));
-    this._cB.setCompiled(0, this.GetEmitterB(0, longestLife));
+    this._cR.setCompiled(0, this.getEmitterR(0, longestLife));
+    this._cG.setCompiled(0, this.getEmitterG(0, longestLife));
+    this._cB.setCompiled(0, this.getEmitterB(0, longestLife));
 
     this._cScaleX.clear(1);
     this._cScaleY.clear(1);
-    this._cScaleX.SetCompiled(0, this.GetEmitterScaleX(0, longestLife));
-    this._cScaleY.SetCompiled(0, this.GetEmitterScaleY(0, longestLife));
+    this._cScaleX.setCompiled(0, this.getEmitterScaleX(0, longestLife));
+    this._cScaleY.setCompiled(0, this.getEmitterScaleY(0, longestLife));
 
     this._cVelocity.clear(1);
-    this._cVelocity.SetCompiled(0, this.GetEmitterVelocity(0, longestLife));
+    this._cVelocity.setCompiled(0, this.getEmitterVelocity(0, longestLife));
 
     this._cWeight.clear(1);
-    this._cWeight.SetCompiled(0, this.GetEmitterWeight(0, longestLife));
+    this._cWeight.setCompiled(0, this.getEmitterWeight(0, longestLife));
 
     this._cDirection.clear(1);
-    this._cDirection.SetCompiled(0, this.GetEmitterDirection(0, longestLife));
+    this._cDirection.setCompiled(0, this.getEmitterDirection(0, longestLife));
 
     this._cDirectionVariationOT.clear(1);
-    this._cDirectionVariationOT.SetCompiled(
+    this._cDirectionVariationOT.setCompiled(
       0,
-      this.GetEmitterDirectionVariationOT(0, longestLife)
+      this.getEmitterDirectionVariationOT(0, longestLife)
     );
 
     this._cFramerate.clear(1);
-    this._cFramerate.SetCompiled(0, this.GetEmitterFramerate(0, longestLife));
+    this._cFramerate.setCompiled(0, this.getEmitterFramerate(0, longestLife));
 
     this._cStretch.clear(1);
-    this._cStretch.SetCompiled(0, this.GetEmitterStretch(0, longestLife));
+    this._cStretch.setCompiled(0, this.getEmitterStretch(0, longestLife));
 
     this._cSplatter.clear(1);
-    this._cSplatter.SetCompiled(0, this.GetEmitterSplatter(0));
+    this._cSplatter.setCompiled(0, this.getEmitterSplatter(0));
   }
 
   analyseEmitter() {
