@@ -1,5 +1,5 @@
 {
-  "name": "timelinefx",
+  "name": "vf-timelinefx",
   "version": "2.0.0",
   "description": "JavaScript port of TimelineFX particle system",
   "main": "src/index.js",
