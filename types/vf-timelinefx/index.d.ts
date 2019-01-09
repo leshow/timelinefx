@@ -28,12 +28,12 @@ export class ParticleManager {
   public onParticleKilledCB: ((p: Particle) => void) | null;
   constructor(drawSprite: SpriteFn, particles: number, layers: number);
 
-  setScreenSize(w: number, h: number): void;
-  setScreenPosition(x: number, y: number): void;
-  addEffect(e: Effect, layer?: number): void;
-  update(): void;
-  drawParticles(tween?: number, layer?: number): void;
-  destroy(): void;
+  public setScreenSize(w: number, h: number): void;
+  public setScreenPosition(x: number, y: number): void;
+  public addEffect(e: Effect, layer?: number): void;
+  public update(): void;
+  public drawParticles(tween?: number, layer?: number): void;
+  public destroy(): void;
 }
 
 export class AnimImage {
@@ -49,10 +49,10 @@ export class Effect {
 }
 
 export class EffectsLibrary {
-  public _effects: { [key: string]: Effect } | Array<Effect>;
+  public static _effects: { [key: string]: Effect } | Array<Effect>;
   constructor();
-  init(): void;
-  load(xml: any): void;
+  public init(): void;
+  public load(xml: any): void;
 }
 
 export class Emitter {

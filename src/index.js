@@ -9,7 +9,7 @@ import Matrix2 from "./Matrix2";
 import Particle from "./Particle";
 import ParticleManager from "./ParticleManager";
 import Vector2 from "./Vector2";
-import Utils from "./Utils";
+import * as Utils from "./Utils";
 
 export {
   AnimImage,
