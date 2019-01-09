@@ -22,7 +22,17 @@ export type SpriteFn = (
 ) => void;
 
 export class ParticleManager {
+  public static c_particleLimit: number;
+  private _drawSprite: SpriteFn;
+  public onParticleSpawnCB: ((p: Particle) => void) | null;
+  public onParticleKilledCB: ((p: Particle) => void) | null;
   constructor(drawSprite: SpriteFn, particles: number, layers: number);
+
+  setScreenSize(w: number, h: number): void;
+  setScreenPosition(x: number, y: number): void;
+  addEffect(e: Effect, layer?: number): void;
+  update(): void;
+  drawParticles(tween?: number, layer?: number): void;
 }
 
 export class AnimImage {
@@ -38,7 +48,10 @@ export class Effect {
 }
 
 export class EffectsLibrary {
+  public _effects: { [key: string]: Effect } | Array<Effect>;
   constructor();
+  init(): void;
+  load(xml: any): void;
 }
 
 export class Emitter {
