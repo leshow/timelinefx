@@ -199,13 +199,13 @@ class Effect extends Entity {
 
   _particleManager: ParticleManager | undefined;
   _arrayOwner: boolean;
-  _inUse: Array<Array<Entity>>;
-  _children: Array<Emitter>;
-  _path: string;
-  _directoryEffects: Array<Effect>;
-  _directoryEmitters: Array<Emitter>;
+  _inUse: Array<Array<Entity>> = [[]];
+  _children: Array<Emitter> = [];
+  _path: string = "";
+  _directoryEffects: Array<Effect> = [];
+  _directoryEmitters: Array<Emitter> = [];
 
-  constructor(other?: any, particleManager?: ParticleManager) {
+  constructor(other: Effect, particleManager: ParticleManager) {
     super(other);
 
     if (other === undefined) {
@@ -276,7 +276,7 @@ class Effect extends Entity {
         (EffectsLibrary as any).angleMax
       );
     } else {
-      for (let key in g_defaultEffect) (this as any)[key] = other[key];
+      for (let key in g_defaultEffect) (this as any)[key] = (other as any)[key];
 
       this._particleManager = particleManager;
       this._arrayOwner = false;
