@@ -1,10 +1,10 @@
 import { M_PI, fmod, toHex, lerp, removeFromList } from "./Utils";
-// import { DrawSprite } from "./index";
 import EffectsLibrary from "./EffectsLibrary";
 import Effect from "./Effect";
 import Emitter from "./Emitter";
 import Particle from "./Particle";
 import Matrix2 from "./Matrix2";
+import Entity from "./Entity";
 
 type SpriteFn = (
   p: Particle,
@@ -59,7 +59,7 @@ class ParticleManager {
   _currentTween: number;
   _effectLayers: number;
   _inUseCount = 0;
-  _inUse: Array<Particle>;
+  _inUse: Array<Array<Array<Particle>>>;
   _effects: Array<Array<Effect>>;
   _matrix: Matrix2 | undefined;
 
@@ -156,19 +156,22 @@ class ParticleManager {
     }
   }
 
-  grabParticle(effect: Effect, pool: boolean, layer: number = 0) {
+  grabParticle(
+    effect: Effect,
+    pool: boolean,
+    layer: number = 0
+  ): Particle | null {
     if (this._unused.length > 0) {
       const p = this._unused.pop();
+      if (p) {
+        p.setLayer(layer);
+        p.setGroupParticles(pool);
+        if (pool) effect.addInUse(layer, p as Entity);
+        else this._inUse[effect.getEffectLayer()][layer].push(p);
 
-      p.setLayer(layer);
-      p.setGroupParticles(pool);
-
-      if (pool) effect.addInUse(layer, p);
-      else this._inUse[effect.getEffectLayer()][layer].push(p);
-
-      this._inUseCount++;
-
-      return p;
+        this._inUseCount++;
+        return p;
+      }
     }
 
     return null;
