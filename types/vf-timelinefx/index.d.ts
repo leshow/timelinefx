@@ -1,4 +1,4 @@
-// Type definitions for timelinefx 2.0
+// Type definitions for vf-timelinefx 2.0
 // Project: https://github.com/leshow/timelinefx (Does not have to be to GitHub, but prefer linking to a source code repository rather than to a project website.)
 // Definitions by: Evan Cameron <https://github.com/leshow>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
