@@ -33,6 +33,7 @@ export class ParticleManager {
   addEffect(e: Effect, layer?: number): void;
   update(): void;
   drawParticles(tween?: number, layer?: number): void;
+  destroy(): void;
 }
 
 export class AnimImage {
