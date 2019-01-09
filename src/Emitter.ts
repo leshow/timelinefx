@@ -212,6 +212,7 @@ class Emitter extends Entity {
   _currentSizeXVariation: number = 0;
   _currentSizeYVariation: number = 0;
   _currentFramerate: number = 0;
+  _path: string = "";
   // _children: Array<Emitter> = [];
 
   constructor(other?: any, pm?: ParticleManager) {
@@ -2084,31 +2085,31 @@ class Emitter extends Entity {
     return this._cSpin.getOt(age, lifetime);
   }
 
-  getEmitterVelocity(age, lifetime = 0) {
+  getEmitterVelocity(age: number, lifetime: number = 0) {
     return this._cVelocity.getOt(age, lifetime);
   }
 
-  getEmitterWeight(age, lifetime = 0) {
+  getEmitterWeight(age: number, lifetime: number = 0) {
     return this._cWeight.getOt(age, lifetime);
   }
 
-  getEmitterDirection(age, lifetime = 0) {
+  getEmitterDirection(age: number, lifetime: number = 0) {
     return this._cDirection.getOt(age, lifetime);
   }
 
-  getEmitterDirectionVariationOt(age, lifetime = 0) {
+  getEmitterDirectionVariationOt(age: number, lifetime: number = 0) {
     return this._cDirectionVariationOT.getOt(age, lifetime);
   }
 
-  getEmitterFramerate(age, lifetime = 0) {
+  getEmitterFramerate(age: number, lifetime: number = 0) {
     return this._cFramerate.getOt(age, lifetime);
   }
 
-  getEmitterStretch(age, lifetime = 0) {
+  getEmitterStretch(age: number, lifetime: number = 0) {
     return this._cStretch.getOt(age, lifetime);
   }
 
-  getEmitterGlobalVelocity(frame) {
+  getEmitterGlobalVelocity(frame: number) {
     return this._cGlobalVelocity.get(frame);
   }
 
@@ -2120,7 +2121,7 @@ class Emitter extends Entity {
     return this._dying;
   }
 
-  setPath(path) {
+  setPath(path: string) {
     this._path = path;
   }
 

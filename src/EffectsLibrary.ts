@@ -77,16 +77,16 @@ class EffectsLibrary {
   public static motionVariationInterval = 30;
 
   //
-  _lookupFrequency: number = 30.0;
-  _updateTime: number = 30.0;
-  _lookupFrequencyOverTime: number = 1.0;
-  _updateFrequency: number = 30.0;
-  _currentUpdateTime: number = 30.0;
-  _shapeList: Array<AnimImage> = [];
-  _name: string = "";
-  _effects: { [key: string]: Effect } | Array<Effect> = [];
-  _emitters: Array<Entity> = [];
-  m_currentFolder: string | null = null;
+  public static _lookupFrequency: number = 30.0;
+  public static _updateTime: number = 30.0;
+  public static _lookupFrequencyOverTime: number = 1.0;
+  public static _updateFrequency: number = 30.0;
+  public static _currentUpdateTime: number = 30.0;
+  public static _shapeList: Array<AnimImage> = [];
+  public static _name: string = "";
+  public static _effects: { [key: string]: Entity } | Array<Entity> = [];
+  public static _emitters: Array<Entity> = [];
+  public static m_currentFolder: string | null = null;
 
   constructor() {
     if (!EffectsLibrary.instance) {
@@ -95,14 +95,14 @@ class EffectsLibrary {
     return EffectsLibrary.instance;
   }
 
-  init() {
+  public static init() {
     this.setUpdateFrequency(30.0);
     this._lookupFrequency = this._updateTime;
     this._lookupFrequencyOverTime = 1.0;
     this.clearAll();
   }
 
-  load(xml: any) {
+  public static load(xml: any) {
     //  console.log(xml);
     // Only allow loading one library
     this.clearAll();
@@ -122,7 +122,7 @@ class EffectsLibrary {
     this.loadEffectElements(xml.getElementsByTagName("EFFECTS")[0].children);
   }
 
-  loadEffectElements(effects: Array<any>) {
+  public static loadEffectElements(effects: Array<any>) {
     for (let i = 0; i < effects.length; i++) {
       if (effects[i].tagName === "FOLDER") {
         this.loadEffectElements(effects[i].children);
@@ -135,30 +135,30 @@ class EffectsLibrary {
     }
   }
 
-  clearAll() {
+  public static clearAll() {
     this._name = "";
     this._effects = []; // indexed by name
     this._emitters = []; // indexed by name
     this._shapeList = [];
   }
 
-  getShapes() {
+  public static getShapes() {
     return this._shapeList;
   }
 
-  getImage(index: number): AnimImage {
+  public static getImage(index: number): AnimImage {
     return this._shapeList[index];
   }
 
-  getEffect(name: string) {
+  public static getEffect(name: string) {
     return this._effects[name];
   }
 
-  getEmitter(name: string) {
+  public static getEmitter(name: string) {
     return this._emitters[name];
   }
 
-  addEffect(e: Effect) {
+  public static addEffect(e: Effect) {
     let name = e.getPath();
 
     this._effects[name] = e;
@@ -170,7 +170,7 @@ class EffectsLibrary {
     }
   }
 
-  addEmitter(e: Emitter) {
+  public static addEmitter(e: Emitter) {
     let name = e.getPath();
 
     this._emitters[name] = e;
@@ -181,33 +181,33 @@ class EffectsLibrary {
     }
   }
 
-  setUpdateFrequency(freq: number) {
+  public static setUpdateFrequency(freq: number) {
     this._updateFrequency = freq; //  fps
     this._updateTime = 1000.0 / this._updateFrequency;
     this._currentUpdateTime = this._updateFrequency;
   }
 
-  setLookupFrequency(freq: number) {
+  public static setLookupFrequency(freq: number) {
     this._lookupFrequency = freq;
   }
 
-  setLookupFrequencyOverTime(freq: number) {
+  public static setLookupFrequencyOverTime(freq: number) {
     this._lookupFrequencyOverTime = freq;
   }
 
-  getUpdateFrequency() {
+  public static getUpdateFrequency() {
     return this._updateFrequency;
   }
-  getUpdateTime() {
+  public static getUpdateTime() {
     return this._updateTime;
   }
-  getCurrentUpdateTime() {
+  public static getCurrentUpdateTime() {
     return this._currentUpdateTime;
   }
-  getLookupFrequency() {
+  public static getLookupFrequency() {
     return this._lookupFrequency;
   }
-  getLookupFrequencyOverTime() {
+  public static getLookupFrequencyOverTime() {
     return this._lookupFrequencyOverTime;
   }
 }

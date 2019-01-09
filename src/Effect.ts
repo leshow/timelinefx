@@ -205,7 +205,7 @@ class Effect extends Entity {
   _directoryEffects: Array<Effect> = [];
   _directoryEmitters: Array<Emitter> = [];
 
-  constructor(other: Effect, particleManager: ParticleManager) {
+  constructor(other?: Effect, particleManager?: ParticleManager) {
     super(other);
 
     if (other === undefined) {
