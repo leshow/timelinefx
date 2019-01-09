@@ -2,7 +2,7 @@
   "name": "vf-timelinefx",
   "version": "2.2.5",
   "description": "JavaScript port of TimelineFX particle system",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "types": "types/vf-timelinefx/index.d.ts",
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js --mode development",
