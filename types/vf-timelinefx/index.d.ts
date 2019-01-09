@@ -51,8 +51,8 @@ export class Effect {
 export class EffectsLibrary {
   public static _effects: { [key: string]: Effect } | Array<Effect>;
   constructor();
-  public init(): void;
-  public load(xml: any): void;
+  public static init(): void;
+  public static load(xml: any): void;
 }
 
 export class Emitter {
