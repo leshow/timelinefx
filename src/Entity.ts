@@ -2,8 +2,7 @@ import { removeFromList, M_PI, getDistance2D } from "./Utils";
 import Matrix2 from "./Matrix2";
 import Vector2 from "./Vector2";
 import EffectsLibrary from "./EffectsLibrary";
-import { AnimImage } from "src";
-import { AnimImage } from "src";
+import AnimImage from "./AnimImage";
 
 export const Blend = {
   BMAlphaBlend: 3,
@@ -233,9 +232,10 @@ class Entity {
 
   constructor(other?: Entity) {
     if (other) {
-      for (let key in g_defaultEntity) this[key] = other[key];
+      for (let key in g_defaultEntity) (this as any)[key] = (other as any)[key];
     } else {
-      for (let key in g_defaultEntity) this[key] = g_defaultEntity[key];
+      for (let key in g_defaultEntity)
+        (this as any)[key] = g_defaultEntity[key];
     }
 
     this._matrix = new Matrix2();

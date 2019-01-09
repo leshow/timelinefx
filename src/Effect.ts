@@ -219,64 +219,64 @@ class Effect extends Entity {
       for (let i = 0; i < 10; i++) this._inUse[i] = [];
 
       this._cAmount = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cLife = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cSizeX = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cSizeY = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cVelocity = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cWeight = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cSpin = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cStretch = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cGlobalZ = new EmitterArray(
-        EffectsLibrary.globalPercentMin,
-        EffectsLibrary.globalPercentMax
+        (EffectsLibrary as any).globalPercentMin,
+        (EffectsLibrary as any).globalPercentMax
       );
       this._cAlpha = new EmitterArray(0, 1.0);
       this._cEmissionAngle = new EmitterArray(
-        EffectsLibrary.angleMin,
-        EffectsLibrary.angleMax
+        (EffectsLibrary as any).angleMin,
+        (EffectsLibrary as any).angleMax
       );
       this._cEmissionRange = new EmitterArray(
-        EffectsLibrary.emissionRangeMin,
-        EffectsLibrary.emissionRangeMax
+        (EffectsLibrary as any).emissionRangeMin,
+        (EffectsLibrary as any).emissionRangeMax
       );
       this._cWidth = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cHeight = new EmitterArray(
-        EffectsLibrary.dimensionsMin,
-        EffectsLibrary.dimensionsMax
+        (EffectsLibrary as any).dimensionsMin,
+        (EffectsLibrary as any).dimensionsMax
       );
       this._cEffectAngle = new EmitterArray(
-        EffectsLibrary.angleMin,
-        EffectsLibrary.angleMax
+        (EffectsLibrary as any).angleMin,
+        (EffectsLibrary as any).angleMax
       );
     } else {
-      for (let key in g_defaultEffect) this[key] = other[key];
+      for (let key in g_defaultEffect) (this as any)[key] = other[key];
 
       this._particleManager = particleManager;
       this._arrayOwner = false;
