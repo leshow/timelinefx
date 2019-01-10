@@ -190,11 +190,9 @@ function () {
   }]);
 
   return EffectsLibrary;
-}(); // const instance = new EffectsLibrary();
-// Object.freeze(instance);
+}();
 
-
-_defineProperty(EffectsLibrary, "instance", new EffectsLibrary());
+_defineProperty(EffectsLibrary, "instance", void 0);
 
 _defineProperty(EffectsLibrary, "c_particleLimit", 5000);
 
@@ -300,4 +298,6 @@ _defineProperty(EffectsLibrary, "maxVelocityVariation", 30.0);
 
 _defineProperty(EffectsLibrary, "motionVariationInterval", 30);
 
-exports.default = EffectsLibrary;
+var instance = new EffectsLibrary(); // Object.freeze(instance);
+
+exports.default = instance;
