@@ -66,6 +66,7 @@ export class EffectsLibrary {
 
 export class Emitter extends Entity {
   constructor(other: Emitter, particleManager: ParticleManager);
+  isHandleCenter(): boolean;
 }
 
 export class EmitterArray {

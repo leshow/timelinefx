@@ -212,4 +212,6 @@ class EffectsLibrary {
 // let instance = new EffectsLibrary();
 // Object.freeze(instance);
 
-export default instance;
+export default {
+  EffectsLibrary: new EffectsLibrary()
+};
