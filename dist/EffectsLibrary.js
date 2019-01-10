@@ -22,6 +22,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var instance = undefined;
+
 var EffectsLibrary =
 /*#__PURE__*/
 function () {
@@ -37,11 +39,15 @@ function () {
 
     _defineProperty(this, "_updateFrequency", void 0);
 
-    if (!EffectsLibrary.instance) {
-      EffectsLibrary.instance = this;
+    // if (!EffectsLibrary.instance) {
+    //   EffectsLibrary.instance = this;
+    // }
+    // return EffectsLibrary.instance;
+    if (!instance) {
+      instance = this;
     }
 
-    return EffectsLibrary.instance;
+    return instance;
   }
 
   _createClass(EffectsLibrary, [{
@@ -186,9 +192,9 @@ function () {
   }]);
 
   return EffectsLibrary;
-}();
+}(); // let instance = new EffectsLibrary();
+// Object.freeze(instance);
 
-_defineProperty(EffectsLibrary, "instance", void 0);
 
 _defineProperty(EffectsLibrary, "c_particleLimit", 5000);
 
@@ -293,7 +299,5 @@ _defineProperty(EffectsLibrary, "maxDirectionVariation", 22.5);
 _defineProperty(EffectsLibrary, "maxVelocityVariation", 30.0);
 
 _defineProperty(EffectsLibrary, "motionVariationInterval", 30);
-
-var instance = new EffectsLibrary(); // Object.freeze(instance);
 
 exports.default = instance;
