@@ -44,8 +44,8 @@ export class AnimImage {
 
   getWidth(): number;
   getHeight(): number;
-  getFrameX(): number;
-  getFrameY(): number;
+  getFrameX(frameIndex: number): number;
+  getFrameY(frameIndex: number): number;
   getFramesCount(): number;
 }
 
