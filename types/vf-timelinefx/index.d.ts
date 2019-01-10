@@ -53,7 +53,7 @@ export class AttributeNode {
   constructor();
 }
 
-export class Effect {
+export class Effect extends Entity {
   constructor(other: Entity, particleManager: ParticleManager);
 }
 
@@ -64,7 +64,7 @@ export class EffectsLibrary {
   public static load(xml: any): void;
 }
 
-export class Emitter {
+export class Emitter extends Entity {
   constructor(other: Emitter, particleManager: ParticleManager);
 }
 
@@ -74,15 +74,17 @@ export class EmitterArray {
 
 export class Entity {
   constructor(other?: Entity);
+  getAvatar(): AnimImage | null;
 }
 
 export class Matrix2 {
   constructor();
 }
 
-export class Particle {
-  public m_pixiSprite: { [key: string]: any };
+export class Particle extends Entity {
+  [key: string]: any;
   constructor();
+  getEmitter(): Emitter | null;
 }
 
 export namespace Utils {
