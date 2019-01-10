@@ -3,7 +3,7 @@ import Effect from "./Effect";
 
 let instance = null;
 class EffectsLibrary {
-  static c_particleLimit = 5000;
+  c_particleLimit = 5000;
 
   static globalPercentMin = 0;
   static globalPercentMax = 20.0;
@@ -209,7 +209,7 @@ class EffectsLibrary {
   }
 }
 
-// let instance = new EffectsLibrary();
+const instance = new EffectsLibrary();
 // Object.freeze(instance);
 
-export default EffectsLibrary;
+export default instance;
