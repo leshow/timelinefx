@@ -1,7 +1,7 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
 
-let instance = new EffectsLibrary();
+let instance = null;
 class EffectsLibrary {
   static c_particleLimit = 5000;
 

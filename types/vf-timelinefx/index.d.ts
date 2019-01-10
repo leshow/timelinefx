@@ -61,7 +61,7 @@ export class EffectsLibrary {
   public static _effects: { [key: string]: any };
   constructor();
   public static init(): void;
-  public static load(xml: any): void;
+  public static load(xml: XMLDocument): void;
 }
 
 export class Emitter extends Entity {
@@ -101,7 +101,7 @@ export namespace Utils {
     constructor(fromObject: Map<T>, toObj: Map<T>);
   }
   class XMLHelper {
-    constructor(xml: any);
+    constructor(xml: XMLDocument);
   }
   function randomUnit(): number;
   function randomBetween(low: number, high: number): void;
