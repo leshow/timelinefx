@@ -37,8 +37,16 @@ export class ParticleManager {
 }
 
 export class AnimImage {
-  public m_pixiTexture: { [key: string]: any };
+  public _horizCells: number;
+  public _width: number;
   constructor();
+  // [key: string]: any;
+
+  getWidth(): number;
+  getHeight(): number;
+  getFrameX(): number;
+  getFrameY(): number;
+  getFramesCount(): number;
 }
 
 export class AttributeNode {
