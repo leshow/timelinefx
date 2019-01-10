@@ -1,7 +1,7 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
 
-let instance = this;
+let instance = new EffectsLibrary();
 class EffectsLibrary {
   static c_particleLimit = 5000;
 
@@ -212,6 +212,4 @@ class EffectsLibrary {
 // let instance = new EffectsLibrary();
 // Object.freeze(instance);
 
-export default {
-  EffectsLibrary: new EffectsLibrary()
-};
+export default EffectsLibrary;

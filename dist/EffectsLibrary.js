@@ -22,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var instance = undefined;
+var instance = new EffectsLibrary();
 
 var EffectsLibrary =
 /*#__PURE__*/
@@ -300,4 +300,4 @@ _defineProperty(EffectsLibrary, "maxVelocityVariation", 30.0);
 
 _defineProperty(EffectsLibrary, "motionVariationInterval", 30);
 
-exports.default = instance;
+exports.default = EffectsLibrary;
