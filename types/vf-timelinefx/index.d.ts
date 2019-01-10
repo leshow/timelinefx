@@ -40,7 +40,7 @@ export class AnimImage {
   public _horizCells: number;
   public _width: number;
   constructor();
-  // [key: string]: any;
+  [key: string]: any;
 
   getWidth(): number;
   getHeight(): number;
