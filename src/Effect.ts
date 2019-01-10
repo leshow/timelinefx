@@ -219,8 +219,8 @@ class Effect extends Entity {
       for (let i = 0; i < 10; i++) this._inUse[i] = [];
 
       this._cAmount = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cLife = new EmitterArray(
         (EffectsLibrary as any).globalPercentMin,
