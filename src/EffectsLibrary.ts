@@ -3,9 +3,8 @@ import Effect from "./Effect";
 import Entity from "./Entity";
 import Emitter from "./Emitter";
 
-let instance: EffectsLibrary | null = null;
 class EffectsLibrary {
-  // public static instance: EffectsLibrary;
+  public static instance: EffectsLibrary = new EffectsLibrary();
 
   public static c_particleLimit = 5000;
 
@@ -90,10 +89,10 @@ class EffectsLibrary {
   public static m_currentFolder: string | null = null;
 
   constructor() {
-    if (!instance) {
-      instance = this;
+    if (!EffectsLibrary.instance) {
+      EffectsLibrary.instance = this;
     }
-    return instance;
+    return EffectsLibrary.instance;
   }
 
   public static init() {
@@ -213,7 +212,6 @@ class EffectsLibrary {
   }
 }
 
-// const instance = new EffectsLibrary();
 // Object.freeze(instance);
 
 export default EffectsLibrary;

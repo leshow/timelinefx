@@ -273,36 +273,36 @@ class Emitter extends Entity {
       this._arrayOwner = true;
 
       this._cAmount = new EmitterArray(
-        (EffectsLibrary as any).amountMin,
-        (EffectsLibrary as any).amountMax
+        EffectsLibrary.amountMin,
+        EffectsLibrary.amountMax
       );
       this._cLife = new EmitterArray(
-        (EffectsLibrary as any).lifeMin,
-        (EffectsLibrary as any).lifeMax
+        EffectsLibrary.lifeMin,
+        EffectsLibrary.lifeMax
       );
       this._cSizeX = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cSizeY = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cBaseSpeed = new EmitterArray(
-        (EffectsLibrary as any).velocityMin,
-        (EffectsLibrary as any).velocityMax
+        EffectsLibrary.velocityMin,
+        EffectsLibrary.velocityMax
       );
       this._cBaseWeight = new EmitterArray(
-        (EffectsLibrary as any).weightMin,
-        (EffectsLibrary as any).weightMax
+        EffectsLibrary.weightMin,
+        EffectsLibrary.weightMax
       );
       this._cBaseSpin = new EmitterArray(
-        (EffectsLibrary as any).spinMin,
-        (EffectsLibrary as any).spinMax
+        EffectsLibrary.spinMin,
+        EffectsLibrary.spinMax
       );
       this._cEmissionAngle = new EmitterArray(
-        (EffectsLibrary as any).angleMin,
-        (EffectsLibrary as any).angleMax
+        EffectsLibrary.angleMin,
+        EffectsLibrary.angleMax
       );
       this._cEmissionRange = new EmitterArray(
         (EffectsLibrary as any).emissionRangeMin,
