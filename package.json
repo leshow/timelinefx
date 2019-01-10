@@ -1,6 +1,6 @@
 {
   "name": "vf-timelinefx",
-  "version": "2.2.13",
+  "version": "2.2.14",
   "description": "JavaScript port of TimelineFX particle system",
   "main": "dist/index.js",
   "types": "types/vf-timelinefx/index.d.ts",
