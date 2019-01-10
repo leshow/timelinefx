@@ -22,8 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var instance = new EffectsLibrary();
-
+// let instance = null;
 var EffectsLibrary =
 /*#__PURE__*/
 function () {
@@ -39,15 +38,14 @@ function () {
 
     _defineProperty(this, "_updateFrequency", void 0);
 
-    // if (!EffectsLibrary.instance) {
-    //   EffectsLibrary.instance = this;
-    // }
-    // return EffectsLibrary.instance;
-    if (!instance) {
-      instance = this;
+    if (!EffectsLibrary.instance) {
+      EffectsLibrary.instance = this;
     }
 
-    return instance;
+    return EffectsLibrary.instance; // if (!instance) {
+    // instance = this;
+    // }
+    // return instance;
   }
 
   _createClass(EffectsLibrary, [{
@@ -192,9 +190,11 @@ function () {
   }]);
 
   return EffectsLibrary;
-}(); // let instance = new EffectsLibrary();
+}(); // const instance = new EffectsLibrary();
 // Object.freeze(instance);
 
+
+_defineProperty(EffectsLibrary, "instance", new EffectsLibrary());
 
 _defineProperty(EffectsLibrary, "c_particleLimit", 5000);
 
