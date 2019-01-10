@@ -305,88 +305,88 @@ class Emitter extends Entity {
         EffectsLibrary.angleMax
       );
       this._cEmissionRange = new EmitterArray(
-        (EffectsLibrary as any).emissionRangeMin,
-        (EffectsLibrary as any).emissionRangeMax
+        EffectsLibrary.emissionRangeMin,
+        EffectsLibrary.emissionRangeMax
       );
       this._cSplatter = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cVelVariation = new EmitterArray(
-        (EffectsLibrary as any).velocityMin,
-        (EffectsLibrary as any).velocityMax
+        EffectsLibrary.velocityMin,
+        EffectsLibrary.velocityMax
       );
       this._cWeightVariation = new EmitterArray(
-        (EffectsLibrary as any).weightVariationMin,
-        (EffectsLibrary as any).weightVariationMax
+        EffectsLibrary.weightVariationMin,
+        EffectsLibrary.weightVariationMax
       );
       this._cLifeVariation = new EmitterArray(
-        (EffectsLibrary as any).lifeMin,
-        (EffectsLibrary as any).lifeMax
+        EffectsLibrary.lifeMin,
+        EffectsLibrary.lifeMax
       );
       this._cAmountVariation = new EmitterArray(
-        (EffectsLibrary as any).amountMin,
-        (EffectsLibrary as any).amountMax
+        EffectsLibrary.amountMin,
+        EffectsLibrary.amountMax
       );
       this._cSizeXVariation = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cSizeYVariation = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cSpinVariation = new EmitterArray(
-        (EffectsLibrary as any).spinVariationMin,
-        (EffectsLibrary as any).spinVariationMax
+        EffectsLibrary.spinVariationMin,
+        EffectsLibrary.spinVariationMax
       );
       this._cDirectionVariation = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cAlpha = new EmitterArray(0, 1.0);
       this._cR = new EmitterArray(0, 0);
       this._cG = new EmitterArray(0, 0);
       this._cB = new EmitterArray(0, 0);
       this._cScaleX = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cScaleY = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cSpin = new EmitterArray(
-        (EffectsLibrary as any).spinOverTimeMin,
-        (EffectsLibrary as any).spinOverTimeMax
+        EffectsLibrary.spinOverTimeMin,
+        EffectsLibrary.spinOverTimeMax
       );
       this._cVelocity = new EmitterArray(
-        (EffectsLibrary as any).velocityOverTimeMin,
-        (EffectsLibrary as any).velocityOverTimeMax
+        EffectsLibrary.velocityOverTimeMin,
+        EffectsLibrary.velocityOverTimeMax
       );
       this._cWeight = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cDirection = new EmitterArray(
-        (EffectsLibrary as any).directionOverTimeMin,
-        (EffectsLibrary as any).directionOverTimeMax
+        EffectsLibrary.directionOverTimeMin,
+        EffectsLibrary.directionOverTimeMax
       );
       this._cDirectionVariationOT = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cFramerate = new EmitterArray(
-        (EffectsLibrary as any).framerateMin,
-        (EffectsLibrary as any).framerateMax
+        EffectsLibrary.framerateMin,
+        EffectsLibrary.framerateMax
       );
       this._cStretch = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cGlobalVelocity = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
     }
   }
@@ -1649,12 +1649,12 @@ class Emitter extends Entity {
           e._directionVariation *
           this.getEmitterDirectionVariationOt(e._age, e._lifeTime);
         e._timeTracker += EffectsLibrary.getUpdateTime();
-        if (e._timeTracker > (EffectsLibrary as any).motionVariationInterval) {
+        if (e._timeTracker > (EffectsLibrary).motionVariationInterval) {
           e._randomDirection +=
-            (EffectsLibrary as any).maxDirectionVariation *
+            (EffectsLibrary).maxDirectionVariation *
             randomBetween(-dv, dv);
           e._randomSpeed +=
-            (EffectsLibrary as any).maxVelocityVariation *
+            (EffectsLibrary).maxVelocityVariation *
             randomBetween(-dv, dv);
           e._timeTracker = 0;
         }

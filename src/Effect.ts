@@ -223,57 +223,57 @@ class Effect extends Entity {
         EffectsLibrary.globalPercentMax
       );
       this._cLife = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cSizeX = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cSizeY = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cVelocity = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cWeight = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cSpin = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cStretch = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cGlobalZ = new EmitterArray(
-        (EffectsLibrary as any).globalPercentMin,
-        (EffectsLibrary as any).globalPercentMax
+        EffectsLibrary.globalPercentMin,
+        EffectsLibrary.globalPercentMax
       );
       this._cAlpha = new EmitterArray(0, 1.0);
       this._cEmissionAngle = new EmitterArray(
-        (EffectsLibrary as any).angleMin,
-        (EffectsLibrary as any).angleMax
+        EffectsLibrary.angleMin,
+        EffectsLibrary.angleMax
       );
       this._cEmissionRange = new EmitterArray(
-        (EffectsLibrary as any).emissionRangeMin,
-        (EffectsLibrary as any).emissionRangeMax
+        EffectsLibrary.emissionRangeMin,
+        EffectsLibrary.emissionRangeMax
       );
       this._cWidth = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cHeight = new EmitterArray(
-        (EffectsLibrary as any).dimensionsMin,
-        (EffectsLibrary as any).dimensionsMax
+        EffectsLibrary.dimensionsMin,
+        EffectsLibrary.dimensionsMax
       );
       this._cEffectAngle = new EmitterArray(
-        (EffectsLibrary as any).angleMin,
-        (EffectsLibrary as any).angleMax
+        EffectsLibrary.angleMin,
+        EffectsLibrary.angleMax
       );
     } else {
       for (let key in g_defaultEffect) (this as any)[key] = (other as any)[key];

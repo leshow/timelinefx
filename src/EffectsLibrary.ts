@@ -4,77 +4,77 @@ import Entity from "./Entity";
 import Emitter from "./Emitter";
 
 class EffectsLibrary {
-  public static instance: EffectsLibrary = new EffectsLibrary();
+  static instance: EffectsLibrary;
 
-  public static c_particleLimit = 5000;
+  public c_particleLimit = 5000;
 
-  public static globalPercentMin = 0;
-  public static globalPercentMax = 20.0;
-  public static globalPercentSteps = 100.0;
+  public globalPercentMin = 0;
+  public globalPercentMax = 20.0;
+  public globalPercentSteps = 100.0;
 
-  public static globalPercentVMin = 0;
-  public static globalPercentVMax = 10.0;
-  public static globalPercentVSteps = 200.0;
+  public globalPercentVMin = 0;
+  public globalPercentVMax = 10.0;
+  public globalPercentVSteps = 200.0;
 
-  public static angleMin = 0;
-  public static angleMax = 1080.0;
-  public static angleSteps = 54.0;
+  public angleMin = 0;
+  public angleMax = 1080.0;
+  public angleSteps = 54.0;
 
-  public static emissionRangeMin = 0;
-  public static emissionRangeMax = 180.0;
-  public static emissionRangeSteps = 30.0;
+  public emissionRangeMin = 0;
+  public emissionRangeMax = 180.0;
+  public emissionRangeSteps = 30.0;
 
-  public static dimensionsMin = 0;
-  public static dimensionsMax = 200.0;
-  public static dimensionsSteps = 40.0;
+  public dimensionsMin = 0;
+  public dimensionsMax = 200.0;
+  public dimensionsSteps = 40.0;
 
-  public static lifeMin = 0;
-  public static lifeMax = 100000.0;
-  public static lifeSteps = 200.0;
+  public lifeMin = 0;
+  public lifeMax = 100000.0;
+  public lifeSteps = 200.0;
 
-  public static amountMin = 0;
-  public static amountMax = 2000;
-  public static amountSteps = 100;
+  public amountMin = 0;
+  public amountMax = 2000;
+  public amountSteps = 100;
 
-  public static velocityMin = 0;
-  public static velocityMax = 10000.0;
-  public static velocitySteps = 100.0;
+  public velocityMin = 0;
+  public velocityMax = 10000.0;
+  public velocitySteps = 100.0;
 
-  public static velocityOverTimeMin = -20.0;
-  public static velocityOverTimeMax = 20.0;
-  public static velocityOverTimeSteps = 200;
+  public velocityOverTimeMin = -20.0;
+  public velocityOverTimeMax = 20.0;
+  public velocityOverTimeSteps = 200;
 
-  public static weightMin = -2500.0;
-  public static weightMax = 2500.0;
-  public static weightSteps = 200.0;
+  public weightMin = -2500.0;
+  public weightMax = 2500.0;
+  public weightSteps = 200.0;
 
-  public static weightVariationMin = 0;
-  public static weightVariationMax = 2500.0;
-  public static weightVariationSteps = 250.0;
+  public weightVariationMin = 0;
+  public weightVariationMax = 2500.0;
+  public weightVariationSteps = 250.0;
 
-  public static spinMin = -2000.0;
-  public static spinMax = 2000.0;
-  public static spinSteps = 100.0;
+  public spinMin = -2000.0;
+  public spinMax = 2000.0;
+  public spinSteps = 100.0;
 
-  public static spinVariationMin = 0;
-  public static spinVariationMax = 2000.0;
-  public static spinVariationSteps = 100.0;
+  public spinVariationMin = 0;
+  public spinVariationMax = 2000.0;
+  public spinVariationSteps = 100.0;
 
-  public static spinOverTimeMin = -20.0;
-  public static spinOverTimeMax = 20.0;
-  public static spinOverTimeSteps = 200.0;
+  public spinOverTimeMin = -20.0;
+  public spinOverTimeMax = 20.0;
+  public spinOverTimeSteps = 200.0;
 
-  public static directionOverTimeMin = 0;
-  public static directionOverTimeMax = 4320.0;
-  public static directionOverTimeSteps = 216.0;
+  public directionOverTimeMin = 0;
+  public directionOverTimeMax = 4320.0;
+  public directionOverTimeSteps = 216.0;
 
-  public static framerateMin = 0;
-  public static framerateMax = 200.0;
-  public static framerateSteps = 100.0;
+  public framerateMin = 0;
+  public framerateMax = 200.0;
+  public framerateSteps = 100.0;
 
-  public static maxDirectionVariation = 22.5;
-  public static maxVelocityVariation = 30.0;
-  public static motionVariationInterval = 30;
+  public maxDirectionVariation = 22.5;
+  public maxVelocityVariation = 30.0;
+  public motionVariationInterval = 30;
 
   //
   public static _lookupFrequency: number = 30.0;
@@ -211,7 +211,7 @@ class EffectsLibrary {
     return this._lookupFrequencyOverTime;
   }
 }
-
+const instance = new EffectsLibrary();
 // Object.freeze(instance);
 
-export default EffectsLibrary;
+export default instance;
