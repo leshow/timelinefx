@@ -1,9 +1,8 @@
 import AnimImage from "./AnimImage";
 import Effect from "./Effect";
 
+let instance = this;
 class EffectsLibrary {
-  static instance;
-
   static c_particleLimit = 5000;
 
   static globalPercentMin = 0;
@@ -81,10 +80,14 @@ class EffectsLibrary {
   _updateFrequency;
 
   constructor() {
-    if (!EffectsLibrary.instance) {
-      EffectsLibrary.instance = this;
+    // if (!EffectsLibrary.instance) {
+    //   EffectsLibrary.instance = this;
+    // }
+    // return EffectsLibrary.instance;
+    if (!instance) {
+      instance = this;
     }
-    return EffectsLibrary.instance;
+    return instance;
   }
 
   init() {
@@ -206,7 +209,7 @@ class EffectsLibrary {
   }
 }
 
-const instance = new EffectsLibrary();
+// let instance = new EffectsLibrary();
 // Object.freeze(instance);
 
 export default instance;

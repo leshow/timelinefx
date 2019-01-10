@@ -2,6 +2,7 @@ import Entity from "./Entity";
 
 class Particle extends Entity {
   // Class(Entity, ...)
+  m_pixiSprite;
   constructor() {
     super(); // Call parent's constructor
 

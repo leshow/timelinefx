@@ -37,6 +37,7 @@ export class ParticleManager {
 }
 
 export class AnimImage {
+  public m_pixiTexture: { [key: string]: any };
   constructor();
 }
 
@@ -49,7 +50,7 @@ export class Effect {
 }
 
 export class EffectsLibrary {
-  public static _effects: { [key: string]: Effect } | Array<Effect>;
+  public static _effects: { [key: string]: any };
   constructor();
   public static init(): void;
   public static load(xml: any): void;
@@ -72,6 +73,7 @@ export class Matrix2 {
 }
 
 export class Particle {
+  public m_pixiSprite: { [key: string]: any };
   constructor();
 }
 
