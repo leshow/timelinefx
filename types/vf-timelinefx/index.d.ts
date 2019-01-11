@@ -47,14 +47,132 @@ export class AnimImage {
   getFrameX(frameIndex: number): number;
   getFrameY(frameIndex: number): number;
   getFramesCount(): number;
+  setMaxRadius(radius: number): void;
+  getMaxRadius(): number;
+  setHeight(height: number): void;
+  setIndex(index: number): void;
+  getIndex(): number;
+  setFilename(filename: string): void;
+  setName(name: string): void;
+  getName(): string;
 }
 
 export class AttributeNode {
   constructor();
+  compare(other: AttributeNode): boolean;
+  setCurvePoints(x0: number, y0: number, x1: number, y1: number): void;
+  toggleCurve(): void;
+  loadFromXML(xml: XMLDocument): void;
 }
 
 export class Effect extends Entity {
   constructor(other: Entity, particleManager: ParticleManager);
+  hideAll(): void;
+  getEffectLayer(): number;
+  setEffectLayer(layer: number): void;
+  emitterCount(): number;
+  showOne(e: Emitter): void;
+  update(): void;
+  setParticleManager(pm: ParticleManager): void;
+  hasParticles(): boolean;
+  getParticleManager(): ParticleManager;
+  getParticles(layer: number): Array<Particle>;
+  isDying(): boolean;
+  softKill(): void;
+  hardKill(): void;
+  destroy(releaseChildren?: boolean): void;
+  setEndBehaviour(behaviour: number): void;
+  setDistanceSetByLife(value: boolean): void;
+  setHandleCenter(center: boolean): void;
+  setReverseSpawn(reverse: boolean): void;
+  setSpawnDirection(): void;
+  setAreaSize(w: number, h: number): void;
+  setLineLength(length: number): void;
+  setEmissionAngle(angle: number): void;
+  setEffectAngle(angle: number): void;
+  setLife(life: number): void;
+  setAmount(amount: number): void;
+  setVelocity(velocity: number): void;
+  setSpin(spin: number): void;
+  setWeight(weight: number): void;
+  setEffectParticleSize(sizeX: number, sizeY: number): void;
+  setSizeX(sizeX: number): void;
+  setSizeY(sizeX: number): void;
+  setEffectAlpha(alpha: number): void;
+  setEffectEmissionRange(emissionRange: number): void;
+  setEllipseArc(degrees: number): void;
+  setX(z: number): void;
+  setStretch(stretch: number): void;
+  setGroupParticles(v: boolean): void;
+  addInUse(layer: number, p: Particle): void;
+  removeInUse(layer: number, p: Particle): void;
+  compileAll(): void;
+  compileQuick(): void;
+  compileAmount(): void;
+  compileLife(): void;
+  compileSizeX(): void;
+  compileSizeY(): void;
+  compileVelocity(): void;
+  compileWeight(): void;
+  compileSpin(): void;
+  compileAlpha(): void;
+  compileEmissionAngle(): void;
+  compileEmissionRange(): void;
+  compileWidth(): void;
+  compileHeight(): void;
+  compileAngle(): void;
+  compileStretch(): void;
+  compileGlobalZ(): void;
+  getLife(frame: number): number;
+  getAmount(frame: number): number;
+  getSizeX(frame: number): number;
+  getSizeY(frame: number): number;
+  getVelocity(frame: number): number;
+  getWeight(frame: number): number;
+  getSpin(frame: number): number;
+  getAlpha(frame: number): number;
+  getEmissionAngle(frame: number): number;
+  getEmissionRange(frame: number): number;
+  getWidth(frame: number): number;
+  getHeight(frame: number): number;
+  getEffectAngle(frame: number): number;
+  getStretch(frame: number): number;
+  getGlobalZ(frame: number): number;
+  loadFromXML(xml: XMLDocument): number;
+  readAttribute(xml: XMLDocument, emitArray: EmitterArray, tag: string): string;
+  addStretch(f: number, v: number): number;
+  getPath(): string;
+  getLifeMaxValue(): number;
+  getCurrentAmount(): number;
+  getCurrentlLife(): number;
+  getCurrentEmissionAngle(): number;
+  getCurrentEmissionRange(): number;
+  getClass(): string;
+  setCurrentEffectFrame(frame: number): void;
+  getTraverseEdge(): number;
+  getCurrentVelocity(): number;
+  getCurrentSizeX(): number;
+  getCurrentSizeY(): number;
+  getCurrentStretch(): number;
+  getCurrentWeight(): number;
+  isBypassWeight(): boolean;
+  getCurrentAlpha(): number;
+  setParticlesCreated(value: boolean): void;
+  getCurrentSpin(): number;
+  getLifeLastFrame(): number;
+  setEffectLength(length: number): void;
+  setParentEmitter(emitter: Emitter): void;
+  getHandleCenter(): boolean;
+  getEmitAtPoints(): boolean;
+  getCurrentWidth(): number;
+  getCurrentHeight(): number;
+  getEllipseArc(): number;
+  getEllipseOffset(): number;
+  getEmissionType(): number;
+  getParentEmitter(): Emitter | null;
+  getMGX(): number;
+  getMGY(): number;
+  getImages(images: Array<AnimImage>): void;
 }
 
 export class EffectsLibrary {
@@ -80,12 +198,65 @@ export class Entity {
 
 export class Matrix2 {
   constructor();
+  create(aa_: number, ab_: number, ba_: number, bb_: number): Matrix2;
+  set(aa_: number, ab_: number, ba_: number, bb_: number): void;
+  scale(s: number): void;
+  transpose(): void;
+  transformSelf(m: Matrix2): void;
+  transformVector(x: number, y: number): Vector2;
+}
+
+export class Vector2 {
+  constructor(x: number, y: number);
+  create(x: number, y: number): Vector2;
+  set(vx: number, vy: number): void;
+  move1(other: Vector2): void;
+  move2(vx: number, vy: number): void;
+  subtract(v: Vector2): Vector2;
+  add(v: Vector2): Vector2;
+  multiply(v: Vector2): Vector2;
+  scale(scale: number): Vector2;
+  length(): number;
+  unit(v: Vector2): Vector2;
+  normal(): Vector2;
+  leftNormal(): Vector2;
+  normalize(): void;
+  dotProduct(v: Vector2): number;
 }
 
 export class Particle extends Entity {
   [key: string]: any;
   constructor();
   getEmitter(): Emitter | null;
+  reset(): void;
+  update(): void;
+  destroy(releaseChildren?: boolean): void;
+  setGroupParticles(value: boolean): void;
+  isGroupParticles(): boolean;
+  setLayer(layer: number): void;
+  getLayer(): number;
+  setEmitter(e: Emitter): void;
+  getEmitter(): Emitter;
+  getEffectLayer(): number;
+  setParticleManager(pm: ParticleManager): void;
+  setEffectLayer(layer: number): void;
+  setVelVariation(): void;
+  setGSizeX(gSizeX: number): void;
+  setGSizeY(gSizeY: number): void;
+  getGSizeX(): number;
+  getGSizeY(): number;
+  getScaleVariationX(): number;
+  setScaleVariationX(scale: number): void;
+  getScaleVariationY(): number;
+  setScaleVariationY(scale: number): void;
+  getEmissionAngle(): number;
+  setEmissionAngle(emissionAngle: number): void;
+  setDirectionVariation(direction: number): void;
+  getDirectionVariation(): number;
+  setSpinVariation(spin: number): void;
+  getSpinVariation(): number;
+  setWeightVariation(weight: number): void;
+  getWeightVariation(): number;
 }
 
 export namespace Utils {
