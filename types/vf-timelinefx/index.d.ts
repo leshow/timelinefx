@@ -189,11 +189,191 @@ export class Emitter extends Entity {
 
 export class EmitterArray {
   constructor(min: number, max: number);
+  getLastFrame(): number;
+  getCompiled(frame: number): number;
+  setCompiled(frame: number, value: number): void;
+  getLife(): number;
+  setLife(life: number): void;
+  getLastAttribute(): AttributeNode;
+  compile(): void;
+  /**
+   * @param longestLife - this.getLastAttributte().frame as default argument
+   */
+  compileOT(longestlife?: number): void;
+  add(frame: number, value: number): void;
+  /**
+   *
+   * @param frame - frame number
+   * @param bezier - default value of `true`
+   */
+  get(frame: number, bezier?: boolean): void;
+  getBezierValue(
+    lastec: AttributeNode,
+    a: AttributeNode,
+    t: number,
+    yMin: number,
+    yMax: number
+  ): number;
+  /**
+   *
+   * @param clamp - default value of `true`
+   */
+  getQuadBezier(
+    p0x: number,
+    p0y: number,
+    p1x: number,
+    p1y: number,
+    p2x: number,
+    p2y: number,
+    t: number,
+    yMin: number,
+    yMax: number,
+    clamp?: boolean
+  ): { x: number; y: number };
+  /**
+   *
+   * @param clamp - default value of `true`
+   */
+  getCubicBezier(
+    p0x: number,
+    p0y: number,
+    p1x: number,
+    p1y: number,
+    p2x: number,
+    p2y: number,
+    p3x: number,
+    p3y: number,
+    t: number,
+    yMin: number,
+    yMax: number,
+    clamp?: boolean
+  ): { x: number; y: number };
+  /**
+   *
+   * @param frame
+   * @param bezier - default value of `true`
+   */
+  interpolate(frame: number, bezier?: boolean): number;
+  /**
+   *
+   * @param age
+   * @param lifetime
+   * @param bezier - default value of `true`
+   */
+  interpolateOT(age: number, lifetime: number, bezier?: boolean): number;
+  getOt(age: number, lifetime: number): number;
+  getAttributesCount(): number;
+  getMaxValue(): number;
 }
 
 export class Entity {
   constructor(other?: Entity);
   getAvatar(): AnimImage | null;
+  isDestroyed(): boolean;
+  getName(): string;
+  setName(name: string): void;
+  setX(x: number): void;
+  setY(x: number): void;
+  setZ(x: number): void;
+  getX(): number;
+  getY(): number;
+  getZ(): number;
+  capture(): void;
+  captureAll(): void;
+  setOKtoRender(ok: boolean): void;
+  destroy(destroyChildren?: boolean): void;
+  removeChild(e: Entity): void;
+  killChildren(): void;
+  getChildren(): Array<Entity>;
+  update(): void;
+  updateChildren(): void;
+  miniUpdate(): void;
+  getChildCount(): number;
+  updateBoundingBox(): void;
+  updateEntityRadius(): void;
+  updateParentEntityRadius(): void;
+  updateParentRootEntityRadius(): void;
+  updateParentBoundingBox(): void;
+  assignRootParent(e: Entity): void;
+  setHandleX(x: number): void;
+  setHandleY(x: number): void;
+  setParent(e: Entity): void;
+  setRelative(value: boolean): void;
+  setEntityScale(sx: number, sy: number): void;
+  setSpeed(speed: number): void;
+  setBlendMode(mode: number): void;
+  getCurrentFrame(): number;
+  setCurrentFrame(frame: number): void;
+  addChild(e: Entity): void;
+  getMatrix(): Matrix2;
+  getWX(): number;
+  getWY(): number;
+  getRelativeAngle(): number;
+  setDoB(dob: number): void;
+  getOldCurrentFrame(): number;
+  setAvatar(avatar: AnimImage): void;
+  setAutocenter(value: boolean): void;
+  getLifeTime(): number;
+  setLifeTime(lifetime: number): void;
+  setSpeedVecX(x: number): void;
+  setSpeedVecY(y: number): void;
+  setBaseSpeed(speed: number): void;
+  setWidth(width: number): void;
+  getWidth(frame?: number): number;
+  setScaleY(scaleY: number): void;
+  getScaleX(): number;
+  getScaleY(): number;
+  setWidthHeightAABB(
+    minWidth: number,
+    minHeight: number,
+    maxWidth: number,
+    maxHeight: number
+  ): void;
+  setDirectionLocked(locked: boolean): void;
+  isDirectionLocked(): boolean;
+  getEntityDirection(): number;
+  setEntityDirection(direction: number): void;
+  setWeight(weight: number): void;
+  getWeight(frame?: number): number;
+  setBaseWeight(weight: number): void;
+  setBaseWeight(): number;
+  getRed(): number;
+  setRed(r: number): void;
+  getGreen(): number;
+  setGreen(g: number): void;
+  getBlue(): number;
+  getBlue(b: number): void;
+  getAge(): number;
+  setAge(age: number): void;
+  setEntityAlpha(alpha: number): void;
+  getOldWX(): number;
+  getOldWY(): number;
+  getImageDiameter(): number;
+  getOldAngle(): number;
+  getOldRelativeAngle(): number;
+  getAvatar(): AnimImage | null;
+  getHandleX(): number;
+  getHandleY(): number;
+  getBlendMode(): number;
+  getAngle(): number;
+  getOldScaleX(): number;
+  getOldScaleY(): number;
+  getOldZ(): number;
+  setEntityColor(r: number, g: number, b: number): number;
+  getEntityAlpha(): number;
+  getImageRadius(): number;
+  getFramerate(): number;
+  setFramerate(framerate: number): void;
+  isAnimating(): boolean;
+  setAnimating(value: boolean): void;
+  isRelative(): boolean;
+  setWX(wx: number): void;
+  setWY(wy: number): void;
+  setAngle(degrees: number): void;
+  setHeight(height: number): void;
+  getHeight(frame?: number): number;
+  getParent(): Entity | null;
+  move(xamount: number, yamount: number): void;
 }
 
 export class Matrix2 {
