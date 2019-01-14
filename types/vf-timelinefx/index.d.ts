@@ -27,13 +27,58 @@ export class ParticleManager {
   public onParticleSpawnCB: ((p: Particle) => void) | null;
   public onParticleKilledCB: ((p: Particle) => void) | null;
   constructor(drawSprite: SpriteFn, particles: number, layers: number);
-
-  public setScreenSize(w: number, h: number): void;
-  public setScreenPosition(x: number, y: number): void;
-  public addEffect(e: Effect, layer?: number): void;
-  public update(): void;
-  public drawParticles(tween?: number, layer?: number): void;
-  public destroy(): void;
+  update(): void;
+  destroy(): void;
+  grabParticle(effect: Effect, pool: boolean, layer?: number): Particle | null;
+  releaseParticle(p: Particle): void;
+  /**
+   *
+   * @param tween - default 1.0
+   * @param layer - default -1
+   */
+  drawParticles(tween?: number, layer?: number): void;
+  drawBoundingBoxes(): void;
+  /**
+   *
+   * @param x
+   * @param y
+   * @param z - default -1
+   */
+  setOrigin(x: number, y: number, z?: number): void;
+  setOriginX(x: number): void;
+  setOriginY(y: number): void;
+  setOriginZ(z: number): void;
+  setAngle(angle: number): void;
+  setScreenSize(w: number, h: number): void;
+  setScreenPosition(x: number, y: number): void;
+  setIdleTimeLimit(limit: number): number;
+  getOriginX(): number;
+  getOriginY(): number;
+  getOriginZ(): number;
+  getGlobalAmountScale(): number;
+  setGlobalAmountScale(scale: number): void;
+  getParticlesInUse(): number;
+  getParticlesUnused(): number;
+  addPreLoadedEffect(e: Effect, frames: number, layer?: number): void;
+  /**
+   *
+   * @param e
+   * @param layer - default 0
+   */
+  addEffect(e: Effect, layer?: number): void;
+  removeEffect(e: Effect): void;
+  clearInUse(): void;
+  destroy(): void;
+  clearAll(): void;
+  clearLayer(layer: number): void;
+  releaseSingleParticles(): void;
+  togglePause(): void;
+  drawEffects(): void;
+  drawEffect(e: Effect): void;
+  drawParticle(p: Particle): void;
+  getIdleTimeLimit(): number;
+  isSpawningAllowed(): boolean;
+  getCurrentTime(): number;
 }
 
 export class AnimImage {
@@ -64,6 +109,13 @@ export class AttributeNode {
   toggleCurve(): void;
   loadFromXML(xml: XMLDocument): void;
 }
+
+/**
+ * AngAlign = 0
+ * AngRandom = 1
+ * AngSpecify = 2;
+ */
+export type AngAlign = 0 | 1 | 2;
 
 export class Effect extends Entity {
   constructor(other: Entity, particleManager: ParticleManager);
@@ -180,11 +232,207 @@ export class EffectsLibrary {
   constructor();
   public static init(): void;
   public static load(xml: XMLDocument): void;
+  public static clearAll(): void;
+  public static getShapes(): Array<AnimImage>;
+  public static getImage(index: number): AnimImage;
+  public static getEffect(name: string): Entity;
+  public static getEmitter(name: string): Emitter;
+  public static addEffect(e: Effect): void;
+  public static addEmitter(e: Emitter): void;
+  public static setUpdateFrequency(freq: number): void;
+  public static setLookupFrequency(freq: number): void;
+  public static setLookupFrequencyOverTime(freq: number): void;
+  public static getUpdateFrequency(): number;
+  public static getUpdateTime(): number;
+  public static getCurrentUpdateTime(): number;
+  public static getLookupFrequency(): number;
+  public static getLookupFrequencyOverTime(): number;
 }
 
 export class Emitter extends Entity {
   constructor(other: Emitter, particleManager: ParticleManager);
   isHandleCenter(): boolean;
+  loadFromXML(xml: XMLDocument, parent: any): void;
+  readAttribute(xml: XMLDocument, emitArray: EmitterArray, tag: string): void;
+  sortAll(): void;
+  showAll(): void;
+  hideAll(): void;
+  addEffect(effect: Emitter): void;
+  setParentEffect(parent: Effect): void;
+  setImage(imageIndex: number): void;
+  setAngleOffset(offset: number): void;
+  setUniform(value: boolean): void;
+  setAngleType(angleType: AngAlign): void;
+  setUseEffectEmission(value: boolean): void;
+  setVisible(value: boolean): void;
+  setSingleParticle(value: boolean): void;
+  setRandomColor(value: boolean): void;
+  setZLayer(zLayer: number): void;
+  setAnimate(value: boolean): void;
+  setRandomStartFrame(value: boolean): void;
+  setAnimationDirection(direction: number): void;
+  setColorRepeat(repeat: number): number;
+  setAlphaRepeat(repeat: number): number;
+  setOneShot(value: boolean): void;
+  setHandleCenter(value: boolean): void;
+  setParticlesRelative(value: boolean): void;
+  setTweenSpawns(value: boolean): void;
+  setLockAngle(value: boolean): void;
+  setAngleRelative(value: boolean): void;
+  setOnce(value: boolean): void;
+  setGroupParticles(value: boolean): void;
+  getParentEffect(): Effect | null;
+  getImage(): AnimImage | null;
+  getAngleOffset(): number;
+  isUniform(): boolean;
+  getAngleType(): AngAlign;
+  isUseEffectEmmision(): boolean;
+  isVisible(): boolean;
+  isSingleParticle(): boolean;
+  isRandomColor(): boolean;
+  getZLayer(): number;
+  isAnimate(): boolean;
+  isRandomStartFrame(): boolean;
+  getAnimationDirection(): number;
+  getColorRepeat(): boolean;
+  getAlphaRepeat(): boolean;
+  isOneShot(): boolean;
+  isHandleCenter(): boolean;
+  isParticlesRelative(): boolean;
+  isTweenSpawns(): boolean;
+  isLockAngle(): boolean;
+  isAngleRelative(): boolean;
+  isOnce(): boolean;
+  isGroupParticles(): boolean;
+  getPath(): string;
+  setRadiusCalculate(value: boolean): void;
+  destroy(releaseChildren?: boolean): void;
+  changeDoB(dob: number): void;
+  update(): void;
+  updateSpawns(eSingle?: boolean): void;
+  controlParticle(e: Particle): void;
+  randomizeR(e: Entity, randomAge: number): number;
+  randomizeG(e: Entity, randomAge: number): number;
+  randomizeB(e: Entity, randomAge: number): number;
+  /**
+   *
+   * @param x - default 0
+   * @param y - default 1
+   * @param w - default 128
+   * @param h - default 128
+   */
+  drawCurrentFrame(x?: number, y?: number, w?: number, h?: number): void;
+  compileAll(): void;
+  compileQuick(): void;
+  analyseEmitter(): void;
+  resetBypassers(): void;
+  getLongestLife(): number;
+  getEmitterLife(frame: number): number;
+  getEmitterLifeVariation(frame: number): number;
+  getEmitterAmount(frame: number): number;
+  getEmitterSizeX(frame: number): number;
+  getEmitterSizeY(frame: number): number;
+  getEmitterBaseSpeed(frame: number): number;
+  getEmitterBaseWeight(frame: number): number;
+  getEmitterBaseSpin(frame: number): number;
+  getEmitterEmissionAngle(frame: number): number;
+  getEmitterEmissionRange(frame: number): number;
+  getEmitterSplatter(frame: number): number;
+  getEmitterVelVariation(frame: number): number;
+  getEmitterWeightVariation(frame: number): number;
+  getEmitterAmountVariation(frame: number): number;
+  getEmitterSizeXVariation(frame: number): number;
+  getEmitterSizeYVariation(frame: number): number;
+  getEmitterSpinVariation(frame: number): number;
+  getEmitterDirectionVariation(frame: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterAlpha(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterR(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterG(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterB(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterScaleX(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterScaleY(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterSpin(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterVelocity(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterWeight(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterDirection(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterDirectionVariationOt(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterFramerate(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterStretch(age: number, lifetime?: number): number;
+  /**
+   *
+   * @param age
+   * @param lifetime - default 0
+   */
+  getEmitterGlobalVelocity(frame: number): number;
+  getEffects(): Array<Emitter>;
+  isDying(): number;
+  setPath(path: string): void;
+  getImages(images: Array<AnimImage>): void;
 }
 
 export class EmitterArray {
@@ -206,7 +454,7 @@ export class EmitterArray {
    * @param frame - frame number
    * @param bezier - default value of `true`
    */
-  get(frame: number, bezier?: boolean): void;
+  get(frame: number, bezier?: boolean): number;
   getBezierValue(
     lastec: AttributeNode,
     a: AttributeNode,
