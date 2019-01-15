@@ -118,7 +118,7 @@ export class AttributeNode {
 export type AngAlign = 0 | 1 | 2;
 
 export class Effect extends Entity {
-  constructor(other: Entity, particleManager: ParticleManager);
+  constructor(other?: Entity, particleManager?: ParticleManager);
   hideAll(): void;
   getEffectLayer(): number;
   setEffectLayer(layer: number): void;
