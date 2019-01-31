@@ -1222,7 +1222,7 @@ function (_Entity) {
             e.updateBoundingBox(); // capture old values for tweening
 
             e.capture();
-            if (pm.onParticleSpawnCB) pm.onParticleSpawnCB(e);
+            if (pm.onParticleSpawnCB) pm.onParticleSpawnCB(e, parentEffect);
           }
         }
 

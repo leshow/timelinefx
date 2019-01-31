@@ -24,7 +24,7 @@ export type SpriteFn = (
 export class ParticleManager {
   public static c_particleLimit: number;
   private _drawSprite: SpriteFn;
-  public onParticleSpawnCB: ((p: Particle) => void) | null;
+  public onParticleSpawnCB: ((p: Particle, e: Effect) => void) | null;
   public onParticleKilledCB: ((p: Particle) => void) | null;
   constructor(drawSprite: SpriteFn, particles: number, layers: number);
   update(): void;
