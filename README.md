@@ -28,6 +28,6 @@ A complete demo can be found here: http://factor43.com/projects/tfx/demo
 
 ## Fork
 
-This fork brings the timelinefxjs lib to ES6+ syntax & style. Eventually we will include typescript definitions.
+This fork brings the timelinefxjs lib to ES6+ syntax & style, as well as TS module definitions.  
 
 There is only one major API change between this fork and gooddoggy's timelinefx, and that is that `ParticleManager` takes 3 arguments now, the first one being the `drawSprite` function.
